@@ -1,0 +1,17 @@
+<%= link_to 'essaii', root_path, :class => 'essaii_corner' %>
+<div class="archive">
+  <div class="archive-header">
+  	<%= @user.username %>
+  	<%= link_to 'posts', user_path(@user), :class => 'archive_button' %>
+  	<% if current_user && current_user == @user %>
+  		<%= link_to "edit about", '/about/'+@user.username+'/edit', :class => 'archive_button' %>
+  	<% end %>
+  </div>
+	<div class="about_text">
+	  <% if @user.about && @user.about.length > 0 %>
+	  	<%= h(@about.html_safe).gsub(/\n/, '<br>').html_safe %>
+	  <% else %>
+	  	Empty
+	  <% end %>
+	</div>
+</div>

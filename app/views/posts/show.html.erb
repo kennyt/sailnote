@@ -1,0 +1,31 @@
+<%= link_to 'essaii', root_path, :class => 'essaii_corner' %>
+<div class="post_title"><%= @post.title %></div>
+<div class="post_text">
+	<%= @post.created_at.strftime("%-d %B %Y")%><br>by <%= link_to @post.user.username, user_path(@post.user), class: "post_author" %><br><br><br>
+	<%= h(@text.html_safe).gsub(/\n/, '<br>').html_safe %>
+</div>
+
+<div class="user_post_controls">
+	<% if current_user && current_user == @post.user %>
+		<%= link_to 'edit', edit_post_path(@post), :class => 'control_button' %><br><br>
+		<% unless @post.published %>
+			<%= link_to '!publish!', publish_post_path(@post), method: "post", :confirm => 'Are you sure you want to publish?', :class => 'control_button' %><br><br>
+		<% end %>
+		<%= link_to '!delete!', post_path(@post), method: "delete", :confirm => 'Are you sure you want to delete this post?', :class => 'control_button' %><br>
+	<% end %>
+</div>
+
+<div class="share_buttons">
+ 	go to <%= link_to @post.user.username+"'s page", user_path(@post.user), class: 'post_author' %><br><br><br><br>
+	<a class="facebook_share" href="/" target="_blank">FB Share</a>
+	<a class="twitter_share" href="/" target="_blank">Tweet</a>
+</div>
+<div class="archive">
+</div>
+
+
+<script>
+	$('.post_text').html($('.post_text').html().replace(/kzxpqzcmskrlawtkbcksd/g, "<"))
+	$('.twitter_share').attr('href', 'https://twitter.com/intent/tweet?url='+encodeURIComponent(document.URL)+'&text='+$('.post_title').html())
+	$('.facebook_share').attr('href','http://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(document.URL))
+</script>

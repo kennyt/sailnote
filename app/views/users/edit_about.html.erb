@@ -1,0 +1,65 @@
+<div class="archive">
+  <div class="archive-header">
+  	<%= @user.username %>
+  	<%= link_to 'posts', user_path(@user), :class => 'archive_button' %>
+  </div>
+  <%= form_for :user, url: update_about_user_path(@user), method: :put do |f| %>
+	  <p>
+	    <%= f.text_area :about, :placeholder => 'Write about yourself. Links you want to link to. Link to your Twitter. Link to your Facebook. Selling shirts? Link that. Email if you feel it. Recommended reading. Frequently asked questions. Whatever fancies you. This is your shot. Just do what you need to do.', class: 'edit-about-box' %>
+	  </p>
+	 
+	  <p>
+	    <%= f.submit 'save', {class: 'edit-about-submit', datasubmit: '1'}%>
+	  </p>
+  <% end %>
+</div>
+<div class="edit_legend">
+	<div class="edit_legend_header">Text styling:</div><br>
+	<div class="edit_legend_text">
+		**example** = <b>example</b><br>
+		*example* = <i>example</i><br>
+		[example](http://www.example.com) = <a class="text_link" href="http://www.example.com">example</a>
+	</div><br>
+	<span class="hide_legend">Show Styling Instructions</span>
+</div>
+<div class="save_success">saved!</div>
+<%= link_to 'I\'m done', about_path(current_user), class: 'edit_back_button' %>
+
+<script>
+	$('.edit-about-box').focus();
+	$('.edit-about-box').autosize();
+
+	$('.edit_legend_text').hide();
+	$('.edit_legend_header').hide();
+	$('body').on('click','.hide_legend', function(e){
+		if ($('.edit_legend_text').attr('style') == 'display: none;'){
+			$('.edit_legend_text').show();
+			$('.edit_legend_header').show();
+			$('.hide_legend').html('Hide')
+		} else {
+			$('.edit_legend_text').hide();
+			$('.edit_legend_header').hide();
+			$('.hide_legend').html('Show');
+		}
+	})
+
+	$('body').on('click','.edit-about-submit',function(ev){
+		if ($(this).attr('datasubmit')){
+			ev.preventDefault();
+			ev.stopPropagation();
+			$.post('/users?edit_about=1', {
+				about: $('.edit-about-box').val()
+			}, function(response){
+				if (response['yes'] == '1'){
+					$('.save_success').show()
+					setTimeout(function(){
+						$('.save_success').hide();
+					}, 300)
+				} else {
+					$('.edit-about-submit').attr('datasubmit','');
+					$('.edit-about-submit').trigger('click');
+				}
+			})
+		}
+	})
+</script>

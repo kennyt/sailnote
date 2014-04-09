@@ -1,0 +1,41 @@
+<div class="top_banner">
+  <div class="signin_form">
+    <%= form_for(:session, url: sessions_path) do |f| %>
+      <%= f.text_field :username, :placeholder => '    username', class: 'signin_input' %>
+      <%= f.password_field :password, :placeholder => '    password', class: 'signin_input' %>
+
+      <%= f.submit "login", class: 'form_submit' %>
+    <% end %>
+  </div>
+</div>
+<div class="hero_npaper">
+  <div class="white_opaque">
+  </div>
+  <div class="essaii_big">essaii</div>
+  <% if @user.errors.any? %>
+    <div id="error_explanation">
+      <div class="alert alert-error">
+        The form contains <%= pluralize(@user.errors.count, "error") %>.
+      </div>
+      <ul>
+      <% @user.errors.full_messages.each do |msg| %>
+        <li>* <%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="user_form">
+    <div class="word_join">Join</div>
+    <%= form_for(@user) do |f| %>
+
+      <%= f.text_field :username, :placeholder => '    username', class: 'form_input' %>
+      <br>
+      <%= f.password_field :password, :placeholder => '    password', class: 'form_input' %>
+      <br>
+      <%= f.password_field :password_confirmation, :placeholder => '    password again', class: 'form_input' %>
+      <br>
+      <%= f.submit "Start Writing", class: 'form_submit' %>
+    <% end %>
+  </div>
+</div>
