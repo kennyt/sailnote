@@ -33,7 +33,7 @@ class UsersController < ApplicationController
 
 	def about
 		@user = User.find(params[:id])
-		@about = clean_text(@user.about)
+		@user.about.nil? ? @about = "" : @about = clean_text(@user.about)
 	end
 
 	def edit_about
