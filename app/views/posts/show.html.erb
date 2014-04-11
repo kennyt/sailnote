@@ -1,4 +1,5 @@
 <%= link_to 'essaii', root_path, :class => 'essaii_corner' %>
+<div class="cover-box"><img src="<%= @post.user.image_banner %>" style="top:<%= @post.user.image_top_margin %>;"></div>
 <div class="post_title"><%= @post.title %></div>
 <div class="post_text">
 	<%= @post.created_at.strftime("%-d %B %Y")%><br>by <%= link_to @post.user.username, user_path(@post.user), class: "post_author" %><br><br><br>
@@ -17,8 +18,10 @@
 
 <div class="share_buttons">
  	go to <%= link_to @post.user.username+"'s page", user_path(@post.user), class: 'post_author' %><br><br><br><br>
-	<a class="facebook_share" href="/" target="_blank">FB Share</a>
-	<a class="twitter_share" href="/" target="_blank">Tweet</a>
+ 	<% if @post.published %>
+		<a class="facebook_share" href="/" target="_blank">FB Share</a>
+		<a class="twitter_share" href="/" target="_blank">Tweet</a>
+	<% end %>
 </div>
 <div class="archive">
 </div>

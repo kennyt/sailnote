@@ -1,6 +1,6 @@
 <%= form_for(@post) do |f| %>
   <p>
-    <%= f.text_field :title, :placeholder => 'Title goes here.', class: 'edit-title' %>
+    <%= f.text_field :title, {:placeholder => 'Title goes here.', class: 'edit-title', data_author: @post.user.username} %>
   </p>
  
   <p>
@@ -59,28 +59,47 @@
 			ev.stopPropagation();
 			var newPost;
 			if (!$(this).attr('new_post')){
-				newPost = ''
+				$.post('/posts', {post: {
+					id: $('.edit-submit').attr('data_id'),
+					title: $('.edit-title').val(),
+					text: $('.edit-box').val()
+				}}, function(response){
+					if (response['yes'] == '1'){
+						$('.edit-submit').attr('data_id', response['id'])
+						$('.edit-title').attr('datatitle', $('.edit-title').val().replace(/ /g, '-'))
+						$('.edit-submit').attr('new_post','1');
+						$('.save_success').show()
+						$('.edit_back_button').html('I\'m done')
+						$('#post_error').hide()
+						setTimeout(function(){
+							$('.save_success').hide();
+						}, 300)
+					} else {
+						$('.edit-submit').attr('datasubmit','');
+						$('.edit-submit').trigger('click');
+					}
+				})
 			} else {
-				newPost = $(this).attr('new_post')
+				var user = $('.edit-title').attr('data_author');
+				var title = $('.edit-title').attr('datatitle');
+
+				$.post('/'+user+'/'+title+'/update_post_json',{post: {
+					id: $('.edit-submit').attr('data_id'),
+					title: $('.edit-title').val(),
+					text: $('.edit-box').val()
+				}}, function(response){
+					if (response['yes'] == '1'){
+						$('.save_success').show()
+						$('#post_error').hide()
+						setTimeout(function(){
+							$('.save_success').hide();
+						}, 300)
+					} else {
+						$('.edit-submit').attr('datasubmit','');
+						$('.edit-submit').trigger('click');
+					}
+				})
 			}
-			$.post('/posts?edit='+newPost,{post: {
-				id: $('.edit-submit').attr('data_id'),
-				title: $('.edit-title').val(),
-				text: $('.edit-box').val()
-			}}, function(response){
-				if (response['yes'] == '1'){
-					$('.edit-submit').attr('data_id', response['id'])
-					$('.edit-submit').attr('new_post','1');
-					$('.save_success').show()
-					$('#post_error').hide()
-					setTimeout(function(){
-						$('.save_success').hide();
-					}, 300)
-				} else {
-					$('.edit-submit').attr('datasubmit','');
-					$('.edit-submit').trigger('click');
-				}
-			})
 		}
 	})
 </script>

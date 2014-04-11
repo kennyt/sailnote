@@ -1,6 +1,6 @@
 class User < ActiveRecord::Base
 	has_secure_password
-  attr_accessible :username, :email, :password, :password_confirmation, :remember_token, :about
+  attr_accessible :username, :email, :password, :password_confirmation, :remember_token, :about, :image_banner, :image_margin_top, :email_followers
   validates :username, presence: true, length: { maximum: 20, minimum: 2 }, uniqueness: { case_sensitive: false }
   validates :password, length: { minimum: 4 }
   has_many :posts, dependent: :destroy

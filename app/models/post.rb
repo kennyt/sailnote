@@ -5,7 +5,7 @@ class Post < ActiveRecord::Base
   belongs_to :user
 
    def to_param
-    title.split(' ').join('-')
+    title.split(' ').join('-') if title
   end
 
   def self.find(input)

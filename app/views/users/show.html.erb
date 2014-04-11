@@ -1,4 +1,33 @@
 <%= link_to 'essaii', root_path, :class => 'essaii_corner' %>
+<div class="cover-box"><img src="<%= @user.image_banner %>" style="top:<%= @user.image_top_margin %>;"></div>
+
+<% if current_user && @user == current_user %>
+	<div class="change_image_button">change pic</div>
+	<div class="image_insert"><input class="submit_image_url" placeholder=" paste image url to change banner" data-username="<%= current_user.username %>"></input></div>
+	<div class="imgur_text">upload to <a class="text_link" href="http://imgur.com" target="_blank">imgur</a> to get url</div>
+	<!-- <div class="move_image_button">move your banner up/down</div> -->
+<% end %>
+
+<% if current_user %>
+	<% if @user == current_user %>
+		<div class="email_call"><%= @email_follower_number %> followers</div>
+	<% else %>
+		<div class="email_call">
+			Like <%= @user.username %>'s writing?<br>
+			Save yourself time by<br> getting updated by email.<br>
+			<input class="email_input" placeholder="  email here"></input><br>
+			<button class="submit_email_button" data-user="<%= @user.username %>">follow</button>
+		</div>
+	<% end %>
+<% else %>
+	<div class="email_call">
+		Like <%= @user.username %>'s writing?<br>
+		Save yourself time by<br> getting updated by email.<br>
+		<input class="email_input" placeholder="  email here"></input><br>
+		<button class="submit_email_button" data-user="<%= @user.username %>">follow</button>
+	</div>
+<% end %>
+
 <div class="archive">
   <div class="archive-header">
   	<%= @user.username %>
@@ -26,3 +55,42 @@
       <br>
   <% end %>
 </div>
+
+<script>
+	$('body').on('click', '.change_image_button', function(){
+		$('.image_insert').show()
+		$('.imgur_text').show()
+		$('.submit_image_url').focus();
+		$(this).hide();
+	})
+
+	$('body').on('keyup','.submit_image_url', function(){
+	  	var link = $('.submit_image_url').val();
+	  	if (link.length > 7){
+	  		var username = $(this).attr('data-username');
+		  	$.post('/'+username+'/update_pic',{
+		  		link: link
+		  	}, function(response){
+		  		if (response['yes'] == '1'){
+		  			$('img').attr('src',link)
+		  			$('.change_image_button').show()
+		  			$('.image_insert').hide()
+						$('.imgur_text').hide()
+						$('.submit_image_url').val('')
+		  		}
+		  	})
+		  }
+	  })
+
+	$('body').on('click','.submit_email_button', function(){
+		var email = $('.email_input').val();
+		var user = $(this).attr('data-user')
+		$.post('/'+user+'/add_email_follower', {
+			email: email
+		}, function(response){
+			if (response['yes'] == '1'){
+				$('.email_call').html('done')
+			}
+		})
+	})
+</script>

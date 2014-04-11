@@ -57,7 +57,9 @@
 		if ($(this).attr('datasubmit').length){
 			ev.preventDefault();
 			ev.stopPropagation();
-			$.post('/posts?edit=1',{post:
+			var user = $('.edit-title').attr('data_author');
+			var title = $('.edit-title').attr('datatitle');
+			$.post('/'+user+'/'+title+'/update_post_json',{post:
 			{	id: $('.edit-submit').attr('data_id'),
 				title: $('.edit-title').val(),
 				text: $('.edit-box').val()
@@ -65,7 +67,9 @@
 				if (response['yes'] == '1'){
 					$('.save_success').show()
 					$('#post_error').hide();
-					$('.edit_back_button').attr('href','/' + $('.edit-title').attr('data_author') + '/'+$('.edit-title').val().replace(/ /g, '-'))
+					var title = $('.edit-title').val().replace(/ /g, '-')
+					$('.edit-title').attr('datatitle', title)
+					$('.edit_back_button').attr('href','/' + $('.edit-title').attr('data_author') + '/'+title)
 					setTimeout(function(){
 						$('.save_success').hide();
 					}, 300)

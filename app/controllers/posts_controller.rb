@@ -4,38 +4,29 @@ class PostsController < ApplicationController
 	end
 
 	def create
-		if params[:edit] && params[:edit].length > 0
-			title = params[:post][:title].gsub('-',' ')
-			if current_user.posts.find_by_id(params[:post][:id]).update_attributes(:text => params[:post][:text], :title => title)
-				respond_to do |format|
-					format.json { render :json => {'yes' => '1'}.to_json }
-				end
-			else
-				respond_to do |format|
-					format.json { render :json => {'no' => '1'}.to_json }
-				end
+		params[:post][:title] = params[:post][:title].gsub('-',' ')
+		@post = current_user.posts.build(post_params)
+		if @post.save
+			respond_to do |format|
+				format.json { render :json => {'yes' => '1', 'id' => @post.id.to_s}.to_json }
+      	format.html { redirect_to user_path(current_user) }
 			end
-		else
-			params[:post][:title] = params[:post][:title].gsub('-',' ')
-			@post = current_user.posts.build(post_params)
-			if @post.save
-				respond_to do |format|
-					format.json { render :json => {'yes' => '1', 'id' => @post.id.to_s}.to_json }
-	      	format.html { redirect_to user_path(current_user) }
-				end
-	    else
-	    	respond_to do |format|
-					format.json { render :json => {'no' => '1'}.to_json }
-	      	format.html { render 'new' }
-				end
-	    end
-	  end
+    else
+    	respond_to do |format|
+				format.json { render :json => {'no' => '1'}.to_json }
+      	format.html { render 'new' }
+			end
+    end
 	end
 
 	def show
 		@user = User.find(params[:id])
 		@post = @user.posts.find_by_title(params[:title].gsub('-',' '))
-		@text = clean_text(@post.text)
+		if @post.published || (current_user && @user == current_user)
+			@text = clean_text(@post.text)
+		else
+			redirect_to user_path(@user)
+		end
 	end
 
 	def edit
@@ -54,7 +45,10 @@ class PostsController < ApplicationController
 
 	def publish
 		@post = current_user.posts.find_by_title(params[:id].gsub('-', ' '))
-		@post.update_attributes(:published => true, :published_date => Time.now)
+		if @post.update_attributes(:published => true, :published_date => Time.now)
+			email_followers = current_user.email_followers.split(',')
+			UserMailer.notify_post(email_followers, current_user, @post).deliver
+		end
 
 		redirect_to user_path(current_user)
 	end
@@ -64,6 +58,19 @@ class PostsController < ApplicationController
 		@post.destroy
 
 		redirect_to user_path(current_user)
+	end
+
+	def update_post_json
+		title = params[:post][:title].gsub('-',' ')
+		if current_user && current_user.posts.find_by_id(params[:post][:id]).update_attributes(:text => params[:post][:text], :title => title)
+			respond_to do |format|
+				format.json { render :json => {'yes' => '1'}.to_json }
+			end
+		else
+			respond_to do |format|
+				format.json { render :json => {'no' => '1'}.to_json }
+			end
+		end
 	end
 	private
 

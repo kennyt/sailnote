@@ -9,7 +9,7 @@
 	  </p>
 	 
 	  <p>
-	    <%= f.submit 'save', {class: 'edit-about-submit', datasubmit: '1'}%>
+	    <%= f.submit 'save', {class: 'edit-about-submit', datasubmit: '1', data_user: @user.username}%>
 	  </p>
   <% end %>
 </div>
@@ -47,9 +47,12 @@
 		if ($(this).attr('datasubmit')){
 			ev.preventDefault();
 			ev.stopPropagation();
-			$.post('/users?edit_about=1', {
+			var user = $(this).attr('data_user')
+			var id = $(this).attr('data_id')
+			$.post('/about/'+user+'/update_about',{user: {
+				id: user,
 				about: $('.edit-about-box').val()
-			}, function(response){
+			}}, function(response){
 				if (response['yes'] == '1'){
 					$('.save_success').show()
 					setTimeout(function(){

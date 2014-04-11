@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140406063409) do
+ActiveRecord::Schema.define(:version => 20140411035425) do
 
   create_table "posts", :force => true do |t|
     t.integer  "user_id"
@@ -30,10 +30,13 @@ ActiveRecord::Schema.define(:version => 20140406063409) do
     t.string   "username"
     t.string   "password_digest"
     t.string   "email"
-    t.datetime "created_at",      :null => false
-    t.datetime "updated_at",      :null => false
+    t.datetime "created_at",                       :null => false
+    t.datetime "updated_at",                       :null => false
     t.string   "remember_token"
     t.text     "about"
+    t.string   "image_banner"
+    t.integer  "image_top_margin", :default => 0
+    t.text     "email_followers",  :default => ""
   end
 
   add_index "users", ["remember_token"], :name => "index_users_on_remember_token"
