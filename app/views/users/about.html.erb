@@ -1,24 +1,5 @@
 <%= link_to 'essaii', root_path, :class => 'essaii_corner' %>
 <div class="cover-box"><img src="<%= @user.image_banner %>" style="top:<%= @user.image_top_margin %>;"></div>
-<% if current_user %>
-	<% if @user == current_user %>
-		<div class="email_call"><%= @email_follower_number %> followers</div>
-	<% else %>
-		<div class="email_call">
-			Like <%= @user.username %>'s writing?<br>
-			Save yourself time by<br> getting updated by email.<br>
-			<input class="email_input" placeholder="  email here"></input><br>
-			<button class="submit_email_button" data-user="<%= @user.username %>">follow</button>
-		</div>
-	<% end %>
-<% else %>
-	<div class="email_call">
-		Like <%= @user.username %>'s writing?<br>
-		Save yourself time by<br> getting updated by email.<br>
-		<input class="email_input" placeholder="  email here"></input><br>
-		<button class="submit_email_button" data-user="<%= @user.username %>">follow</button>
-	</div>
-<% end %>
 
 <div class="archive">
   <div class="archive-header">
@@ -27,6 +8,21 @@
   	<% if current_user && current_user == @user %>
   		<%= link_to "edit about", '/about/'+@user.username+'/edit', :class => 'archive_button' %>
   	<% end %>
+		<% if current_user %>
+			<% if @user == current_user %>
+				<div style="opacity:.7;font-size:14px;"><%= @email_follower_number %> followers</div>
+			<% else %>
+				<span class="email_call">
+					<input class="email_input" placeholder="subscribe by email"></input>
+					<button class="submit_email_button" data-user="<%= @user.username %>">follow</button>
+				</span>
+			<% end %>
+		<% else %>
+			<span class="email_call">
+				<input class="email_input" placeholder="subscribe by email"></input>
+				<button class="submit_email_button" data-user="<%= @user.username %>">follow</button>
+			</span>
+		<% end %>
   </div>
 	<div class="about_text">
 	  <% if @user.about && @user.about.length > 0 %>

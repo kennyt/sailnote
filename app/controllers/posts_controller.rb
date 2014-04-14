@@ -21,7 +21,7 @@ class PostsController < ApplicationController
 
 	def show
 		@user = User.find(params[:id])
-		@post = @user.posts.find_by_title(params[:title].gsub('-',' '))
+		@post = @user.posts.first(:conditions => ["lower(title) = ?", params[:title].gsub('-',' ').downcase])
 		if @post.published || (current_user && @user == current_user)
 			@text = clean_text(@post.text)
 		else

@@ -26,6 +26,9 @@ class UsersController < ApplicationController
 	def about
 		@user = User.find(params[:id])
 		@user.about.nil? ? @about = "" : @about = clean_text(@user.about)
+		if current_user && current_user == @user
+			@email_follower_number = @user.email_followers.split(',').length
+		end
 	end
 
 	def edit_about

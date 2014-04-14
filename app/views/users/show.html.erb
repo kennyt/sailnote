@@ -8,25 +8,6 @@
 	<!-- <div class="move_image_button">move your banner up/down</div> -->
 <% end %>
 
-<% if current_user %>
-	<% if @user == current_user %>
-		<div class="email_call"><%= @email_follower_number %> followers</div>
-	<% else %>
-		<div class="email_call">
-			Like <%= @user.username %>'s writing?<br>
-			Save yourself time by<br> getting updated by email.<br>
-			<input class="email_input" placeholder="  email here"></input><br>
-			<button class="submit_email_button" data-user="<%= @user.username %>">follow</button>
-		</div>
-	<% end %>
-<% else %>
-	<div class="email_call">
-		Like <%= @user.username %>'s writing?<br>
-		Save yourself time by<br> getting updated by email.<br>
-		<input class="email_input" placeholder="  email here"></input><br>
-		<button class="submit_email_button" data-user="<%= @user.username %>">follow</button>
-	</div>
-<% end %>
 
 <div class="archive">
   <div class="archive-header">
@@ -36,24 +17,49 @@
   		<%= link_to "new post", new_post_path, method: "get", :class => 'archive_button' %>
   		<%= link_to "logout", session_path, method: "delete", :class => 'archive_button' %>
   	<% end %>
+		<% if current_user %>
+			<% if @user == current_user %>
+				<div style="opacity:.7;font-size:14px;"><%= @email_follower_number %> followers</div>
+			<% else %>
+				<span class="email_call">
+					<input class="email_input" placeholder="subscribe by email"></input>
+					<button class="submit_email_button" data-user="<%= @user.username %>">follow</button>
+				</span>
+			<% end %>
+		<% else %>
+			<span class="email_call">
+				<input class="email_input" placeholder="subscribe by email"></input>
+				<button class="submit_email_button" data-user="<%= @user.username %>">follow</button>
+			</span>
+		<% end %>
   </div>
 
-  <% if current_user && current_user == @user %>
-	  <span class="post_list_header">drafts (dates = last time updated)</span><br>
-	  <% @unpublished_posts.each do |post| %>
-	      <span class="essay-date"> <%= post.updated_at.strftime("%0d %b %y") %></span>
-	      <span><%= link_to post.title, '/'+post.user.username+'/'+post.title.gsub(' ','-'), class: 'essay-title' %></span>
-	      <br>
-	  <% end %>
-	  <br>
-	  <span class="post_list_header">published (dates = time published)</span><br>
-	 <% end %>
+	<div class="post_list">
+	  <% if current_user && current_user == @user %>
+		  <span class="post_list_header">drafts (dates = last time updated)</span><br>
+		  <% if @unpublished_posts.count > 0 %>
+			  <% @unpublished_posts.each do |post| %>
+			      <span class="essay-date"> <%= post.updated_at.strftime("%0d %b %y") %></span>
+			      <span><%= link_to post.title, '/'+post.user.username+'/'+post.title.gsub(' ','-').downcase, class: 'essay-title' %></span>
+			      <br>
+			  <% end %>
+		  <% else %>
+		  	<span style="font-family:PT Serif Caption; font-size: 12px;">Empty</span>
+		  <% end %>
+		  <br>
+		  <span class="post_list_header">published (dates = time published)</span><br>
+		 <% end %>
 
-  <% @published_posts.each do |post| %>
-  <span class="essay-date"> <%= post.created_at.strftime("%0d %b %y") %></span>
-      <span><%= link_to post.title, '/'+post.user.username+'/'+post.title.gsub(' ','-'), class: 'essay-title' %></span>
-      <br>
-  <% end %>
+		 <% if @published_posts.count > 0 %>
+		  <% @published_posts.each do |post| %>
+		  <span class="essay-date"> <%= post.published_date.strftime("%0d %b %y") %></span>
+		      <span><%= link_to post.title, '/'+post.user.username+'/'+post.title.gsub(' ','-').downcase, class: 'essay-title' %></span>
+		      <br>
+		  <% end %>
+	  <% else %>
+	  	<span style="font-family:PT Serif Caption; font-size: 12px;">Empty</span>
+	  <% end %>
+	</div>
 </div>
 
 <script>
