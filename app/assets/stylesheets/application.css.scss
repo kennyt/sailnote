@@ -56,12 +56,12 @@
 .user_form {
 	position: absolute;
 	left: 38%;
-	top:  50%;
+	top:  60%;
 }
 
 .word_join {
 	margin-left: 130px;
-	font-family: tahoma;
+	font-family: verdana;
 	font-size: 25px;
 }
 
@@ -83,6 +83,16 @@
   */
   -ms-user-select: none;
   user-select: none;
+}
+
+.below_big {
+	font-family: times new roman;
+	font-family: verdana;
+	position: relative;
+	bottom: 40px;
+	font-size: 26px;
+	text-align: center;
+	opacity: .7;
 }
 
 .form_input {
