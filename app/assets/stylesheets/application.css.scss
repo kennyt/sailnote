@@ -67,7 +67,7 @@
 
 .essaii_big {
 	position: absolute;
-	top: 100px;
+	top: 9%;
 	left: 35%;
 	font-family: 'UnifrakturCook';
 	font-size: 200px;
@@ -283,7 +283,15 @@
 
 .essay-date {
 	font-family: Tahoma, Geneva, sans-serif;
+	opacity: .6;
+}
+
+.view-count {
+	margin-left: 6px;
+	/*font-family: Tahoma, Geneva, sans-serif;*/
+	font-family: 'PT Serif Caption';
 	opacity: .8;
+	font-size: 13px;
 }
 
 .post_title {

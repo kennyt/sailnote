@@ -47,14 +47,17 @@
 		  	<span style="font-family:PT Serif Caption; font-size: 12px;">Empty</span>
 		  <% end %>
 		  <br>
-		  <span class="post_list_header">published (dates = time published)</span><br>
+		  <span class="post_list_header">published</span><br>
 		 <% end %>
 
 		 <% if @published_posts.count > 0 %>
 		  <% @published_posts.each do |post| %>
-		  <span class="essay-date"> <%= post.published_date.strftime("%0d %b %y") %></span>
-		      <span><%= link_to post.title, '/'+post.user.username+'/'+CGI.escape(post.title.gsub(' ','-').downcase), class: 'essay-title' %></span>
-		      <br>
+		  	<span class="essay-date"> <%= post.published_date.strftime("%0d %b %y") %></span>
+	      <span><%= link_to post.title, '/'+post.user.username+'/'+CGI.escape(post.title.gsub(' ','-').downcase), class: 'essay-title' %></span>
+		  	<% if current_user && current_user == @user %>
+		  		<span class="view-count"><%= post.hits %> views</span>
+		  	<% end %>
+	      <br>
 		  <% end %>
 	  <% else %>
 	  	<span style="font-family:PT Serif Caption; font-size: 12px;">Empty</span>

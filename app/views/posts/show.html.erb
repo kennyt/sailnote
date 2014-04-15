@@ -31,4 +31,12 @@
 	$('.post_text').html($('.post_text').html().replace(/kzxpqzcmskrlawtkbcksd/g, "<"))
 	$('.twitter_share').attr('href', 'https://twitter.com/intent/tweet?url='+encodeURIComponent(document.URL)+'&text='+$('.post_title').html())
 	$('.facebook_share').attr('href','http://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(document.URL))
+
+	if (!($('.control_button').length > 0)){
+		setTimeout(function(){
+			var user = $('.post_author').html()
+			var title = encodeURIComponent($('.post_title').html().replace(/ /g, '-').toLowerCase())
+			$.post('/'+user+'/'+title+'/increment_viewcount')
+		}, 1000)
+	}
 </script>

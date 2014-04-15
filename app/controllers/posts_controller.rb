@@ -30,11 +30,11 @@ class PostsController < ApplicationController
 	end
 
 	def edit
-		@post = current_user.posts.find_by_title(params[:id].gsub('-',' '))
+		@post = current_user.posts.first(:conditions => ["lower(title) = ?", CGI.unescape(params[:id].gsub('-',' ').downcase)])
 	end
 
 	def update
-		@post = current_user.posts.find_by_title(params[:id].gsub('-',' '))
+		@post = current_user.posts.first(:conditions => ["lower(title) = ?", CGI.unescape(params[:id].gsub('-',' ').downcase)])
 
 		if @post.update_attributes(post_params)
 	    redirect_to post_path(@post)
@@ -44,7 +44,7 @@ class PostsController < ApplicationController
 	end
 
 	def publish
-		@post = current_user.posts.find_by_title(params[:id].gsub('-', ' '))
+		@post = current_user.posts.first(:conditions => ["lower(title) = ?", CGI.unescape(params[:id].gsub('-',' ').downcase)])
 		if @post.update_attributes(:published => true, :published_date => Time.now)
 			email_followers = current_user.email_followers.split(',')
 			UserMailer.notify_post(email_followers, current_user, @post).deliver
@@ -54,14 +54,14 @@ class PostsController < ApplicationController
 	end
 
 	def destroy
-		@post = current_user.posts.find_by_title(params[:id].gsub('-', ' '))
+		@post = current_user.posts.first(:conditions => ["lower(title) = ?", CGI.unescape(params[:id].gsub('-',' ').downcase)])
 		@post.destroy
 
 		redirect_to user_path(current_user)
 	end
 
 	def update_post_json
-		title = params[:post][:title].gsub('-',' ')
+		title = CGI.unescape(params[:post][:title].gsub('-',' '))
 		if current_user && current_user.posts.find_by_id(params[:post][:id]).update_attributes(:text => params[:post][:text], :title => title)
 			respond_to do |format|
 				format.json { render :json => {'yes' => '1'}.to_json }
@@ -70,6 +70,16 @@ class PostsController < ApplicationController
 			respond_to do |format|
 				format.json { render :json => {'no' => '1'}.to_json }
 			end
+		end
+	end
+
+	def increment_viewcount
+		@user = User.find(params[:id])
+		@post = @user.posts.first(:conditions => ["lower(title) = ?", CGI.unescape(params[:title].gsub('-',' ').downcase)])
+		@post.update_attribute(:hits, @post.hits + 1)
+
+		respond_to do |format|
+			format.json { render :json => {'yes' => '1'}.to_json }
 		end
 	end
 	private

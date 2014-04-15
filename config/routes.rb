@@ -20,6 +20,7 @@ Essaii::Application.routes.draw do
   match '/:id/:title' => 'posts#show'
   match '/:id/:title/update_post' => 'posts#update'
   match '/:id/:title/update_post_json' => 'posts#update_post_json'
+  match '/:id/:title/increment_viewcount' => 'posts#increment_viewcount'
   # match '/signup',  to: 'users#new',            via: 'get'
   # match '/signin',  to: 'sessions#new',         via: 'get'
   # match '/signout', to: 'sessions#destroy',     via: 'delete'
