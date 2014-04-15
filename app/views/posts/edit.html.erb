@@ -58,7 +58,7 @@
 			ev.preventDefault();
 			ev.stopPropagation();
 			var user = $('.edit-title').attr('data_author');
-			var title = $('.edit-title').attr('datatitle');
+			var title = encodeURIComponent($('.edit-title').attr('datatitle').toLowerCase());
 			$.post('/'+user+'/'+title+'/update_post_json',{post:
 			{	id: $('.edit-submit').attr('data_id'),
 				title: $('.edit-title').val(),

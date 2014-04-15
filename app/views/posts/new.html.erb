@@ -66,7 +66,7 @@
 				}}, function(response){
 					if (response['yes'] == '1'){
 						$('.edit-submit').attr('data_id', response['id'])
-						$('.edit-title').attr('datatitle', $('.edit-title').val().replace(/ /g, '-'))
+						$('.edit-title').attr('datatitle', encodeURIComponent($('.edit-title').val().replace(/ /g, '-').toLowerCase()) )
 						$('.edit-submit').attr('new_post','1');
 						$('.save_success').show()
 						$('.edit_back_button').html('I\'m done')
@@ -91,6 +91,7 @@
 					if (response['yes'] == '1'){
 						$('.save_success').show()
 						$('#post_error').hide()
+						$('.edit-title').attr('datatitle', encodeURIComponent($('.edit-title').val().replace(/ /g, '-').toLowerCase()) )
 						setTimeout(function(){
 							$('.save_success').hide();
 						}, 300)
