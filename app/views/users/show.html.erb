@@ -40,7 +40,7 @@
 		  <% if @unpublished_posts.count > 0 %>
 			  <% @unpublished_posts.each do |post| %>
 			      <span class="essay-date"> <%= post.updated_at.strftime("%0d %b %y") %></span>
-			      <span><%= link_to post.title, '/'+post.user.username+'/'+post.title.gsub(' ','-').downcase, class: 'essay-title' %></span>
+			      <span><%= link_to post.title, '/'+post.user.username+'/'+CGI.escape(post.title.gsub(' ','-').downcase), class: 'essay-title' %></span>
 			      <br>
 			  <% end %>
 		  <% else %>
@@ -53,7 +53,7 @@
 		 <% if @published_posts.count > 0 %>
 		  <% @published_posts.each do |post| %>
 		  <span class="essay-date"> <%= post.published_date.strftime("%0d %b %y") %></span>
-		      <span><%= link_to post.title, '/'+post.user.username+'/'+post.title.gsub(' ','-').downcase, class: 'essay-title' %></span>
+		      <span><%= link_to post.title, '/'+post.user.username+'/'+CGI.escape(post.title.gsub(' ','-').downcase), class: 'essay-title' %></span>
 		      <br>
 		  <% end %>
 	  <% else %>

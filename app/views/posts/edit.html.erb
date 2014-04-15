@@ -33,7 +33,7 @@
 	<span class="hide_legend">Show Styling Instructions</span>
 </div>
 <div class="save_success">saved!</div>
-<%= link_to 'I\'m done', '/'+@post.user.username+'/'+@post.title.gsub(' ','-'), class: 'edit_back_button' %>
+<%= link_to 'I\'m done', '/'+@post.user.username+'/'+CGI.escape(@post.title.gsub(' ','-').downcase), class: 'edit_back_button' %>
 
 <script>
 	$('.edit-box').focus();
@@ -67,7 +67,7 @@
 				if (response['yes'] == '1'){
 					$('.save_success').show()
 					$('#post_error').hide();
-					var title = $('.edit-title').val().replace(/ /g, '-')
+					var title = encodeURIComponent($('.edit-title').val().replace(/ /g, '-').toLowerCase());
 					$('.edit-title').attr('datatitle', title)
 					$('.edit_back_button').attr('href','/' + $('.edit-title').attr('data_author') + '/'+title)
 					setTimeout(function(){

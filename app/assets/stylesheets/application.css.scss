@@ -452,21 +452,28 @@
 .email_call {
 	font-family: Tahoma, Geneva, sans-serif;
 	font-family: 'PT Serif Caption';
-	/*position: relative;
-	top: -30px;
-	left: 270px;*/
 	opacity: .4;
 	font-size: 12px;
-	/*margin-bottom: 20px;
-	margin-top: 10px;*/
 	width: 470px;
 	-webkit-transition: all 200ms ease-out;
   -moz-transition: all 200ms ease-out;
   -o-transition: all 200ms ease-out;
   -ms-transition: all 200ms ease-out;
   transition: all 200ms ease-out;
+  padding-left: 10px;
 	&:hover {
 		opacity: 1;
+		background: black;
+		padding: 10px;
+	}
+	.submit_email_button {
+		background: white;
+		border: 0px;
+		cursor: pointer;
+		font-family: 'PT Serif Caption';
+	}
+	.email_input {
+		font-family: 'PT Serif Caption';
 	}
 }
 
