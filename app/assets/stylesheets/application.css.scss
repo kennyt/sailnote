@@ -470,7 +470,7 @@
 .email_call {
 	font-family: Tahoma, Geneva, sans-serif;
 	font-family: 'PT Serif Caption';
-	opacity: .4;
+	opacity: .2;
 	font-size: 12px;
 	width: 470px;
 	-webkit-transition: all 200ms ease-out;
@@ -481,7 +481,7 @@
   padding-left: 10px;
 	&:hover {
 		opacity: 1;
-		background: black;
+		background: #2c3e50;
 		padding: 10px;
 	}
 	.submit_email_button {

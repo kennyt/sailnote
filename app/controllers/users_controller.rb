@@ -6,7 +6,7 @@ class UsersController < ApplicationController
 	def create
 		@user = User.new(user_params)
     if @user.save
-    	@user.update_attribute(:image_banner, 'http://4.bp.blogspot.com/-_UV1RJJyxl4/Th5Aq6rz0tI/AAAAAAAABqg/hRi0amaxeK8/s1600/The-best-top-spring-desktop-wallpapers-29.jpg')
+    	@user.update_attribute(:image_banner, 'http://upload.wikimedia.org/wikipedia/commons/d/d9/Leonardo_Da_Vinci_-_Annunciazione.jpeg')
     	build_cookie(@user)
     	redirect_to user_path(@user)
     else
@@ -66,8 +66,9 @@ class UsersController < ApplicationController
 	end
 
 	def add_email_follower
+		email_regex = /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i
 		@user = User.find(params[:id])
-		if params[:email]
+		if params[:email] && email_regex.match(params[:email])
 			if @user.email_followers.split(',').length > 0
 				updated_followers = @user.email_followers+','+params[:email]
 			else

@@ -280,4 +280,5 @@
 			adjust();
 		});
 	};
+
 }(window.jQuery || window.$)); 
