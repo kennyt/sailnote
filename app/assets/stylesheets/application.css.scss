@@ -280,9 +280,17 @@
 	&:hover {
 		.essay-date {
 			opacity: .75;
+			&:hover {
+				opacity: 0;
+				cursor: default;
+			}
 		}
 		.view-count {
 			opacity: .75;
+			&:hover {
+				opacity: 0;
+				cursor: default;
+			}
 		}
 	}
 }
