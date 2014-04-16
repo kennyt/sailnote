@@ -273,25 +273,50 @@
 	cursor: pointer;
 }
 
+.post_line {
+	width: 550px;
+	position: relative;
+	height: 26px;
+	&:hover {
+		.essay-date {
+			opacity: .75;
+		}
+		.view-count {
+			opacity: .75;
+		}
+	}
+}
+
 .essay-title {
-	margin-left: 10px;
 	font-size: 20px;
-	/*font-family: Tahoma, Geneva, sans-serif;
-	font-family: Verdana;*/
-	/*text-decoration: none;*/
 }
 
 .essay-date {
 	font-family: Tahoma, Geneva, sans-serif;
-	opacity: .6;
+	opacity: 0;
+	margin-left: 10px;
+	-webkit-transition: all 100ms ease-out;
+  -moz-transition: all 100ms ease-out;
+  -o-transition: all 100ms ease-out;
+  -ms-transition: all 100ms ease-out;
+  transition: all 100ms ease-out;
+  position: absolute;
+  left: -100px;
 }
 
 .view-count {
 	margin-left: 6px;
 	/*font-family: Tahoma, Geneva, sans-serif;*/
 	font-family: 'PT Serif Caption';
-	opacity: .8;
+	opacity: 0;
 	font-size: 13px;
+	position: absolute;
+	left: -180px;
+	-webkit-transition: all 100ms ease-out;
+  -moz-transition: all 100ms ease-out;
+  -o-transition: all 100ms ease-out;
+  -ms-transition: all 100ms ease-out;
+  transition: all 100ms ease-out;
 }
 
 .post_title {
@@ -444,8 +469,8 @@
 
 .change_image_button {
 	position: absolute;
-	left: 120px;
-	top: 210px;
+	left: 10px;
+	top: 270px;
 	font-family: 'PT Serif Caption';
 	font-size: 20px;
 	border-bottom: 1px solid grey;
