@@ -1,4 +1,4 @@
-<%= link_to 'essaii', root_path, :class => 'essaii_corner' %>
+<%= link_to 'ii', root_path, :class => 'essaii_corner' %>
 <div class="cover-box"><img src="<%= @user.image_banner %>" style="top:<%= @user.image_top_margin %>;"></div>
 
 <div class="archive">
@@ -10,7 +10,7 @@
   	<% end %>
 		<% if current_user %>
 			<% if @user == current_user %>
-				<div style="opacity:.7;font-size:14px;"><%= @email_follower_number %> followers</div>
+				<div style="opacity:.7;font-size:14px;"><%= @email_follower_number %> email followers</div>
 			<% else %>
 				<span class="email_call">
 					<input class="email_input" placeholder="subscribe by email"></input>

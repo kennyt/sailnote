@@ -22,11 +22,30 @@
 	opacity: .23;
 	text-decoration: none;
 	color: black;
+	z-index: 2;
 	-webkit-transition: opacity 100ms ease-out;
   -moz-transition: opacity 100ms ease-out;
   -o-transition: opacity 100ms ease-out;
   -ms-transition: opacity 100ms ease-out;
   transition: opacity 100ms ease-out;
+}
+
+#left_shade_column {
+	position:absolute;
+	left: 0px;
+	top: 200px;
+	width: 70px;
+	background:#bdc3c7;
+	opacity: .35;
+}
+
+#right_shade_column {
+	position:absolute;
+	right: 0px;
+	top: 200px;
+	width: 70px;
+	background:#bdc3c7;
+	opacity: .35;
 }
 
 .essaii_corner:hover {
@@ -60,9 +79,10 @@
 }
 
 .word_join {
-	margin-left: 130px;
 	font-family: verdana;
 	font-size: 25px;
+	text-align: center;
+	opacity: .8;
 }
 
 .essaii_big {
@@ -76,6 +96,7 @@
 	-moz-user-select: -moz-none;
   -khtml-user-select: none;
   -webkit-user-select: none;
+  text-align: center;
 
   /*
     Introduced in IE 10.
@@ -154,7 +175,7 @@
 	cursor: pointer;
 	text-decoration: none;
 	color: black;
-	opacity: .7;
+	opacity: .8;
 	&:hover{
 		opacity: 1;
 	}
@@ -183,9 +204,83 @@
 	margin-left: 30%;
 	resize: none;
 	border: none;
+	border-top: 1px solid grey;
 	outline: none;
 	padding-bottom: 100px;
+	z-index: -2;
+	opacity: 0;
 }
+
+.txt_editor {
+  width : 700px;
+  border : 1px solid #ccc;
+  position : absolute;
+  left: 30%;
+  word-wrap: normal;
+}
+
+.editor-btns {
+	position: absolute;
+	left: 200px;
+	top: 200px;
+	width: 30px;
+	height: 150px;
+	display: none;
+	a{
+		text-decoration: none;
+		color: black;
+	}
+	.selected {
+		background: black;
+		color: white;
+	}
+}
+
+.bold-btn {
+	font-size: 30px;
+	font-family: Tahoma, Geneva, sans-serif;
+	font-weight: bold;
+	padding-left: 4px;
+	padding-right: 4px;
+}
+
+.italic-btn {
+	font-size: 30px;
+	font-family: Tahoma, Geneva, sans-serif;
+	font-style: italic;
+	padding-left: 5px;
+	padding-right: 10px;
+	display: block;
+}
+
+.image-btn {
+	color: #bdc3c7;
+	text-decoration: none;
+	font-size: 16px;
+	font-family: Tahoma, Geneva, sans-serif;
+	padding-right: 5px;
+	border-radius: 2px;
+	border: 1px solid #bdc3c7;
+	position: absolute;
+	&:hover{
+		color: #34495e;
+		border: 1px solid #34495e;
+	}
+}
+
+.link-btn {
+	font-size: 16px;
+	font-family: Tahoma, Geneva, sans-serif;
+	position: absolute;
+	right: 5px;
+}
+
+iframe {
+  font-family: Tahoma, Geneva, sans-serif;
+	font-size: 17px;
+
+}
+
 
 .view-text {
 	width: 550px;
@@ -201,7 +296,7 @@
 }
 
 .edit-title {
-	font-size: 50px;
+	font-size: 20px;
 	margin-left: 30%;
 	font-family: times new roman;
 	resize: none;
@@ -218,13 +313,17 @@
 	font-family: Tahoma, Geneva, sans-serif;
 }
 
+.saving {
+	background: #c0392b;
+}
+
 .save_success {
 	position: fixed;
 	left: 50px;
 	bottom: 200px;
 	padding: 20px;
 	font-family: Tahoma, Geneva, sans-serif;
-	background: green;
+	background: #27ae60;
 	color: white;
 	display: none;
 }
@@ -285,18 +384,11 @@
 				cursor: default;
 			}
 		}
-		.view-count {
-			opacity: .75;
-			&:hover {
-				opacity: 0;
-				cursor: default;
-			}
-		}
 	}
 }
 
 .essay-title {
-	font-size: 20px;
+	font-size: 21px;
 }
 
 .essay-date {
@@ -314,34 +406,36 @@
 
 .view-count {
 	margin-left: 6px;
-	/*font-family: Tahoma, Geneva, sans-serif;*/
 	font-family: 'PT Serif Caption';
-	opacity: 0;
+	opacity: .7;
 	font-size: 13px;
-	position: absolute;
-	left: -180px;
-	-webkit-transition: all 100ms ease-out;
-  -moz-transition: all 100ms ease-out;
-  -o-transition: all 100ms ease-out;
-  -ms-transition: all 100ms ease-out;
-  transition: all 100ms ease-out;
 }
 
 .post_title {
 	font-size: 50px;
-	margin-left: 30%;
+	margin-left: auto;
+	margin-right: auto;
 	width: 550px;
 	margin-top: 210px;
 	/*font-weight: bold;*/
 }
 
 .post_text {
-	margin-left: 30%;
+	margin-left: auto;
+	margin-right: auto;
 	width: 550px;
 	/*opacity: .87;*/
 	font-size: 17px;
 	font-family: Tahoma, Geneva, sans-serif;
+	word-wrap:break-word;
 	/*font-family: Trebuchet MS;*/
+	img {
+		cursor: -moz-zoom-in; 
+		cursor: -webkit-zoom-in; 
+		cursor: zoom-in;	
+		display: block;
+		margin: auto;
+	}
 }
 
 .about_text {
@@ -358,6 +452,7 @@
 	padding-right: 3px;
 	padding-left: 3px;
 	border-bottom: 1px solid grey;
+	font-family: Tahoma, Geneva, sans-serif;
 }
 
 .text_link {
@@ -368,8 +463,8 @@
 .user_post_controls {
 	position: fixed;
 	top: 300px;
-	left: 10px;
-	opacity: .7;
+	left: 2px;
+	opacity: .3;
 	&:hover {
 		opacity: 1;
 	}
@@ -398,7 +493,10 @@
 
 .share_buttons {
 	margin-top: 70px;
-	margin-left: 30%;
+	margin-left: auto;
+	margin-right: auto;
+	padding-bottom: 100px;
+	max-width: 550px;
 }
 
 .facebook_share {
@@ -529,7 +627,8 @@
 }
 
 .essay-title:link {color:#2980b9;}
-.essay-title:visited {color:#95a5a6;}
+.essay-title:visited {color:#7f8c8d;}
+/*.essay-title:visited {color:#95a5a6;}*/
 .essay-title:active {color:red;}
 
 .text_link:link {color:#2980b9;}

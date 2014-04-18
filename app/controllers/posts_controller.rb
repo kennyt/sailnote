@@ -23,7 +23,8 @@ class PostsController < ApplicationController
 		@user = User.find(params[:id])
 		@post = @user.posts.first(:conditions => ["lower(title) = ?", CGI.unescape(params[:title].gsub('-',' ').downcase)])
 		if @post.published || (current_user && @user == current_user)
-			@text = clean_text(@post.text)
+			# @text = clean_text(@post.text)
+			@text = @post.text
 		else
 			redirect_to user_path(@user)
 		end

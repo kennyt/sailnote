@@ -11,7 +11,7 @@
 <div class="hero_npaper">
   <div class="essaii_big">
     essaii
-    <div class="below_big">writing-centric blogs <br> <a class="text_link" href="/johnsy" target="_blank">sample</a></div>
+    <div class="below_big">deep-writing blogs. write deeper.<br> <a class="text_link" href="/johnsy" target="_blank">model blog</a></div>
   </div>
   <% if @user.errors.any? %>
     <div id="error_explanation">
@@ -27,7 +27,7 @@
   <% end %>
 
   <div class="user_form">
-    <div class="word_join">Join</div>
+    <div class="word_join">start writing</div>
     <%= form_for(@user) do |f| %>
 
       <%= f.text_field :username, :placeholder => '    username', class: 'form_input' %>
@@ -36,7 +36,7 @@
       <br>
       <%= f.password_field :password_confirmation, :placeholder => '    password again', class: 'form_input' %>
       <br>
-      <%= f.submit "Start Writing", class: 'form_submit' %>
+      <%= f.submit "finish", class: 'form_submit' %>
     <% end %>
   </div>
 </div>
