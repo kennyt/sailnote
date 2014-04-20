@@ -63,6 +63,7 @@
 		$(img).css({'max-width': $(document).width()/1.6})
 		$(img).attr('onload','centerImage('+i+')');
 		$(img).css({'opacity':'1'})
+		centerImage(i);
 	})
 
 	function centerImage(img_index){
