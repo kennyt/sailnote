@@ -6,7 +6,8 @@ class UsersController < ApplicationController
 	def create
 		@user = User.new(user_params)
     if @user.save
-    	@user.update_attribute(:image_banner, 'http://upload.wikimedia.org/wikipedia/commons/d/d9/Leonardo_Da_Vinci_-_Annunciazione.jpeg')
+    	image_array = ['http://i.imgur.com/iEeeRSq.jpg', 'http://i.imgur.com/PLUS3y1.jpg', 'http://i.imgur.com/S9pfRrW.jpg', 'http://i.imgur.com/Nd0eRNj.jpg']
+    	@user.update_attribute(:image_banner, image_array.sample)
     	build_cookie(@user)
     	redirect_to user_path(@user)
     else
@@ -17,7 +18,8 @@ class UsersController < ApplicationController
 	def show
 		@user = User.find(params[:id])
 		@published_posts = @user.posts.where(:published => true).order('published_date DESC')
-		if current_user && current_user == @user
+		@authored_bool = current_user && current_user == @user
+		if @authored_bool
 			@unpublished_posts = @user.posts.where(:published => false).order('updated_at DESC')
 			@email_follower_number = @user.email_followers.split(',').length
 		end

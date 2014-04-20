@@ -22,6 +22,7 @@ class PostsController < ApplicationController
 	def show
 		@user = User.find(params[:id])
 		@post = @user.posts.first(:conditions => ["lower(title) = ?", CGI.unescape(params[:title].gsub('-',' ').downcase)])
+		@archive_posts = @user.posts.where(:published => true).order('published_date DESC')
 		if @post.published || (current_user && @user == current_user)
 			# @text = clean_text(@post.text)
 			@text = @post.text
