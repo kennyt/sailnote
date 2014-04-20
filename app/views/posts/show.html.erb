@@ -21,15 +21,16 @@
  	<% if @post.published %>
 		<a class="facebook_share" href="/" target="_blank">FB Share</a>
 		<a class="twitter_share" href="/" target="_blank">Tweet</a>
-	<% end %><br><br><br>
+		<br><br><br><br>
+	<% end %>
 </div>
 <!-- <a class="end_post_author" href="<%= user_path(@post.user) %>"><span style="position:relative;top:35px;font-size:20px;">< go to <%=@post.user.username%>'s blog</span><a> -->
 
 <div class="end_post_archive" data-author="<%=@post.user.username%>">
 	<div class="end_post_inside">
 		<%= link_to @post.user.username + "'s blog", user_path(@post.user), class: 'end_user' %>
-		<%= link_to "about " + @post.user.username, about_path(@post.user), class: 'end_about' %><br><br>
-		<div class="end_archive_title"><%= @post.user.username %>'s full archive:</div><br>
+		<%= link_to "about", about_path(@post.user), class: 'end_about' %><br><br>
+		<div class="end_archive_title"><%= @post.user.username %>'s archive:</div><br>
 		<div class="end_list">
 			<% if @archive_posts.count > 0 %>
 			  <% @archive_posts.each do |post| %>
@@ -51,7 +52,7 @@
 
 	if (!($('.control_button').length > 0)){
 		setTimeout(function(){
-			var user = $('.end_post_archive').attr('data_author')
+			var user = $('.end_post_archive').attr('data-author')
 			var title = encodeURIComponent($('.post_title').html().replace(/ /g, '-').toLowerCase())
 			$.post('/'+user+'/'+title+'/increment_viewcount')
 		}, 1000)
