@@ -8,12 +8,12 @@ class PostsController < ApplicationController
 		@post = current_user.posts.build(post_params)
 		if @post.save
 			respond_to do |format|
-				format.json { render :json => {'yes' => '1', 'id' => @post.id.to_s}.to_json }
+				format.json { render :json => {'yes' => '1', 'id' => @post.id.to_s, 'date' => @post.updated_at.strftime("%0d %b %y")}.to_json }
       	format.html { redirect_to user_path(current_user) }
 			end
     else
     	respond_to do |format|
-				format.json { render :json => {'no' => '1'}.to_json }
+				format.json { render :json => {'no' => @post.errors.full_messages}.to_json }
       	format.html { render 'new' }
 			end
     end
@@ -25,7 +25,7 @@ class PostsController < ApplicationController
 		@archive_posts = @user.posts.where(:published => true).order('published_date DESC')
 		if @post.published || (current_user && @user == current_user)
 			# @text = clean_text(@post.text)
-			@text = @post.text
+			@text = @post.text || ""
 		else
 			redirect_to user_path(@user)
 		end

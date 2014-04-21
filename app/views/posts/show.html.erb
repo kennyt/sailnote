@@ -26,24 +26,27 @@
 </div>
 <!-- <a class="end_post_author" href="<%= user_path(@post.user) %>"><span style="position:relative;top:35px;font-size:20px;">< go to <%=@post.user.username%>'s blog</span><a> -->
 
-<div class="end_post_archive" data-author="<%=@post.user.username%>">
-	<div class="end_post_inside">
-		<%= link_to @post.user.username + "'s blog", user_path(@post.user), class: 'end_user' %>
-		<%= link_to "about", about_path(@post.user), class: 'end_about' %><br><br>
-		<div class="end_archive_title"><%= @post.user.username %>'s archive:</div><br>
-		<div class="end_list">
-			<% if @archive_posts.count > 0 %>
-			  <% @archive_posts.each do |post| %>
-			  	<span class="post_line">
-			      - <span><%= link_to post.title, '/'+post.user.username+'/'+CGI.escape(post.title.gsub(' ','-').downcase), class: 'essay-title' %></span>
-				  	<span class="end_essay_date"> <%= post.published_date.strftime("%0d %b %y") %></span>
-				  </span>
-		      <br><div style="height:5px;"></div>
+<% if @post.published %>
+	<div class="end_post_archive" data-author="<%=@post.user.username%>">
+		<div class="end_post_inside">
+			<%= link_to @post.user.username + "'s blog", user_path(@post.user), class: 'end_user' %>
+			<%= link_to "about", about_path(@post.user), class: 'end_about' %><br><br>
+			<div class="end_archive_title"><%= @post.user.username %>'s archive:</div><br>
+			<div class="end_list">
+				<% if @archive_posts.count > 0 %>
+				  <% @archive_posts.each do |post| %>
+				  	<span class="post_line">
+				      - <span><%= link_to post.title, '/'+post.user.username+'/'+CGI.escape(post.title.gsub(' ','-').downcase), class: 'essay-title' %></span>
+					  	<span class="end_essay_date"> <%= post.published_date.strftime("%0d %b %y") %></span>
+					  </span>
+			      <br><div style="height:5px;"></div>
+				  <% end %>
 			  <% end %>
-		  <% end %>
+			</div>
 		</div>
 	</div>
-</div><br><br><br>
+<% end %>
+<br><br><br>
 
 
 <script>

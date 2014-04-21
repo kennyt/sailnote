@@ -1,60 +1,42 @@
-<div class="archive">
-  <div class="archive-header">
-  	<%= @user.username %>
-  	<%= link_to 'posts', user_path(@user), :class => 'archive_button' %>
-  </div>
-  <%= form_for :user, url: update_about_user_path(@user), method: :put do |f| %>
-	  <p>
-	    <%= f.text_area :about, :placeholder => 'Write about yourself. Links you want to link to. Link to your Twitter. Link to your Facebook. Selling shirts? Link that. Email if you feel it. Recommended reading. Frequently asked questions. Whatever fancies you. This is your shot. Just do what you need to do.', class: 'edit-about-box' %>
-	  </p>
-	 
-	  <p>
-	    <%= f.submit 'save', {class: 'edit-about-submit', datasubmit: '1', data_user: @user.username}%>
-	  </p>
-  <% end %>
+
+<div class="archive-header" style="margin-left:auto; margin-right:auto; width: 40%; padding:0;">
+	<%= @user.username %>
+	<%= link_to 'posts', user_path(@user), :class => 'archive_button' %>
 </div>
-<div class="edit_legend">
-	<div class="edit_legend_header">Text styling:</div><br>
-	<div class="edit_legend_text">
-		**example** = <b>example</b><br>
-		*example* = <i>example</i><br>
-		[example](http://www.example.com) = <a class="text_link" href="http://www.example.com">example</a>
-	</div><br>
-	<span class="hide_legend">Show Styling Instructions</span>
-</div>
+<%= form_for :user, url: update_about_user_path(@user), method: :put do |f| %>
+  <p>
+    <%= f.text_area :about, :placeholder => 'Write about yourself. Links you want to link to. Link to your Twitter. Link to your Facebook. Selling shirts? Link that. Email if you feel it. Recommended reading. Frequently asked questions. Whatever fancies you. This is your shot. Just do what you need to do.', class: 'edit-about-box' %>
+  </p>
+ 
+  <p>
+    <%= f.submit 'save (ctrl + s)', {class: 'edit-about-submit', datasubmit: '1', data_user: @user.username}%>
+  </p>
+<% end %>
+
+<div class="instruct_highlight">highlight to style</div>
 <div class="save_success">saved!</div>
 <%= link_to 'I\'m done', about_path(current_user), class: 'edit_back_button' %>
 
 <script>
-	$('.edit-about-box').focus();
-	$('.edit-about-box').autosize();
-
-	$('.edit_legend_text').hide();
-	$('.edit_legend_header').hide();
-	$('body').on('click','.hide_legend', function(e){
-		if ($('.edit_legend_text').attr('style') == 'display: none;'){
-			$('.edit_legend_text').show();
-			$('.edit_legend_header').show();
-			$('.hide_legend').html('Hide')
-		} else {
-			$('.edit_legend_text').hide();
-			$('.edit_legend_header').hide();
-			$('.hide_legend').html('Show');
-		}
-	})
-
 	$('body').on('click','.edit-about-submit',function(ev){
 		if ($(this).attr('datasubmit')){
 			ev.preventDefault();
 			ev.stopPropagation();
+			$('.edit-about-box').val($('iframe').contents().find('body').html())
 			var user = $(this).attr('data_user')
 			var id = $(this).attr('data_id')
+
+			$('.save_success').attr('style','display:block;background:#c0392b;');
+			$('.save_success').html('saving..')
+
 			$.post('/about/'+user+'/update_about',{user: {
 				id: user,
 				about: $('.edit-about-box').val()
 			}}, function(response){
 				if (response['yes'] == '1'){
-					$('.save_success').show()
+					$('.save_success').attr('style','display:block;')
+					$('.save_success').html('saved!')
+
 					setTimeout(function(){
 						$('.save_success').hide();
 					}, 300)
@@ -65,4 +47,173 @@
 			})
 		}
 	})
+
+	$.fn.myTextEditor = function(options){
+	    // extend the option with the default ones
+	    var settings = $.extend({
+	        width : "700px",
+	        height : ($(document).height() - 70) + "px"
+	    },options);
+	    return this.each(function(){
+	       var $this = $(this).hide();
+			   // create a container div on the fly
+			   var containerDiv = $("<div/>").attr('class','txt_editor');
+			   $this.after(containerDiv); 
+			   var editor = $("<iframe/>",{
+			       frameborder : "0",
+			       css : {
+			           width : settings.width,
+			           height : settings.height,
+			           'font-family': 'open sans'
+			       }
+			   }).appendTo(containerDiv).get(0);
+			   // opening and closing the editor is a workaround to solve issue in Firefox
+			   editor.contentWindow.document.open();
+			   editor.contentWindow.document.close();
+			   editor.contentWindow.document.designMode="on";
+				var buttonPane = $("<div/>",{
+				    "class" : "editor-btns"
+				}).prependTo($('body'));
+
+				var btnBold = $("<a/>",{
+						"class": "bold-btn",
+				    href : "#",
+				    text : "B",
+				    data : {
+				        commandName : "bold"
+				    },
+				    click : execCommand 
+				}).appendTo(buttonPane);
+
+				var btnItalics = $("<a/>",{
+					"class": "italic-btn",
+				    href : "#",
+				    text : "I",
+				    data : {
+				        commandName : "italic"
+				    },
+				    click : execCommand 
+				}).appendTo(buttonPane);
+
+				var btnImage = $("<a/>",{
+					"class": "image-btn",
+				    href : "#",
+				    text : "+image",
+				    data : {
+				        commandName : "insertImage",
+				        argument : ""
+				    },
+				    click : getImageLink 
+				}).appendTo($('body'));
+
+				var linkDiv = $("<div/>", {
+					"class": "link-div"
+				}).appendTo(buttonPane);
+
+				var btnLink = $("<a/>",{
+					"class": "link-btn",
+				    href : "#",
+				    text : "+link",
+				    data : {
+				        commandName : "createLink",
+				        argument: ""
+				    },
+				    click : getLink 
+				}).appendTo(linkDiv);
+
+				$('iframe').contents().find('body').attr('style','width:550px;margin:0px;padding-left:65px;padding-right:65px;padding-top:30px;font-family:arial;;font-size:16px;line-height:1.5;word-wrap:break-word; border:0px;height:'+$('iframe').contents().height()+';')
+				$('.txt_editor').css({height: settings.height})
+				$('.txt_editor').css({left: ($(document).width() - 700)/2})
+				$('.editor-btns').css({left: $('iframe').offset().left - 30})
+				$('.image-btn').css({left: $('iframe').offset().left - 130})
+
+				function execCommand (e) {
+				    var contentWindow = editor.contentWindow;
+				    contentWindow.focus();
+				    contentWindow.document.execCommand($(this).data("commandName"), false, $(this).data("argument") || "");
+				    contentWindow.focus();
+
+				    if ($(this).data("commandName") == "insertImage"){
+				    	setTimeout(function(){
+				    		$('iframe').contents().find('img').css({'max-width':'550px'})
+				    	}, 50)
+				    }
+
+				    return false;
+				}
+
+				function getImageLink(){
+					$('body').append('<input class="post_image_getter" placeholder="paste image URL (use imgur)"></input>')
+					$('.post_image_getter').css({position: 'absolute', left: $('.image-btn').offset().left - 150, width: 200, padding: '5px', top:'45px'})
+					var that = this;
+					$('.post_image_getter').focus();
+					$('.post_image_getter').keyup(function(){
+						var input = $(this).val()
+						if (input.length > 6){
+							$(that).data("argument", input)
+							var boundExec = execCommand.bind(that)
+							boundExec();
+							$('.post_image_getter').remove();
+						}
+					})
+				}
+
+				function getLink(){
+					var that = this;
+					$('.link-div').append('<input class="text_link_getter" placeholder="link here. press enter when done"></input>');
+					$('.text_link_getter').css({position: 'absolute', right: 1, width: 200, padding: '5px', top:70})
+					$('.text_link_getter').focus()
+					$('.text_link_getter').keydown(function(ev){
+						if (ev.keyCode == 13){
+							$(that).data('argument', $('.text_link_getter').val())
+							execCommand.bind(that)();
+							$('.text_link_getter').remove();
+						}
+					})
+				}
+	    });
+	}
+
+	$('.edit-about-box').myTextEditor();
+	var textBody = $('iframe').contents().find('body')
+	textBody.html($('.edit-about-box').val())
+	textBody.height($('iframe').contents().height())
+	textBody.on('mouseup', function(ev){
+		setTimeout(function(){
+			if ($('iframe').contents()[0].getSelection().toString().length > 0){
+				$('.editor-btns').show();
+				$('.editor-btns').css({top: ev.screenY- 130})
+			} else {
+				$('.editor-btns').hide();
+				$('.text_link_getter').remove();
+			}
+		}, 20)
+	})
+	var isCtrl = false;
+	textBody.on('keydown',function(ev){
+		if (ev.keyCode == 8){
+			$('.editor-btns').hide();
+		}
+		if(ev.keyCode == 17) isCtrl=true;
+    if(ev.keyCode == 83 && isCtrl == true) {
+      $('.edit-about-submit').trigger('click')
+      ev.preventDefault();
+    }
+    textBody.height($('iframe').contents().height() - 30)
+	})
+	textBody.on('keyup',function(e){
+	    if(e.keyCode == 17) isCtrl=false;
+	})
+
+	document.onkeyup=function(e){
+	    if(e.keyCode == 17) isCtrl=false;
+	}
+
+	document.onkeydown=function(e){
+    if(e.keyCode == 17) isCtrl=true;
+    if(e.keyCode == 83 && isCtrl == true) {
+      $('.edit-about-submit').trigger('click')
+      e.preventDefault();
+    }
+	}
 </script>

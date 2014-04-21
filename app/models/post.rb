@@ -1,7 +1,7 @@
 class Post < ActiveRecord::Base
   attr_accessible :title, :text, :published, :published_date
   validates :user_id, presence: true
-  validates :title, uniqueness: { case_sensitive: false }, presence: true
+  validates :title, uniqueness: { case_sensitive: false, scope: :user_id }, presence: true
   validate :no_periods
   belongs_to :user
 

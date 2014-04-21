@@ -26,7 +26,7 @@
   </div>
 	<div class="about_text">
 	  <% if @user.about && @user.about.length > 0 %>
-	  	<%= h(@about.html_safe).gsub(/\n/, '<br>').html_safe %>
+	  	<%= h(@about.html_safe) %>
 	  <% else %>
 	  	Empty
 	  <% end %>

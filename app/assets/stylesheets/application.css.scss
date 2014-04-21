@@ -45,9 +45,11 @@
 	width: 70px;
 	width: 16%;
 	/*background:#ecf0f1;*/
-	border-right: 2px solid #34495e;
 	background:#bdc3c7;
-	opacity: .6;
+	/*background:#7f8c8d;
+	background:#95a5a6;*/
+	border-right: 1px solid #34495e;
+	opacity: .5;
 }
 
 #right_shade_column {
@@ -57,10 +59,16 @@
 	width: 70px;
 	width: 16%;
 	/*background:#ecf0f1;*/
-	border-left: 2px solid #34495e;
 	background:#bdc3c7;
-	opacity: .6;
+	/*background:#7f8c8d;
+	background:#95a5a6;*/
+	border-left: 1px solid #34495e;
+	opacity: .5;
 }
+
+.input-error::-webkit-input-placeholder { color: red; }    
+.input-error:-moz-placeholder { color: red; }
+.input-error:-ms-input-placeholder { color: red; }
 
 .essaii_corner:hover {
 	opacity: 1;
@@ -197,7 +205,7 @@
 	font-size: 20px;
 	border-bottom: 1px solid grey;
 	font-family: 'PT Serif Caption';
-	opacity: .25;
+	opacity: .6;
 	&:hover{
 		opacity: 1;
 	}
@@ -209,7 +217,7 @@
 	font-size: 20px;
 	border-bottom: 1px solid grey;
 	font-family: 'PT Serif Caption';
-	opacity: .25;
+	opacity: .6;
 	&:hover{
 		opacity: 1;
 	}
@@ -506,8 +514,9 @@ iframe {
 	margin-right: auto;
 	width: 550px;
 	font-size: 16px;
-	font-family: Verdana, Verdana, Geneva, sans-serif;
-	line-height: 1.3;
+	font-family: 'Open Sans', arial, sans-serif;
+	/*font-family: 'Vollkorn';*/
+	line-height: 1.5;
 	word-wrap:break-word;
 
 	img {
@@ -524,8 +533,8 @@ iframe {
 	width: 550px;
 	/*opacity: .87;*/
 	font-size: 16px;
-	font-family: Verdana, Verdana, Geneva, sans-serif;
-	line-height: 1.3;
+	font-family: 'Open Sans', arial, sans-serif;
+	line-height: 1.5;
 	/*font-family: Trebuchet MS;*/
 }
 
@@ -733,6 +742,33 @@ iframe {
 	.email_input {
 		font-family: 'PT Serif Caption';
 	}
+}
+
+.instruct_highlight {
+	font-family: 'Open Sans';
+	font-size: 25px;
+	opacity: .3;
+	position: absolute;
+	top: 25%;
+	left: 50px;
+	width: 100px;
+	cursor: default;
+}
+
+.new_post_input {
+	width: 250px;
+	font-family: times;
+	font-size: 21px;
+	margin-bottom: 5px;
+}
+
+#inform_enter {
+	display: none;
+	font-family: 'Open Sans';
+	opacity: .3;
+	font-size: 20px;
+	margin-left: 20px;
+	cursor: default;
 }
 
 .essay-title:link {color:#2980b9;}
