@@ -1,3 +1,4 @@
+
 <%= form_for :post, url: post_path(@post), method: :put do |f| %>
     <%= f.text_field :title, {class: 'edit-title', datatitle: @post.title.gsub(' ', '-'),  :placeholder => 'Title goes here.', data_author: @post.user.username} %>
  
@@ -22,10 +23,11 @@
     </ul>
   </div>
 <% end %>
-
 <div class="instruct_highlight">highlight to style</div>
 <div class="save_success">saved!</div>
 <%= link_to 'I\'m done', '/'+@post.user.username+'/'+CGI.escape(@post.title.gsub(' ','-').downcase), class: 'edit_back_button' %>
+
+
 
 <script>
 	$('body').on('click','.edit-submit',function(ev){
@@ -34,31 +36,35 @@
 			ev.stopPropagation();
 			var user = $('.edit-title').attr('data_author');
 			var title = encodeURIComponent($('.edit-title').attr('datatitle').toLowerCase());
-			$('.edit-box').val($('iframe').contents().find('body').html())
 
+			$('.edit-box').val($('iframe').contents().find('body').html())
 			$('.save_success').attr('style','display:block;background:#c0392b;');
 			$('.save_success').html('saving..')
 
-			$.post('/'+user+'/'+title+'/update_post_json',{post:
-			{	id: $('.edit-submit').attr('data_id'),
-				title: $('.edit-title').val(),
-				text: $('.edit-box').val()
-			}}, function(response){
-				if (response['yes'] == '1'){
-					$('.save_success').attr('style','display:block;')
-					$('.save_success').html('saved!')
-					$('#post_error').hide();
-					var title = encodeURIComponent($('.edit-title').val().replace(/ /g, '-').toLowerCase());
-					$('.edit-title').attr('datatitle', title)
-					$('.edit_back_button').attr('href','/' + $('.edit-title').attr('data_author') + '/'+title)
-					setTimeout(function(){
-						$('.save_success').hide();
-					}, 300)
-				} else {
-					$('.edit-submit').attr('datasubmit','');
-					$('.edit-submit').trigger('click');
-				}
-			})
+			if ($('.edit-title').val().indexOf('-') == -1){
+				$.post('/'+user+'/'+title+'/update_post_json',{post:
+				{	id: $('.edit-submit').attr('data_id'),
+					title: $('.edit-title').val(),
+					text: $('.edit-box').val()
+				}}, function(response){
+					if (response['yes'] == '1'){
+						$('.save_success').attr('style','display:block;')
+						$('.save_success').html('saved!')
+						$('#post_error').hide();
+						var title = encodeURIComponent($('.edit-title').val().replace(/ /g, '-').toLowerCase());
+						$('.edit-title').attr('datatitle', title)
+						$('.edit_back_button').attr('href','/' + $('.edit-title').attr('data_author') + '/'+title)
+						setTimeout(function(){
+							$('.save_success').hide();
+						}, 300)
+					} else {
+						$('.save_success').html(response['no'])
+					}
+				})
+			} else {
+				$('.save_success').html('Title cannot have hyphen');
+			}
+
 		}
 	})
 
@@ -188,10 +194,13 @@
 	    });
 	}
 
+
 	$('.edit-box').myTextEditor();
 	var textBody = $('iframe').contents().find('body')
 	textBody.html($('.edit-box').val())
 	textBody.height($('iframe').contents().height())
+	$('body').css({'background':'#ecf0f1'})
+	textBody.css({'background':'white'})
 	textBody.on('mouseup', function(ev){
 		setTimeout(function(){
 			if ($('iframe').contents()[0].getSelection().toString().length > 0){
@@ -230,5 +239,7 @@
       e.preventDefault();
     }
 	}
+
+
 
 </script>

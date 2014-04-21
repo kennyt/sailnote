@@ -64,13 +64,14 @@ class PostsController < ApplicationController
 
 	def update_post_json
 		title = CGI.unescape(params[:post][:title].gsub('-',' '))
-		if current_user && current_user.posts.find_by_id(params[:post][:id]).update_attributes(:text => params[:post][:text], :title => title)
+		@post = current_user.posts.find_by_id(params[:post][:id])
+		if @post.update_attributes(:text => params[:post][:text], :title => title)
 			respond_to do |format|
 				format.json { render :json => {'yes' => '1'}.to_json }
 			end
 		else
 			respond_to do |format|
-				format.json { render :json => {'no' => '1'}.to_json }
+				format.json { render :json => {'no' => @post.errors.full_messages}.to_json }
 			end
 		end
 	end

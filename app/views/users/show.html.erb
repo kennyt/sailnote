@@ -1,4 +1,4 @@
-<%= link_to 'ii', root_path, :class => 'essaii_corner' %>
+<%= link_to '', root_path, :class => 'essaii_corner' %>
 <div class="cover-box"><img src="<%= @user.image_banner %>" style="top:<%= @user.image_top_margin %>;"></div>
 
 <% if @authored_bool %>
@@ -113,25 +113,31 @@
     if (e.keyCode == 13) {
 			var title = $('.new_post_input').val()
 			if (title.length > 0){
-				$.post('/posts',{post:{
-					id: $('.page-username').html(),
-					title: title
-				}}, function(response){
-					if (response['yes']){
-						$('.new_post_input').val('')
-						var date = response['date'];
-						var href = '/'+$('.page-username').html()+'/'+encodeURIComponent(title.toLowerCase().replace(/ /g, '-'));
-						var prependTitle = title;
-						$('.unpublished_list').prepend('<span class="post_line"><span class="essay-date">'+date+'</span>- <span><a href="'+href+'" class="essay-title">'+prependTitle+'</a></span></span><br><div style="height:5px;"></div>')
-						$('#inform_enter').hide();
-					}else {
-						if (response['no']){
-							$('.new_post_input').attr('placeholder', response['no'])
+				if (title.indexOf('-') == -1){
+					$.post('/posts',{post:{
+						id: $('.page-username').html(),
+						title: title
+					}}, function(response){
+						if (response['yes']){
 							$('.new_post_input').val('')
-							$('.new_post_input').attr('class','new_post_input input-error')
+							var date = response['date'];
+							var href = '/'+$('.page-username').html()+'/'+encodeURIComponent(title.toLowerCase().replace(/ /g, '-'));
+							var prependTitle = title;
+							$('.unpublished_list').prepend('<span class="post_line"><span class="essay-date">'+date+'</span>- <span><a href="'+href+'" class="essay-title">'+prependTitle+'</a></span></span><br><div style="height:5px;"></div>')
+							$('#inform_enter').hide();
+						}else {
+							if (response['no']){
+								$('.new_post_input').attr('placeholder', response['no'])
+								$('.new_post_input').val('')
+								$('.new_post_input').attr('class','new_post_input input-error')
+							}
 						}
-					}
-				})
+					})
+				} else {
+					$('.new_post_input').attr('placeholder', 'title cannot have hyphen')
+					$('.new_post_input').val('')
+					$('.new_post_input').attr('class','new_post_input input-error')
+				}
 			}
     } else {
     	$('.new_post_input').attr('placeholder', '  enter new post idea')

@@ -3,6 +3,7 @@ class Post < ActiveRecord::Base
   validates :user_id, presence: true
   validates :title, uniqueness: { case_sensitive: false, scope: :user_id }, presence: true
   validate :no_periods
+  validate :no_hyphen
   belongs_to :user
 
    def to_param
@@ -17,6 +18,12 @@ class Post < ActiveRecord::Base
   def no_periods
     if title.include?('.')
       errors.add(:title, "can't include a period.")
+    end
+  end
+
+  def no_hyphen
+    if title.include?('-')
+      errors.add(:title, "can't include a hypen.")
     end
   end
 end
