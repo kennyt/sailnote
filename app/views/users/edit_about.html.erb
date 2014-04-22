@@ -178,6 +178,9 @@
 	var textBody = $('iframe').contents().find('body')
 	textBody.html($('.edit-about-box').val())
 	textBody.height($('iframe').contents().height())
+	$('body').css({'background':'#ecf0f1'})
+	textBody.css({'background':'white'})
+	
 	textBody.on('mouseup', function(ev){
 		setTimeout(function(){
 			if ($('iframe').contents()[0].getSelection().toString().length > 0){

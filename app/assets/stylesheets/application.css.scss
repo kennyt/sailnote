@@ -179,9 +179,14 @@
 }
 
 .archive {
-	margin-left: 30%;
+	margin-left: auto;
+	margin-right: auto;
 	margin-top: 210px;
-	padding-bottom: 100px;
+	padding: 50px;
+	padding-top: 0px;
+	/*border: 20px solid #bdc3c7;*/
+	/*background: #ecf0f1;*/
+	width: 550px;
 }
 
 .end_post_archive {
@@ -532,7 +537,7 @@ iframe {
 	color: black;
 	font-family: 'Open Sans', arial, sans-serif;
 	-webkit-font-smoothing: antialiased;
-	-webkit-text-stroke-width: .2px;
+	-webkit-text-stroke-width: .3px;
 	-webkit-text-stroke-color: #2c3e50;
 
 	img {
@@ -551,6 +556,10 @@ iframe {
 	font-size: 16px;
 	font-family: 'Open Sans', arial, sans-serif;
 	line-height: 1.5;
+	word-wrap:break-word;
+	-webkit-font-smoothing: antialiased;
+	-webkit-text-stroke-width: .3px;
+	-webkit-text-stroke-color: #2c3e50;
 	/*font-family: Trebuchet MS;*/
 }
 
@@ -786,6 +795,7 @@ iframe {
 	margin-left: 20px;
 	cursor: default;
 }
+
 
 .essay-title:link {color:#2980b9;}
 .essay-title:visited {color:#7f8c8d;}
