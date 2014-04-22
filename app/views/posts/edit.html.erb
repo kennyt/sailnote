@@ -23,7 +23,7 @@
     </ul>
   </div>
 <% end %>
-<div class="instruct_highlight">highlight to style</div>
+<div class="instruct_highlight">ctrl + b for bold<br>ctrl + i for italics<br>highlight text for more</div>
 <div class="save_success">saved!</div>
 <%= link_to 'I\'m done', '/'+@post.user.username+'/'+CGI.escape(@post.title.gsub(' ','-').downcase), class: 'edit_back_button' %>
 
@@ -141,7 +141,7 @@
 				    click : getLink 
 				}).appendTo(linkDiv);
 
-				$('iframe').contents().find('body').attr('style','width:550px;margin:0px;padding-left:65px;padding-right:65px;padding-top:30px;font-family:arial;;font-size:16px;line-height:1.5;word-wrap:break-word; border:0px;height:'+$('iframe').contents().height()+';')
+				$('iframe').contents().find('body').attr('style','width:550px;margin:0px;padding-left:65px;padding-right:65px;padding-top:30px;font-family:arial;font-size:16px;line-height:1.5;word-wrap:break-word; border:0px;height:'+$('iframe').contents().height()+';')
 				$('.txt_editor').css({height: settings.height})
 				$('.txt_editor').css({left: ($(document).width() - 700)/2})
 				$('.editor-btns').css({left: $('iframe').offset().left - 30})
@@ -205,7 +205,7 @@
 		setTimeout(function(){
 			if ($('iframe').contents()[0].getSelection().toString().length > 0){
 				$('.editor-btns').show();
-				$('.editor-btns').css({top: ev.screenY- 130})
+				$('.editor-btns').css({top: ev.screenY- 160})
 			} else {
 				$('.editor-btns').hide();
 				$('.text_link_getter').remove();
@@ -218,6 +218,7 @@
 			$('.editor-btns').hide();
 		}
 		if(ev.keyCode == 17) isCtrl=true;
+		console.log(ev.keyCode)
     if(ev.keyCode == 83 && isCtrl == true) {
       $('.edit-submit').trigger('click')
       ev.preventDefault();

@@ -29,7 +29,7 @@
 <% if @post.published %>
 	<div class="end_post_archive" data-author="<%=@post.user.username%>">
 		<div class="end_post_inside">
-			<%= link_to @post.user.username + "'s blog", user_path(@post.user), class: 'end_user' %>
+			<%= link_to @post.user.username + "'s page", user_path(@post.user), class: 'end_user' %>
 			<%= link_to "about", about_path(@post.user), class: 'end_about' %><br><br>
 			<div class="end_archive_title"><%= @post.user.username %>'s archive:</div><br>
 			<div class="end_list">
@@ -73,6 +73,9 @@
 	function centerImage(img_index){
 		var img = $('.post_text img')[img_index]
 		$(img).css({'margin-left': (550 - $(img).width())/2})
+
+		$('#left_shade_column').css({'height': $(document).height() - 200})
+		$('#right_shade_column').css({'height': $(document).height() - 200})
 	}
 
 	$('.post_text a').attr('class','text_link')
@@ -81,6 +84,7 @@
 		var src = $($('.post_text img')[img_index]).attr('src');
 		window.location.href = src;
 	}
+
 	$('#left_shade_column').css({'height': $(document).height() - 200})
 	$('#right_shade_column').css({'height': $(document).height() - 200})
 	setTimeout(function(){

@@ -3,7 +3,7 @@
 
 <div class="archive">
   <div class="archive-header">
-  	<%= @user.username %>
+  	<data class="page-username"><%= @user.username %></data>
   	<%= link_to 'posts', user_path(@user), :class => 'archive_button' %>
   	<% if current_user && current_user == @user %>
   		<%= link_to "edit about", '/about/'+@user.username+'/edit', :class => 'archive_button' %>
@@ -35,4 +35,8 @@
 
 <script>
 	$('.cover-box img').css({'width': screen.width})
+	$('.archive').css({'width': 450 + $('data').width()})
+	$('.about_text a').attr('class','text_link')
+	// $('.archive').css({'width':'auto'})
+	// $('.archive').css({'width': $('.archive-header').width()})
 </script>
