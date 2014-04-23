@@ -122,7 +122,7 @@
 							var date = response['date'];
 							var href = '/'+$('.page-username').html()+'/'+encodeURIComponent(title.toLowerCase().replace(/ /g, '-'));
 							var prependTitle = title;
-							$('.unpublished_list').prepend('<span class="post_line"><span class="essay-date">'+date+'</span>- <span><a href="'+href+'" class="essay-title">'+prependTitle+'</a></span></span><br><div style="height:5px;"></div>')
+							$('.unpublished_list').prepend('<span class="post_line">- <span><a href="'+href+'" class="essay-title">'+prependTitle+'</a></span></span><br><div style="height:5px;"></div>')
 							$('#inform_enter').hide();
 						}else {
 							if (response['no']){
