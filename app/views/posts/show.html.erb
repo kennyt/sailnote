@@ -3,7 +3,11 @@
 <!-- <div id="left_shade_column"></div>
 <div id="right_shade_column"></div> -->
 <div class="post_title"><%= @post.title %></div>
-<div class="the-by-line"><%= @post.created_at.strftime("%-d %B %Y")%><br>by <%= link_to @post.user.username, user_path(@post.user), class: "text_link" %></div>
+<% if @post.published_date.nil? %>
+	<div class="the-by-line"><%= @post.created_at.strftime("%-d %B %Y")%><br>by <%= link_to @post.user.username, user_path(@post.user), class: "text_link" %></div>
+<% else %>
+	<div class="the-by-line"><%= @post.published_date.strftime("%-d %B %Y")%><br>by <%= link_to @post.user.username, user_path(@post.user), class: "text_link" %></div>
+<% end %>
 <div class="post_text">
 	<%= h(@text.html_safe) %>
 </div>
@@ -36,7 +40,7 @@
 				<% if @archive_posts.count > 0 %>
 				  <% @archive_posts.each do |post| %>
 				  	<span class="post_line">
-				      - <span><%= link_to post.title, '/'+post.user.username+'/'+CGI.escape(post.title.gsub(' ','-').downcase), class: 'essay-title' %></span>
+				      <span><%= link_to post.title, '/'+post.user.username+'/'+CGI.escape(post.title.gsub(' ','-').downcase), class: 'essay-title' %></span>
 					  	<span class="end_essay_date"> <%= post.published_date.strftime("%0d %b %y") %></span>
 					  </span>
 			      <br><div style="height:5px;"></div>
@@ -60,6 +64,7 @@
 			$.post('/'+user+'/'+title+'/increment_viewcount')
 		}, 1000)
 	}
+	$('.cover-box').css({'width': $(document).width()})
 	$('.cover-box img').css({'width': screen.width})
 
 	$.each($('.post_text img'), function(i, img){
@@ -73,9 +78,6 @@
 	function centerImage(img_index){
 		var img = $('.post_text img')[img_index]
 		$(img).css({'margin-left': (550 - $(img).width())/2})
-
-		// $('#left_shade_column').css({'height': $(document).height() - 200})
-		// $('#right_shade_column').css({'height': $(document).height() - 200})
 	}
 
 	$('.post_text a').attr('class','text_link')
@@ -84,11 +86,11 @@
 		var src = $($('.post_text img')[img_index]).attr('src');
 		window.location.href = src;
 	}
-
-	// $('#left_shade_column').css({'height': $(document).height() - 200})
-	// $('#right_shade_column').css({'height': $(document).height() - 200})
-	// setTimeout(function(){
-	// 	$('#left_shade_column').css({'height': $(document).height() - 200})
-	// 	$('#right_shade_column').css({'height': $(document).height() - 200})
-	// }, 200)
+	// $(document).scroll(function(){
+	// 	if ($(document).scrollTop() >= 190){
+	// 		$('.cover-box').css({'position':'fixed','top': '-190px','box-shadow':'0px 0px 2px 3px grey inset'})
+	// 	} else {
+	// 		$('.cover-box').css({'position':'absolute','top': '0px','box-shadow':'0px 0px 0px 0px grey'})
+	// 	}
+	// })
 </script>

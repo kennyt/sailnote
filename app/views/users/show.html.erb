@@ -35,13 +35,13 @@
 
 	<div class="post_list">
 	  <% if @authored_bool %>
-	  	<input class="new_post_input" placeholder="  enter new post idea"></input><span id="inform_enter">press enter to submit</span><br>
-		  <span class="post_list_header">drafts</span><br>
+		  <span class="post_list_header">drafts</span><br><input class="new_post_input" placeholder="enter new post idea"></input><span id="inform_enter">press enter to submit</span><br>
 		  <div class="unpublished_list">
 			  <% if @unpublished_posts.count > 0 %>
 				  <% @unpublished_posts.each do |post| %>
 				  		<span class="post_line">
-					      - <span><%= link_to post.title, '/'+post.user.username+'/'+CGI.escape(post.title.gsub(' ','-').downcase), class: 'essay-title' %></span>
+				  			<span class="essay-date"> <%= post.updated_at.strftime("%0d %b %y") %></span>
+					      <span><%= link_to post.title, '/'+post.user.username+'/'+CGI.escape(post.title.gsub(' ','-').downcase), class: 'essay-title' %></span>
 					    </span>
 				      <br><div style="height:5px;"></div>
 				  <% end %>
@@ -51,13 +51,14 @@
 			</div>
 		  <br>
 		  <span class="post_list_header">published</span><br>
+		  <div style="height:5px;"></div>
 		 <% end %>
 
 		 <% if @published_posts.count > 0 %>
 		  <% @published_posts.each do |post| %>
 		  	<span class="post_line">
 			  	<span class="essay-date"> <%= post.published_date.strftime("%0d %b %y") %></span>
-		      - <span><%= link_to post.title, '/'+post.user.username+'/'+CGI.escape(post.title.gsub(' ','-').downcase), class: 'essay-title' %></span>
+		      <span><%= link_to post.title, '/'+post.user.username+'/'+CGI.escape(post.title.gsub(' ','-').downcase), class: 'essay-title' %></span>
 			  </span>
 		  	<% if @authored_bool %>
 		  		<span class="view-count"><%= post.hits %> views</span>
@@ -122,7 +123,7 @@
 							var date = response['date'];
 							var href = '/'+$('.page-username').html()+'/'+encodeURIComponent(title.toLowerCase().replace(/ /g, '-'));
 							var prependTitle = title;
-							$('.unpublished_list').prepend('<span class="post_line">- <span><a href="'+href+'" class="essay-title">'+prependTitle+'</a></span></span><br><div style="height:5px;"></div>')
+							$('.unpublished_list').prepend('<span class="post_line"><span class="essay-date">'+response['date']+'</span><span><a href="'+href+'" class="essay-title">'+prependTitle+'</a></span></span><br><div style="height:5px;"></div>')
 							$('#inform_enter').hide();
 						}else {
 							if (response['no']){
@@ -139,7 +140,7 @@
 				}
 			}
     } else {
-    	$('.new_post_input').attr('placeholder', '  enter new post idea')
+    	$('.new_post_input').attr('placeholder', 'enter new post idea')
 			$('.new_post_input').attr('class','new_post_input')
 			var input = $(this).val();
 			if (input.length > 0) {
@@ -149,8 +150,12 @@
 			}
     }
 	});
+
+	if ($('.unpublished_list').length > 0){
+		$('.essay-title').css({'color':'#2980b9'})
+	}
+
 	$('.archive').css({'width': 450 + $('data').width()})
-
-
+	$('.cover-box').css({'width': $(document).width()})
 	$('.cover-box img').css({'width': screen.width})
 </script>

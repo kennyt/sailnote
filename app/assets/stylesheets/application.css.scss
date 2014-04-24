@@ -100,7 +100,11 @@
  }
 
 .user_form {
-	position: absolute;
+	/*position: absolute;*/
+	width: 340px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: auto;
 	display: block;
 }
 
@@ -181,9 +185,9 @@
 .archive {
 	margin-left: auto;
 	margin-right: auto;
-	margin-top: 210px;
+	margin-top: 200px;
 	padding: 50px;
-	padding-top: 0px;
+	padding-top: 10px;
 	/*border: 20px solid #bdc3c7;*/
 	/*background: #ecf0f1;*/
 	width: 550px;
@@ -192,11 +196,12 @@
 .end_post_archive {
 	margin-left: auto;
 	margin-right: auto;
-	width: 510px;
+	width: 526px;
 	/*padding-bottom: 20px;
 	padding-top: 20px;*/
-	border: 20px solid #ecf0f1;
-	border: 20px solid #bdc3c7;
+	border: 12px solid #ecf0f1;
+	border: 12px solid #bdc3c7;
+	border-radius: 8px;
 }
 
 .end_post_inside {
@@ -529,13 +534,6 @@ iframe {
 	position: relative;
 	height: 26px;
 	&:hover {
-		.essay-date {
-			opacity: .75;
-			&:hover {
-				opacity: 0;
-				cursor: default;
-			}
-		}
 		.end_essay_date {
 			opacity: .75;
 			&:hover {
@@ -561,7 +559,7 @@ iframe {
 
 .essay-date {
 	font-family: Tahoma, Geneva, sans-serif;
-	opacity: 0;
+	opacity: .3;
 	margin-left: 10px;
 	-webkit-transition: all 100ms ease-out;
   -moz-transition: all 100ms ease-out;
@@ -704,8 +702,9 @@ iframe {
 }
 
 .post_list_header {
-	font-size: 16px;
-	font-family: "PT Serif Caption";
+	font-size: 22px;
+	font-family: "droid sans";
+	border-bottom: 2px solid black;
 }
 
 #post_error {
@@ -734,7 +733,8 @@ iframe {
 	background: #3b5998;
 	color: white;
 	text-decoration: none;
-	/*opacity: .8;*/
+	border-radius: 6px;
+	opacity: .87;
 	&:hover {
 		opacity: 1;
 	}
@@ -753,7 +753,8 @@ iframe {
 	background: #55ACEE;
 	color: white;
 	text-decoration: none;
-	/*opacity: .8;*/
+	border-radius: 6px;
+	opacity: .87;
 	&:hover {
 		opacity: 1;
 	}
@@ -800,7 +801,7 @@ iframe {
 	position: absolute;
 	left: 10px;
 	top: 270px;
-	font-family: 'PT Serif Caption';
+	font-family: 'droid sans';
 	font-size: 20px;
 	border-bottom: 1px solid grey;
 	cursor: pointer;
@@ -865,6 +866,7 @@ iframe {
 	font-family: tahoma;
 	font-size: 20px;
 	margin-bottom: 5px;
+	margin-top: 10px;
 }
 
 .post_list {
