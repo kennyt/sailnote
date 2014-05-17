@@ -11,7 +11,7 @@
 <div class="hero_npaper">
   <div class="essaii_big">
     <div class="sailboat_icon"></div>
-    <div class="below_big"><br>the place for <strike>blogging</strike> writing<br> <a class="hero_blog" href="/johnsy">example</a></div>
+    <div class="below_big"><br>the place for <strike>blogging</strike> <strike>writing</strike> storytelling<br> <a class="hero_blog" href="/johnsy">example</a></div>
   </div>
   <% if @user.errors.any? %>
     <div id="error_explanation">
@@ -36,7 +36,7 @@
       <br>
       <%= f.password_field :password_confirmation, :placeholder => '    password again', class: 'form_input' %>
       <br>
-      <%= f.submit "create blog", class: 'form_submit' %>
+      <%= f.submit "create account", class: 'form_submit' %>
     <% end %>
   </div>
 </div>
