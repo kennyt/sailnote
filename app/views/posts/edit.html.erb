@@ -1,15 +1,64 @@
+<div class="cover-box">
+	<img src="<%= @post.user.image_banner %>" onload="verticalAlign()">
+	<a class="cover-header" href="/<%=@post.user.username%>"><span><%= @post.user.username %></span></a>
+</div>
 
-<%= form_for :post, url: post_path(@post), method: :put do |f| %>
-    <%= f.text_field :title, {class: 'edit-title', datatitle: @post.title.gsub(' ', '-'),  :placeholder => 'Title goes here.', data_author: @post.user.username} %>
- 
-  <p>
-    <%= f.text_area :text, :placeholder => 'Body goes here.', class: 'edit-box' %>
-  </p>
- 
-  <p>
-    <%= f.submit 'save (ctrl + s)', {class: 'edit-submit', datasubmit: '1', data_id: @post.id}%>
-  </p>
+<%= link_to '', root_path, :class => 'essaii_corner' %>
+<% if current_user && @post.user == current_user %>
+	<div class="post_text"></div>
+	<%= form_for :post, url: post_path(@post), method: :put do |f| %>
+	  <%= f.text_area :title, {class: 'edit-title', datatitle: @post.title.gsub(' ', '-'),  :placeholder => 'Title goes here.', data_author: @post.user.username} %>
+	  <div class="the-by-line"><%= @post.created_at.strftime("%-d %B %Y")%></div>
+	  <p>
+	    <%= f.text_area :text, :placeholder => 'Body goes here.', class: 'edit-box' %>
+	  </p>
+	 
+		<div class="sidebar_nav">
+			<div class="instruct_highlight">ctrl + b for bold<br>ctrl + i for italics<br>highlight text for more</div>
+			<div class="save_success">saved!</div>
+			<%= link_to 'I\'m done', '/'+@post.user.username+'/'+CGI.escape(@post.title.gsub(' ','-').downcase), class: 'edit_back_button' %>
+		  <p>
+		    <%= f.submit 'save (ctrl + s)', {class: 'edit-submit', datasubmit: '1', data_id: @post.id}%>
+		  </p>
+		</div>
+	<% end %>
+<% else %>
+	<div class="post_title"><%= @post.title %></div>
+	<% if @post.published_date.nil? %>
+		<div class="the-by-line"><%= @post.created_at.strftime("%-d %B %Y")%></div>
+	<% else %>
+		<div class="the-by-line"><%= @post.published_date.strftime("%-d %B %Y")%></div>
+	<% end %>
+	<div class="post_text">
+		<%= h(@text.html_safe) %>
+	</div>
 <% end %>
+
+<div class="share_buttons">
+ 	<% if @post.published %>
+		<a class="facebook_share" href="/" target="_blank">FB Share</a>
+		<a class="twitter_share" href="/" target="_blank">Tweet</a>
+		<br><br><br><br>
+	<% end %>
+</div>
+<div class="end_post_archive" data-author="<%=@post.user.username%>">
+	<div class="end_post_inside">
+		<%= link_to @post.user.username + "'s page", user_path(@post.user), class: 'end_user' %>
+		<%= link_to "about", about_path(@post.user), class: 'end_about' %><br><br>
+		<div class="end_archive_title"><%= @post.user.username %>'s archive:</div><br>
+		<div class="end_list">
+			<% if @archive_posts.count > 0 %>
+			  <% @archive_posts.each do |post| %>
+			  	<span class="post_line">
+			      <span><%= link_to post.title, '/'+post.user.username+'/'+CGI.escape(post.title.gsub(' ','-').downcase), class: 'essay-title' %></span>
+				  	<span class="end_essay_date"> <%= post.published_date.strftime("%0d %b %y") %></span>
+				  </span>
+		      <br><div style="height:5px;"></div>
+			  <% end %>
+		  <% end %>
+		</div>
+	</div>
+</div>
 
 <% if @post.errors.any? %>
   <div id="post_error">
@@ -23,224 +72,4 @@
     </ul>
   </div>
 <% end %>
-<div class="instruct_highlight">ctrl + b for bold<br>ctrl + i for italics<br>highlight text for more</div>
-<div class="save_success">saved!</div>
-<%= link_to 'I\'m done', '/'+@post.user.username+'/'+CGI.escape(@post.title.gsub(' ','-').downcase), class: 'edit_back_button' %>
 
-
-
-<script>
-	$('body').on('click','.edit-submit',function(ev){
-		if ($(this).attr('datasubmit').length){
-			ev.preventDefault();
-			ev.stopPropagation();
-			var user = $('.edit-title').attr('data_author');
-			var title = encodeURIComponent($('.edit-title').attr('datatitle').toLowerCase());
-
-			$('.edit-box').val($('iframe').contents().find('body').html())
-			$('.save_success').attr('style','display:block;background:#c0392b;');
-			$('.save_success').html('saving..')
-
-			if ($('.edit-title').val().indexOf('-') == -1){
-				$.post('/'+user+'/'+title+'/update_post_json',{post:
-				{	id: $('.edit-submit').attr('data_id'),
-					title: $('.edit-title').val(),
-					text: $('.edit-box').val()
-				}}, function(response){
-					if (response['yes'] == '1'){
-						$('.save_success').attr('style','display:block;')
-						$('.save_success').html('saved!')
-						$('#post_error').hide();
-						var title = encodeURIComponent($('.edit-title').val().replace(/ /g, '-').toLowerCase());
-						$('.edit-title').attr('datatitle', title)
-						$('.edit_back_button').attr('href','/' + $('.edit-title').attr('data_author') + '/'+title)
-						setTimeout(function(){
-							$('.save_success').hide();
-						}, 300)
-					} else {
-						$('.save_success').html(response['no'])
-					}
-				})
-			} else {
-				$('.save_success').html('Title cannot have hyphen');
-			}
-
-		}
-	})
-
-	$.fn.myTextEditor = function(options){
-	    // extend the option with the default ones
-	    var settings = $.extend({
-	        width : "700px",
-	        height : ($(document).height() - 70) + "px"
-	    },options);
-	    return this.each(function(){
-	       var $this = $(this).hide();
-			   // create a container div on the fly
-			   var containerDiv = $("<div/>").attr('class','txt_editor');
-			   $this.after(containerDiv); 
-			   var editor = $("<iframe/>",{
-			       frameborder : "0",
-			       css : {
-			           width : settings.width,
-			           height : settings.height,
-			           'font-family': 'open sans'
-			       }
-			   }).appendTo(containerDiv).get(0);
-			   // opening and closing the editor is a workaround to solve issue in Firefox
-			   editor.contentWindow.document.open();
-			   editor.contentWindow.document.close();
-			   editor.contentWindow.document.designMode="on";
-				var buttonPane = $("<div/>",{
-				    "class" : "editor-btns"
-				}).prependTo($('body'));
-
-				var btnBold = $("<a/>",{
-						"class": "bold-btn",
-				    href : "#",
-				    text : "B",
-				    data : {
-				        commandName : "bold"
-				    },
-				    click : execCommand 
-				}).appendTo(buttonPane);
-
-				var btnItalics = $("<a/>",{
-					"class": "italic-btn",
-				    href : "#",
-				    text : "I",
-				    data : {
-				        commandName : "italic"
-				    },
-				    click : execCommand 
-				}).appendTo(buttonPane);
-
-				var btnImage = $("<a/>",{
-					"class": "image-btn",
-				    href : "#",
-				    text : "+image",
-				    data : {
-				        commandName : "insertImage",
-				        argument : ""
-				    },
-				    click : getImageLink 
-				}).appendTo($('body'));
-
-				var linkDiv = $("<div/>", {
-					"class": "link-div"
-				}).appendTo(buttonPane);
-
-				var btnLink = $("<a/>",{
-					"class": "link-btn",
-				    href : "#",
-				    text : "+link",
-				    data : {
-				        commandName : "createLink",
-				        argument: ""
-				    },
-				    click : getLink 
-				}).appendTo(linkDiv);
-
-				$('iframe').contents().find('body').attr('style','width:550px;margin:0px;padding-left:65px;padding-right:65px;padding-top:30px;font-family:arial;font-size:16px;line-height:1.5;word-wrap:break-word; border:0px;height:'+$('iframe').contents().height()+';')
-				$('.txt_editor').css({height: settings.height})
-				$('.txt_editor').css({left: ($(document).width() - 700)/2})
-				$('.editor-btns').css({left: $('iframe').offset().left - 30})
-				$('.image-btn').css({left: $('iframe').offset().left - 130})
-
-				function execCommand (e) {
-				    var contentWindow = editor.contentWindow;
-				    contentWindow.focus();
-				    contentWindow.document.execCommand($(this).data("commandName"), false, $(this).data("argument") || "");
-				    contentWindow.focus();
-
-				    if ($(this).data("commandName") == "insertImage"){
-				    	setTimeout(function(){
-				    		$('iframe').contents().find('img').css({'max-width':'550px'})
-				    	}, 50)
-				    }
-
-				    return false;
-				}
-
-				function getImageLink(){
-					$('body').append('<input class="post_image_getter" placeholder="paste image URL (use imgur)"></input>')
-					$('.post_image_getter').css({position: 'absolute', left: $('.image-btn').offset().left - 150, width: 200, padding: '5px', top:'45px'})
-					var that = this;
-					$('.post_image_getter').focus();
-					$('.post_image_getter').keyup(function(){
-						var input = $(this).val()
-						if (input.length > 6){
-							$(that).data("argument", input)
-							var boundExec = execCommand.bind(that)
-							boundExec();
-							$('.post_image_getter').remove();
-						}
-					})
-				}
-
-				function getLink(){
-					var that = this;
-					$('.link-div').append('<input class="text_link_getter" placeholder="link here. press enter when done"></input>');
-					$('.text_link_getter').css({position: 'absolute', right: 1, width: 200, padding: '5px', top:70})
-					$('.text_link_getter').focus()
-					$('.text_link_getter').keydown(function(ev){
-						if (ev.keyCode == 13){
-							$(that).data('argument', $('.text_link_getter').val())
-							execCommand.bind(that)();
-							$('.text_link_getter').remove();
-						}
-					})
-				}
-	    });
-	}
-
-
-	$('.edit-box').myTextEditor();
-	var textBody = $('iframe').contents().find('body')
-	textBody.html($('.edit-box').val())
-	textBody.height($('iframe').contents().height())
-	$('body').css({'background':'#ecf0f1'})
-	textBody.css({'background':'white'})
-	textBody.on('mouseup', function(ev){
-		setTimeout(function(){
-			if ($('iframe').contents()[0].getSelection().toString().length > 0){
-				$('.editor-btns').show();
-				$('.editor-btns').css({top: ev.screenY- 160})
-			} else {
-				$('.editor-btns').hide();
-				$('.text_link_getter').remove();
-			}
-		}, 20)
-	})
-	var isCtrl = false;
-	textBody.on('keydown',function(ev){
-		if (ev.keyCode == 8){
-			$('.editor-btns').hide();
-		}
-		if(ev.keyCode == 17) isCtrl=true;
-		console.log(ev.keyCode)
-    if(ev.keyCode == 83 && isCtrl == true) {
-      $('.edit-submit').trigger('click')
-      ev.preventDefault();
-    }
-    textBody.height($('iframe').contents().height() - 30)
-	})
-	textBody.on('keyup',function(e){
-	    if(e.keyCode == 17) isCtrl=false;
-	})
-
-	document.onkeyup=function(e){
-	    if(e.keyCode == 17) isCtrl=false;
-	}
-
-	document.onkeydown=function(e){
-    if(e.keyCode == 17) isCtrl=true;
-    if(e.keyCode == 83 && isCtrl == true) {
-      $('.edit-submit').trigger('click')
-      e.preventDefault();
-    }
-	}
-
-
-
-</script>

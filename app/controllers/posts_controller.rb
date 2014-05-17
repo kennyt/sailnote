@@ -23,7 +23,7 @@ class PostsController < ApplicationController
 		@user = User.find(params[:id])
 		@post = @user.posts.first(:conditions => ["lower(title) = ?", CGI.unescape(params[:title].gsub('-',' ').downcase)])
 		@archive_posts = @user.posts.where(:published => true).order('published_date DESC')
-		if @post.published || (current_user && @user == current_user)
+		if ( !@post.nil? && @post.published) || ( !@post.nil? && current_user && @user == current_user)
 			# @text = clean_text(@post.text)
 			@text = @post.text || ""
 		else
@@ -33,6 +33,8 @@ class PostsController < ApplicationController
 
 	def edit
 		@post = current_user.posts.first(:conditions => ["lower(title) = ?", CGI.unescape(params[:id].gsub('-',' ').downcase)])
+		@archive_posts = @post.user.posts.where(:published => true).order('published_date DESC')
+		@text = @post.text || ""
 	end
 
 	def update

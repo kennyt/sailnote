@@ -6,12 +6,12 @@ class UsersController < ApplicationController
 	def create
 		@user = User.new(user_params)
     if @user.save
-    	image_array = ['http://i.imgur.com/iEeeRSq.jpg', 'http://i.imgur.com/PLUS3y1.jpg', 'http://i.imgur.com/S9pfRrW.jpg', 'http://i.imgur.com/Nd0eRNj.jpg']
+    	image_array = ['http://i.imgur.com/iEeeRSq.jpg', 'http://i.imgur.com/S9pfRrW.jpg']
     	@user.update_attribute(:image_banner, image_array.sample)
     	build_cookie(@user)
     	redirect_to user_path(@user)
     else
-      render 'new'
+      render 'sessions/new'
     end
 	end
 

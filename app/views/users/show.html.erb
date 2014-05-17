@@ -1,24 +1,23 @@
-<%= link_to '', root_path, :class => 'essaii_corner' %>
-<div class="cover-box"><img src="<%= @user.image_banner %>" style="top:<%= @user.image_top_margin %>;"></div>
+<div class="cover-box">
+	<img src="<%= @user.image_banner %>" onload="verticalAlign()">
+	<a class="cover-header" href="/<%=@user.username%>"><%= @user.username %></a>
+</div>
 
 <% if @authored_bool %>
-	<div class="change_image_button">change pic</div>
-	<div class="image_insert"><input class="submit_image_url" placeholder=" paste image url to change banner" data-username="<%= current_user.username %>"></input></div>
-	<div class="imgur_text">upload to <a class="text_link" href="http://imgur.com" target="_blank">imgur</a> to get url</div>
-	<!-- <div class="move_image_button">move your banner up/down</div> -->
-<% end %>
-
-
-<div class="archive">
-  <div class="archive-header">
-  	<data class="page-username"><%= @user.username %></data>
-  	<%= link_to "about", about_path(@user), :class => 'archive_button' %>
-  	<% if @authored_bool %>
-  		<%= link_to "logout", session_path, method: "delete", :class => 'archive_button' %>
-  	<% end %>
+	<div class="sidebar_nav">
+		<%= link_to '', root_path, :class => 'essaii_corner' %>
+		<% if @authored_bool %>
+			<div class="change_image_button">change pic</div>
+			<div class="image_insert"><input class="submit_image_url" placeholder=" paste image url to change banner" data-username="<%= current_user.username %>"></input></div>
+			<div class="imgur_text">upload to <a class="text_link" href="http://imgur.com" target="_blank">imgur</a> to get url</div>
+			<!-- <div class="move_image_button">move your banner up/down</div> -->
+		<% end %>
+		<% if @authored_bool %>
+			<%= link_to "logout", session_path, method: "delete", :class => 'logout_button' %>
+		<% end %>
 		<% if current_user %>
 			<% if @user == current_user %>
-				<div style="opacity:.7;font-size:14px;"><%= @email_follower_number %> email followers</div>
+				<div style="opacity:.7;font-size:14px;position:absolute;top:200px;left: 20px;width: 200px;"><%= @email_follower_number %> email followers</div>
 			<% else %>
 				<span class="email_call">
 					<input class="email_input" placeholder="subscribe by email"></input>
@@ -31,131 +30,50 @@
 				<button class="submit_email_button" data-user="<%= @user.username %>">follow</button>
 			</span>
 		<% end %>
-  </div>
+	</div>
+<% end %>
+
+
+<div class="archive" user-show="1">
+  <% if @authored_bool %>
+  	<input class="new_post_input" placeholder="enter new post idea"></input><br>
+  <% end %>
 
 	<div class="post_list">
 	  <% if @authored_bool %>
-		  <span class="post_list_header">drafts</span><br><input class="new_post_input" placeholder="enter new post idea"></input><span id="inform_enter">press enter to submit</span><br>
+		  <!-- <span class="post_list_header">drafts</span><br> -->
 		  <div class="unpublished_list">
 			  <% if @unpublished_posts.count > 0 %>
 				  <% @unpublished_posts.each do |post| %>
-				  		<span class="post_line">
-				  			<span class="essay-date"> <%= post.updated_at.strftime("%0d %b %y") %></span>
-					      <span><%= link_to post.title, '/'+post.user.username+'/'+CGI.escape(post.title.gsub(' ','-').downcase), class: 'essay-title' %></span>
-					    </span>
-				      <br><div style="height:5px;"></div>
+			  		<a class="essay-title" href="/<%= post.user.username %>/<%= CGI.escape(post.title.gsub(' ','-').downcase) %>">
+			  			<li class="post_line">
+			  				<%= post.title %>
+			  			</li>
+			  		</a>
 				  <% end %>
 			  <% else %>
-			  	<span style="font-family:PT Serif Caption; font-size: 12px;">Empty</span>
+			  	<div style="font-family:verdana; font-size: 16px; margin-top: 20px; margin-bottom:20px;" id="unpublished_empty">Empty</div>
 			  <% end %>
 			</div>
-		  <br>
-		  <span class="post_list_header">published</span><br>
-		  <div style="height:5px;"></div>
-		 <% end %>
-
+		  <div class="line-break"></div>
+		  <div class="post_list_header">published</div>
+		<% else %>
+			<div class="break-top"></div>
+		<% end %>
 		 <% if @published_posts.count > 0 %>
 		  <% @published_posts.each do |post| %>
-		  	<span class="post_line">
-			  	<span class="essay-date"> <%= post.published_date.strftime("%0d %b %y") %></span>
-		      <span><%= link_to post.title, '/'+post.user.username+'/'+CGI.escape(post.title.gsub(' ','-').downcase), class: 'essay-title' %></span>
-			  </span>
-		  	<% if @authored_bool %>
-		  		<span class="view-count"><%= post.hits %> views</span>
-		  	<% end %>
-	      <br><div style="height:5px;"></div>
+		  	<a class="essay-title" href="/<%= post.user.username %>/<%= CGI.escape(post.title.gsub(' ','-').downcase) %>">
+		  		<div class="post_line">
+		  			<%= post.title %>
+			  		<span class="essay-date"> <%= post.published_date.strftime("%0d %b %y") %></span>
+				  	<% if @authored_bool %>
+				  		<span class="view-count"><%= post.hits %> views</span>
+				  	<% end %>
+		  		</div>
+		  	</a>
 		  <% end %>
 	  <% else %>
-	  	<span style="font-family:PT Serif Caption; font-size: 12px;">Empty</span>
+	  	<div style="font-family:verdana; font-size: 16px; margin-top: 20px; margin-bottom:20px;">Empty</div>
 	  <% end %>
 	</div>
 </div>
-
-<script>
-	$('body').on('click', '.change_image_button', function(){
-		$('.image_insert').show()
-		$('.imgur_text').show()
-		$('.submit_image_url').focus();
-		$(this).hide();
-	})
-
-	$('body').on('keyup','.submit_image_url', function(){
-	  	var link = $('.submit_image_url').val();
-	  	if (link.length > 7){
-	  		var username = $(this).attr('data-username');
-		  	$.post('/'+username+'/update_pic',{
-		  		link: link
-		  	}, function(response){
-		  		if (response['yes'] == '1'){
-		  			$('img').attr('src',link)
-		  			$('.change_image_button').show()
-		  			$('.image_insert').hide()
-						$('.imgur_text').hide()
-						$('.submit_image_url').val('')
-		  		}
-		  	})
-		  }
-	  })
-
-	$('body').on('click','.submit_email_button', function(){
-		var email = $('.email_input').val();
-		var user = $(this).attr('data-user')
-		$.post('/'+user+'/add_email_follower', {
-			email: email
-		}, function(response){
-			if (response['yes'] == '1'){
-				$('.email_call').html('done')
-			}
-		})
-	})
-
-	$(".new_post_input").keyup(function (e) {
-    if (e.keyCode == 13) {
-			var title = $('.new_post_input').val()
-			if (title.length > 0){
-				if (title.indexOf('-') == -1){
-					$.post('/posts',{post:{
-						id: $('.page-username').html(),
-						title: title
-					}}, function(response){
-						if (response['yes']){
-							$('.new_post_input').val('')
-							var date = response['date'];
-							var href = '/'+$('.page-username').html()+'/'+encodeURIComponent(title.toLowerCase().replace(/ /g, '-'));
-							var prependTitle = title;
-							$('.unpublished_list').prepend('<span class="post_line"><span class="essay-date">'+response['date']+'</span><span><a href="'+href+'" class="essay-title">'+prependTitle+'</a></span></span><br><div style="height:5px;"></div>')
-							$('#inform_enter').hide();
-						}else {
-							if (response['no']){
-								$('.new_post_input').attr('placeholder', response['no'])
-								$('.new_post_input').val('')
-								$('.new_post_input').attr('class','new_post_input input-error')
-							}
-						}
-					})
-				} else {
-					$('.new_post_input').attr('placeholder', 'title cannot have hyphen')
-					$('.new_post_input').val('')
-					$('.new_post_input').attr('class','new_post_input input-error')
-				}
-			}
-    } else {
-    	$('.new_post_input').attr('placeholder', 'enter new post idea')
-			$('.new_post_input').attr('class','new_post_input')
-			var input = $(this).val();
-			if (input.length > 0) {
-				$('#inform_enter').show();
-			} else {
-				$('#inform_enter').hide();
-			}
-    }
-	});
-
-	if ($('.unpublished_list').length > 0){
-		$('.essay-title').css({'color':'#2980b9'})
-	}
-
-	$('.archive').css({'width': 450 + $('data').width()})
-	$('.cover-box').css({'width': $(document).width()})
-	$('.cover-box img').css({'width': screen.width})
-</script>

@@ -1,26 +1,30 @@
 <%= link_to '', root_path, :class => 'essaii_corner' %>
-<div class="cover-box"><img src="<%= @post.user.image_banner %>" style="top:<%= @post.user.image_top_margin %>;"></div>
-<!-- <div id="left_shade_column"></div>
-<div id="right_shade_column"></div> -->
+<div class="cover-box">
+	<img src="<%= @post.user.image_banner %>" onload="verticalAlign()">
+	<a class="cover-header" href="/<%=@post.user.username%>"><%= @post.user.username %></a>
+</div>
 <div class="post_title"><%= @post.title %></div>
 <% if @post.published_date.nil? %>
-	<div class="the-by-line"><%= @post.created_at.strftime("%-d %B %Y")%><br>by <%= link_to @post.user.username, user_path(@post.user), class: "text_link" %></div>
+	<div class="the-by-line"><%= @post.created_at.strftime("%-d %B %Y")%></div>
 <% else %>
-	<div class="the-by-line"><%= @post.published_date.strftime("%-d %B %Y")%><br>by <%= link_to @post.user.username, user_path(@post.user), class: "text_link" %></div>
+	<div class="the-by-line"><%= @post.published_date.strftime("%-d %B %Y")%></div>
 <% end %>
 <div class="post_text">
 	<%= h(@text.html_safe) %>
 </div>
 
-<div class="user_post_controls">
-	<% if current_user && current_user == @post.user %>
-		<%= link_to 'edit', edit_post_path(@post), :class => 'control_button' %><br><br>
-		<% unless @post.published %>
-			<%= link_to '!publish', publish_post_path(@post), method: "post", :confirm => 'Are you sure you want to publish?', :class => 'control_button' %><br><br>
+<div class="sidebar_nav">
+	<div class="user_post_controls">
+		<% if current_user && current_user == @post.user %>
+			<%= link_to 'edit', edit_post_path(@post), :class => 'control_button' %><br><br>
+			<% unless @post.published %>
+				<%= link_to '!publish', publish_post_path(@post), method: "post", :confirm => 'Are you sure you want to publish?', :class => 'control_button' %><br><br>
+			<% end %>
+			<%= link_to '!delete', post_path(@post), method: "delete", :confirm => 'Are you sure you want to delete this post?', :class => 'control_button' %><br>
 		<% end %>
-		<%= link_to '!delete', post_path(@post), method: "delete", :confirm => 'Are you sure you want to delete this post?', :class => 'control_button' %><br>
-	<% end %>
+	</div>
 </div>
+
 <div class="share_buttons">
  	<% if @post.published %>
 		<a class="facebook_share" href="/" target="_blank">FB Share</a>
@@ -28,28 +32,25 @@
 		<br><br><br><br>
 	<% end %>
 </div>
-<!-- <a class="end_post_author" href="<%= user_path(@post.user) %>"><span style="position:relative;top:35px;font-size:20px;">< go to <%=@post.user.username%>'s blog</span><a> -->
 
-<% if @post.published %>
-	<div class="end_post_archive" data-author="<%=@post.user.username%>">
-		<div class="end_post_inside">
-			<%= link_to @post.user.username + "'s page", user_path(@post.user), class: 'end_user' %>
-			<%= link_to "about", about_path(@post.user), class: 'end_about' %><br><br>
-			<div class="end_archive_title"><%= @post.user.username %>'s archive:</div><br>
-			<div class="end_list">
-				<% if @archive_posts.count > 0 %>
-				  <% @archive_posts.each do |post| %>
-				  	<span class="post_line">
-				      <span><%= link_to post.title, '/'+post.user.username+'/'+CGI.escape(post.title.gsub(' ','-').downcase), class: 'essay-title' %></span>
-					  	<span class="end_essay_date"> <%= post.published_date.strftime("%0d %b %y") %></span>
-					  </span>
-			      <br><div style="height:5px;"></div>
-				  <% end %>
+<div class="end_post_archive" data-author="<%=@post.user.username%>">
+	<div class="end_post_inside">
+		<%= link_to @post.user.username + "'s page", user_path(@post.user), class: 'end_user' %>
+		<%= link_to "about", about_path(@post.user), class: 'end_about' %><br><br>
+		<div class="end_archive_title"><%= @post.user.username %>'s archive:</div><br>
+		<div class="end_list">
+			<% if @archive_posts.count > 0 %>
+			  <% @archive_posts.each do |post| %>
+			  	<span class="post_line">
+			      <span><%= link_to post.title, '/'+post.user.username+'/'+CGI.escape(post.title.gsub(' ','-').downcase), class: 'essay-title' %></span>
+				  	<span class="end_essay_date"> <%= post.published_date.strftime("%0d %b %y") %></span>
+				  </span>
+		      <br><div style="height:5px;"></div>
 			  <% end %>
-			</div>
+		  <% end %>
 		</div>
 	</div>
-<% end %>
+</div>
 <br><br><br>
 
 
@@ -86,11 +87,6 @@
 		var src = $($('.post_text img')[img_index]).attr('src');
 		window.location.href = src;
 	}
-	// $(document).scroll(function(){
-	// 	if ($(document).scrollTop() >= 190){
-	// 		$('.cover-box').css({'position':'fixed','top': '-190px','box-shadow':'0px 0px 2px 3px grey inset'})
-	// 	} else {
-	// 		$('.cover-box').css({'position':'absolute','top': '0px','box-shadow':'0px 0px 0px 0px grey'})
-	// 	}
-	// })
+
+	$('.post_text').fadeIn(5000)
 </script>
