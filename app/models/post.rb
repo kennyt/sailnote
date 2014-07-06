@@ -14,4 +14,10 @@ class Post < ActiveRecord::Base
     input.to_i == 0 ? find_by_url(input) : super
   end
 
+  def uniquify_all
+    Post.all.each{ |post|
+      post.update_attribute(:url,uniquify_url(post.title.gsub(' ','-').downcase))
+    }
+  end
+
 end
