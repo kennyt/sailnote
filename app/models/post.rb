@@ -16,7 +16,7 @@ class Post < ActiveRecord::Base
 
   def uniquify_all
     Post.all.each{ |post|
-      post.update_attribute(:url,uniquify_url(post.title.gsub(' ','-').downcase))
+      post.update_attribute(:url,post.title.gsub(' ','-').downcase)
     }
   end
 
