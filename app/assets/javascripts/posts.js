@@ -844,6 +844,13 @@ $(document).ready(function(){
 		if ($('#the_editor').length > 0){
 			$('.post_text').hide();
 		}
+
+		//focus on txt_editor
+		setTimeout(function(){
+			$('iframe')[0].contentWindow.document.body.focus()
+		}, 200)
+		autoSetEditorHeight();
+
 		//transition effects
 		$('.edit-title').css({'opacity':'1'})
 		$('.author_link_wrapper').css({'opacity':'.2'})
@@ -853,10 +860,6 @@ $(document).ready(function(){
 		setTimeout(function(){
 			$('.edit-title').autosize();
 		},300)
-		// setTimeout(function(){
-		// 	$('.edit-title').focus();
-		// },700)
-
 	}
 })
 
