@@ -26,6 +26,8 @@ end
 gem 'jquery-rails'
 gem 'bcrypt-ruby', '3.0.0'
 gem 'strong_parameters'
+gem 'cloudinary'
+gem 'carrierwave'
 
 # group :production do
 gem 'pg'

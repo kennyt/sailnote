@@ -1,42 +1,39 @@
-<div class="top_banner">
-  <div class="signin_form">
-    <%= form_for(:session, url: sessions_path) do |f| %>
-      <%= f.text_field :username, :placeholder => '    username', class: 'signin_input' %>
-      <%= f.password_field :password, :placeholder => '    password', class: 'signin_input' %>
+<% @title="sailnote" %>
+<div class="page_identifier" id="new_session"></div>
+<div class="signin_form">
+  <%= form_for(:session, url: sessions_path) do |f| %>
+    <%= f.text_field :username, :placeholder => '    username', class: 'signin_input' %>
+    <%= f.password_field :password, :placeholder => '    password', class: 'signin_input' %>
 
-      <%= f.submit "login", class: 'form_submit' %>
-    <% end %>
-  </div>
-</div>
-<div class="hero_npaper">
-  <div class="essaii_big">
-    <div class="sailboat_icon"></div>
-    <div class="below_big"><br>the place for <strike>blogging</strike> <strike>writing</strike> storytelling<br> <a class="hero_blog" href="/johnsy">example</a></div>
-  </div>
-  <% if @user.errors.any? %>
-    <div id="error_explanation">
-      <div class="alert alert-error">
-        The form contains <%= pluralize(@user.errors.count, "error") %>.
-      </div>
-      <ul>
-      <% @user.errors.full_messages.each do |msg| %>
-        <li>* <%= msg %></li>
-      <% end %>
-      </ul>
-    </div>
+    <%= f.submit "login", class: 'signin_submit' %>
   <% end %>
+</div>
+<a class="hero_blog_wrapper" href="/johnsy"><b style="font-family:courier;font-size: 20px;">example:</b><br> "A Glimpse of Human Nature"<br><b>by kennyt</b></a>
 
-  <div class="user_form">
-    <div class="word_join">start writing</div>
-    <%= form_for(@user) do |f| %>
-
-      <%= f.text_field :username, :placeholder => '    username', class: 'form_input' %>
-      <br>
-      <%= f.password_field :password, :placeholder => '    password', class: 'form_input' %>
-      <br>
-      <%= f.password_field :password_confirmation, :placeholder => '    password again', class: 'form_input' %>
-      <br>
-      <%= f.submit "create account", class: 'form_submit' %>
+<div class="essaii_big">
+  <div class="sailboat_icon"></div>
+  <div class="below_big"><br>a writing tool<br></div>
+</div>
+<% if @user.errors.any? %>
+  <div id="error_explanation">
+    <div class="alert alert-error">
+      The form contains <%= pluralize(@user.errors.count, "error") %>.
+    </div>
+    <ul>
+    <% @user.errors.full_messages.each do |msg| %>
+      <li>* <%= msg %></li>
     <% end %>
+    </ul>
   </div>
+<% end %>
+
+<div class="user_form">
+  <div class="word_join">start writing</div>
+  <%= form_for(@user) do |f| %>
+
+    <%= f.text_field :username, :placeholder => '    username', class: 'form_input' %>
+    <%= f.password_field :password, :placeholder => '    password', class: 'form_input' %>
+    <%= f.password_field :password_confirmation, :placeholder => '    password again', class: 'form_input' %>
+    <%= f.submit "create", class: 'form_submit' %>
+  <% end %>
 </div>

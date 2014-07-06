@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140411035425) do
+ActiveRecord::Schema.define(:version => 20140626144903) do
 
   create_table "posts", :force => true do |t|
     t.integer  "user_id"
@@ -22,6 +22,7 @@ ActiveRecord::Schema.define(:version => 20140411035425) do
     t.datetime "created_at",                        :null => false
     t.datetime "updated_at",                        :null => false
     t.datetime "published_date"
+    t.string   "url"
   end
 
   add_index "posts", ["user_id", "created_at"], :name => "index_posts_on_user_id_and_created_at"
@@ -37,6 +38,7 @@ ActiveRecord::Schema.define(:version => 20140411035425) do
     t.string   "image_banner"
     t.integer  "image_top_margin", :default => 0
     t.text     "email_followers",  :default => ""
+    t.text     "bio",              :default => ""
   end
 
   add_index "users", ["remember_token"], :name => "index_users_on_remember_token"

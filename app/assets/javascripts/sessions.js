@@ -3,13 +3,20 @@
 // # You can use CoffeeScript in this file: http://jashkenas.github.com/coffee-script/
 
 
-// $(document).ready(function(){
-// 	if ($('.essaii_big').length > 0) {
-// 		var essaiiMarginLeft = (screen.width - $('.essaii_big').width())/2
-// 		var formMarginLeft = (screen.width - $('.user_form').width())/2
-// 		var formMarginTop = $('.essaii_big').offset().top + $('.essaii_big').height() + 70
-// 		// $('.essaii_big').css({'left':essaiiMarginLeft})
-// 		// $('.user_form').css({'left':formMarginLeft})
-// 		// $('.user_form').css({'top':formMarginTop})
-// 	}
-// })
+$(document).ready(function(){
+	if ($('.page_identifier').attr('id') == 'new_session') {
+
+		$('.essaii_big').css({'margin-top':'12%'})// transition effect
+		setTimeout(function(){
+			$('.essaii_big').css({'opacity':'1'})
+		}, 200)
+		$('.hero_blog_wrapper').css({'top':$('.below_big').offset().top})
+
+		$('body').on('click','.word_join', function(){
+			$('.user_form').css({'background':'#bdc3c7','height':'250px'})
+			$('.new_user').css({'display':'block','opacity':'1'})
+			$(this).css({'background':'#bdc3c7','cursor':'default','color':'#2c3e50','border':'0px','text-decoration':'none'})
+			$(this).html('creating account!')
+		})
+	}
+})

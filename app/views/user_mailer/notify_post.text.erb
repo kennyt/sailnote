@@ -6,3 +6,10 @@ The post title is: <%= @title %>.
 To read, just go to this link: <%= @url %>
  
 Have a great day!
+
+<input name="file" type="file" 
+       class="cloudinary-fileupload" data-cloudinary-field="image_upload" 
+       data-form-data="<%= h '{ "timestamp":  1345719094, 
+  "callback": "localhost:3000/cloudinary_cors.html",
+  "signature": "7ac8c757e940d95f95495aa0f1cba89ef1a8aa7a", 
+  "api_key": "579372528537872" }' %>" ></input>

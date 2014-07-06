@@ -6,8 +6,9 @@ class UsersController < ApplicationController
 	def create
 		@user = User.new(user_params)
     if @user.save
-    	image_array = ['http://i.imgur.com/iEeeRSq.jpg', 'http://i.imgur.com/S9pfRrW.jpg']
-    	@user.update_attribute(:image_banner, image_array.sample)
+			@user.posts.create!(:title => 'Your First Post', :text => '<section class="text_center_panel graceful_font color_white"><blockquote>Highlight any text to style it. Use the left to add image, edit the section (font, color theme, layout), and add section.</blockquote><h1>Boom!</h1><div><b>The following is filler text</b><br>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry\'s standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.</div><blockquote class="pullquote">Welcome to Sailnote. Writing is hard. We\'ll try to help you.</blockquote><div>It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</div></section>', :url => 'first')
+    	# image_array = ['http://i.imgur.com/iEeeRSq.jpg', 'http://i.imgur.com/S9pfRrW.jpg']
+    	# @user.update_attribute(:image_banner, image_array.sample)
     	build_cookie(@user)
     	redirect_to user_path(@user)
     else
@@ -81,6 +82,18 @@ class UsersController < ApplicationController
 				format.json { render :json => {'yes' => '1'}.to_json }
 			end
 		else
+			respond_to do |format|
+				format.json { render :json => {'no' => '1'}.to_json }
+			end
+		end
+	end
+
+	def change_bio
+		if current_user.update_attribute(:bio, params[:user][:bio].squeeze(" "))
+			respond_to do |format|
+				format.json { render :json => {'yes' => '1'}.to_json }
+			end
+		else 
 			respond_to do |format|
 				format.json { render :json => {'no' => '1'}.to_json }
 			end

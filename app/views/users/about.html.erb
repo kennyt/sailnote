@@ -40,3 +40,25 @@
 	// $('.archive').css({'width':'auto'})
 	// $('.archive').css({'width': $('.archive-header').width()})
 </script>
+
+
+
+
+
+
+<!-- random shit -->
+<% if current_user %>
+	<% if @user == current_user %>
+		<div style="opacity:.7;font-size:14px;position:absolute;top:200px;left: 20px;width: 200px;"><%= @email_follower_number %> email followers</div>
+	<% else %>
+		<span class="email_call">
+			<input class="email_input" placeholder="subscribe by email"></input>
+			<button class="submit_email_button" data-user="<%= @user.username %>">follow</button>
+		</span>
+	<% end %>
+<% else %>
+	<span class="email_call">
+		<input class="email_input" placeholder="subscribe by email"></input>
+		<button class="submit_email_button" data-user="<%= @user.username %>">follow</button>
+	</span>
+<% end %>

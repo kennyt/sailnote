@@ -1,0 +1,9 @@
+development: 
+  cloud_name: "sailnote"
+  api_key: "579372528537872"
+  api_secret: "PfRrzasc4fpFNolGiknYqeStkls"
+
+production:
+  cloud_name: "sailnote"
+  api_key: "579372528537872"
+  api_secret: "PfRrzasc4fpFNolGiknYqeStkls"

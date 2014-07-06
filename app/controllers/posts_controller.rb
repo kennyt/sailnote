@@ -6,9 +6,11 @@ class PostsController < ApplicationController
 	def create
 		params[:post][:title] = params[:post][:title].gsub('-',' ')
 		@post = current_user.posts.build(post_params)
+		@post.url = uniquify_url(CGI.escape(@post.title.gsub(' ','-').downcase))
+		@post.text = "<section class='text_center_panel color_white graceful_font'><div><br></div></section>"
 		if @post.save
 			respond_to do |format|
-				format.json { render :json => {'yes' => '1', 'id' => @post.id.to_s, 'date' => @post.updated_at.strftime("%0d %b %y")}.to_json }
+				format.json { render :json => {'yes' => '1', 'id' => @post.id.to_s, 'date' => @post.updated_at.strftime("%0d %b %y"), 'url' => @post.url}.to_json }
       	format.html { redirect_to user_path(current_user) }
 			end
     else
@@ -21,11 +23,10 @@ class PostsController < ApplicationController
 
 	def show
 		@user = User.find(params[:id])
-		@post = @user.posts.first(:conditions => ["lower(title) = ?", CGI.unescape(params[:title].gsub('-',' ').downcase)])
-		@archive_posts = @user.posts.where(:published => true).order('published_date DESC')
+		@post = @user.posts.first(:conditions => ["url = ?", CGI.escape(params[:title])])
 		if ( !@post.nil? && @post.published) || ( !@post.nil? && current_user && @user == current_user)
 			# @text = clean_text(@post.text)
-			@text = @post.text || ""
+			@text = @post.text || "<div><br></div>"
 		else
 			redirect_to user_path(@user)
 		end
@@ -48,17 +49,41 @@ class PostsController < ApplicationController
 	end
 
 	def publish
-		@post = current_user.posts.first(:conditions => ["lower(title) = ?", CGI.unescape(params[:id].gsub('-',' ').downcase)])
+		@post = current_user.posts.first(:conditions => ["url = ?", CGI.escape(params[:id])])
 		if @post.update_attributes(:published => true, :published_date => Time.now)
-			email_followers = current_user.email_followers.split(',')
-			UserMailer.notify_post(email_followers, current_user, @post).deliver
-		end
+			# email_followers = current_user.email_followers.split(',')
+			# UserMailer.notify_post(email_followers, current_user, @post).deliver
 
-		redirect_to user_path(current_user)
+			respond_to do |format|
+				format.json { render :json => {'yes' => '1', 'pub_date' => @post.published_date.strftime("%0d %b %y"), 'views' => @post.hits}.to_json }
+				format.html { redirect_to user_path(current_user) }
+			end
+		else
+			respond_to do |format|
+				format.json { render :json => {'no' => '1'}.to_json }
+				format.html { redirect_to user_path(current_user) }
+			end
+		end
+	end
+
+	def unpublish
+		@post = current_user.posts.first(:conditions => ["url = ?", CGI.escape(params[:id])])
+		if @post.update_attribute(:published, false)
+
+			respond_to do |format|
+				format.json { render :json => {'yes' => '1'}.to_json }
+				format.html { redirect_to user_path(current_user) }
+			end
+		else
+			respond_to do |format|
+				format.json { render :json => {'no' => '1'}.to_json }
+				format.html { redirect_to user_path(current_user) }
+			end
+		end
 	end
 
 	def destroy
-		@post = current_user.posts.first(:conditions => ["lower(title) = ?", CGI.unescape(params[:id].gsub('-',' ').downcase)])
+		@post = current_user.posts.first(:conditions => ["url = ?", CGI.escape(params[:id])])
 		@post.destroy
 
 		redirect_to user_path(current_user)
@@ -66,10 +91,11 @@ class PostsController < ApplicationController
 
 	def update_post_json
 		title = CGI.unescape(params[:post][:title].gsub('-',' '))
+		url = CGI.escape(params[:post][:url].gsub(' ','-').downcase)
 		@post = current_user.posts.find_by_id(params[:post][:id])
-		if @post.update_attributes(:text => params[:post][:text], :title => title)
+		if @post.update_attributes(:text => params[:post][:text], :title => title, :url => url)
 			respond_to do |format|
-				format.json { render :json => {'yes' => '1'}.to_json }
+				format.json { render :json => {'yes' => '1', 'url' => url}.to_json }
 			end
 		else
 			respond_to do |format|
@@ -78,15 +104,39 @@ class PostsController < ApplicationController
 		end
 	end
 
+	def delete_post_json
+		@post = current_user.posts.first(:conditions => ["url = ?", CGI.escape(params[:title])])
+		if @post.destroy
+			respond_to do |format|
+				format.json { render :json => {'yes' => '1'}.to_json }
+			end
+		else
+			respond_to do |format|
+				format.json { render :json => {'no' => '1'}.to_json }
+			end
+		end
+	end
+
 	def increment_viewcount
 		@user = User.find(params[:id])
-		@post = @user.posts.first(:conditions => ["lower(title) = ?", CGI.unescape(params[:title].gsub('-',' ').downcase)])
+		@post = @user.posts.first(:conditions => ["url = ?", CGI.escape(params[:title])])
 		@post.update_attribute(:hits, @post.hits + 1)
 
 		respond_to do |format|
 			format.json { render :json => {'yes' => '1'}.to_json }
 		end
 	end
+
+	# def upload_image
+	# 	if params[:image_id].present?
+	# 	  preloaded = Cloudinary::PreloadedFile.new(params[:image_id])         
+	# 	  raise "Invalid upload signature" if !preloaded.valid?
+	# 	  puts '##################' + preloaded.identifier + '##############################'
+	# 	end
+	# 	puts 'fuckkkkkkkkkkkkkkk###############################'
+	# end
+
+
 	private
 
 		def post_params

@@ -1,79 +1,78 @@
+<% @title=@user.username %>
+<div class="page_identifier" id="user_view" data-username="<%= @user.username %>"></div>
 <div class="cover-box">
-	<img src="<%= @user.image_banner %>" onload="verticalAlign()">
+	<!-- <img src="<%= @user.image_banner %>" onload="verticalAlign()"> -->
 	<a class="cover-header" href="/<%=@user.username%>"><%= @user.username %></a>
+	<% if @authored_bool %>
+		<% if @user.bio.length == 0 %>
+			<div class="bio_text user_panel" contentEditable="true" data-placeholder="type short bio here" data-changed="0" spellcheck="false"><%= h(@user.bio.html_safe) %></div>
+		<% else %>
+			<div class="bio_text user_panel" contentEditable="true" data-placeholder="" data-changed="0" spellcheck="false"><%= h(@user.bio.html_safe) %></div>
+		<% end %>
+	<% else %>
+		<div class="bio_text"><%= h(@user.bio.html_safe) %></div>
+	<% end %>
+	<%= link_to '', root_path, :class => 'essaii_left' %>
+	<div class="ocean"></div>
 </div>
+<div class="save_success">saved!</div>
 
 <% if @authored_bool %>
-	<div class="sidebar_nav">
-		<%= link_to '', root_path, :class => 'essaii_corner' %>
-		<% if @authored_bool %>
-			<div class="change_image_button">change pic</div>
-			<div class="image_insert"><input class="submit_image_url" placeholder=" paste image url to change banner" data-username="<%= current_user.username %>"></input></div>
-			<div class="imgur_text">upload to <a class="text_link" href="http://imgur.com" target="_blank">imgur</a> to get url</div>
+	<div class="batman_toolbelt">
+		<div class="hidden_toolbelt">
+			<li><span class="preview_user">preview mode</span></li>
+			<!-- <li><span class="change_image_button">change pic</span></li> -->
+			<!-- <div class="image_insert"><input class="submit_image_url" placeholder=" paste image url to change banner" data-username="<%= current_user.username %>"></input></div> -->
+			<!-- <div class="imgur_text">upload to <a class="text_link" href="http://imgur.com" target="_blank">imgur</a> to get url</div> -->
 			<!-- <div class="move_image_button">move your banner up/down</div> -->
-		<% end %>
-		<% if @authored_bool %>
-			<%= link_to "logout", session_path, method: "delete", :class => 'logout_button' %>
-		<% end %>
-		<% if current_user %>
-			<% if @user == current_user %>
-				<div style="opacity:.7;font-size:14px;position:absolute;top:200px;left: 20px;width: 200px;"><%= @email_follower_number %> email followers</div>
-			<% else %>
-				<span class="email_call">
-					<input class="email_input" placeholder="subscribe by email"></input>
-					<button class="submit_email_button" data-user="<%= @user.username %>">follow</button>
-				</span>
-			<% end %>
-		<% else %>
-			<span class="email_call">
-				<input class="email_input" placeholder="subscribe by email"></input>
-				<button class="submit_email_button" data-user="<%= @user.username %>">follow</button>
-			</span>
-		<% end %>
+			<li><%= link_to "logout", session_path, method: "delete", :class => 'logout_button' %></li>
+		</div>
 	</div>
 <% end %>
 
 
 <div class="archive" user-show="1">
   <% if @authored_bool %>
-  	<input class="new_post_input" placeholder="enter new post idea"></input><br>
+  	<div class="press_enter_info">press enter to create draft</div>
+  	<input class="new_post_input" placeholder="enter new post title"></input>
   <% end %>
 
 	<div class="post_list">
 	  <% if @authored_bool %>
-		  <!-- <span class="post_list_header">drafts</span><br> -->
 		  <div class="unpublished_list">
-			  <% if @unpublished_posts.count > 0 %>
-				  <% @unpublished_posts.each do |post| %>
-			  		<a class="essay-title" href="/<%= post.user.username %>/<%= CGI.escape(post.title.gsub(' ','-').downcase) %>">
-			  			<li class="post_line">
-			  				<%= post.title %>
-			  			</li>
-			  		</a>
+				  <% if @unpublished_posts.count > 0 %>
+					  <% @unpublished_posts.each do |post| %>
+				  			<a class="essay-title" href="/<%= post.user.username %>/<%= post.url %>">
+					  			<div class="post_line">
+				  					<div class="publish_button"><div class="left-hover-tag">publish</div></div>
+					  				<div class="delete_button"><div class="right-hover-tag">delete</div></div>
+				  					<span class="essay-text"><%= post.title %></span>
+					  			</div>
+				  			</a>
+					  <% end %>
+				  <% else %>
+				  	<div style="font-family:source sans pro; font-size: 20px; margin-top: 8px; margin-bottom:20px;text-align:center;" id="unpublished_empty">Empty</div>
+				  <% end %>
+			</div>
+		<% end %>
+			<div class="published_list">
+				<% if @published_posts.count > 0 %>
+				  <% @published_posts.each do |post| %>
+				  	<a class="essay-title" href="/<%= post.user.username %>/<%= post.url %>">
+				  		<div class="post_line">
+				  			<span class="essay-text"><%= post.title %></span>
+					  		<span class="essay-date"> <%= post.published_date.strftime("%0d %b %y") %></span>
+						  	<% if @authored_bool %>
+					  			<div class="unpublish_button"><div class="left-hover-tag">unpublish</div></div>
+					  			<div class="delete_button"><div class="right-hover-tag">delete</div></div>
+						  		<span class="view-count"><%= post.hits %> views</span>
+						  	<% end %>
+				  		</div>
+				  	</a>
 				  <% end %>
 			  <% else %>
-			  	<div style="font-family:verdana; font-size: 16px; margin-top: 20px; margin-bottom:20px;" id="unpublished_empty">Empty</div>
+			  	<div style="font-family:source sans pro; font-size: 20px; margin-top: 8px; margin-bottom:20px;text-align:center;" id="empty-published">Empty</div>
 			  <% end %>
-			</div>
-		  <div class="line-break"></div>
-		  <div class="post_list_header">published</div>
-		<% else %>
-			<div class="break-top"></div>
-		<% end %>
-		 <% if @published_posts.count > 0 %>
-		  <% @published_posts.each do |post| %>
-		  	<a class="essay-title" href="/<%= post.user.username %>/<%= CGI.escape(post.title.gsub(' ','-').downcase) %>">
-		  		<div class="post_line">
-		  			<%= post.title %>
-			  		<span class="essay-date"> <%= post.published_date.strftime("%0d %b %y") %></span>
-				  	<% if @authored_bool %>
-				  		<span class="view-count"><%= post.hits %> views</span>
-				  	<% end %>
-		  		</div>
-		  	</a>
-		  <% end %>
-	  <% else %>
-	  	<div style="font-family:verdana; font-size: 16px; margin-top: 20px; margin-bottom:20px;">Empty</div>
-	  <% end %>
+		</div>
 	</div>
 </div>

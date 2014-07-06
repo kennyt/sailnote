@@ -12,48 +12,48 @@
 //
 //= require jquery
 //= require jquery_ujs
+//= require cloudinary
 //= require_tree .
 
 
 //moving cover picture code. happens on every page with cover picture.
-function verticalAlign(){
-	$('.cover-box img').css({'bottom': -(($('.cover-box img').height() - 200)/2)})
-	setTimeout(function(){
-		$('.cover-box img').css({'-webkit-transition': 'bottom 3s linear','-moz-transition': 'bottom 3s linear','-o-transition': 'bottom 3s linear','-ms-transition': 'bottom 3s linear','transition': 'bottom 3s linear'})
-	},0)
-}
-$(document).ready(function(){
-	if ($('.cover-box').length > 0){
-		movingPicture = false;
-		$('.cover-box').mousemove(function(e){
-			cursorY = -(($('.cover-box img').height() - ($('.cover-box img').height() * (e.screenY/200)))+300)
-			if (cursorY > 0){
-				cursorY = 0;
-			} else {
-				if (cursorY < -($('.cover-box img').height() - 200)) {
-					cursorY = -($('.cover-box img').height() - 200)
-				}
-			}
-		})
-		$('.cover-box').mouseover(function(e){
-			$(this).attr('hovering','1')
-			movingPicture ? false : clearInterval(movingPicture)
-			movingPicture = setInterval(function(){
-				if ($('.cover-box').attr('hovering').length > 0){
-					$('.cover-box img').css({'bottom':cursorY+'px'})
-				} else {
-					clearInterval(movingPicture)
-				}
-				console.log('fuck')
-			}, 50)
-		})
-		$('.cover-box').mouseout(function(e){
-			$(this).attr('hovering','')
-			clearInterval(movingPicture);
-			$('.cover-box img').css({'bottom':$('.cover-box img').css('bottom')})
-		})
-	}
-})
+// function verticalAlign(){
+// 	$('.cover-box img').css({'bottom': -(($('.cover-box img').height() - 200)/2)})
+// 	setTimeout(function(){
+// 		$('.cover-box img').css({'-webkit-transition': 'bottom 3s linear','-moz-transition': 'bottom 3s linear','-o-transition': 'bottom 3s linear','-ms-transition': 'bottom 3s linear','transition': 'bottom 3s linear'})
+// 	},0)
+// }
+// $(document).ready(function(){
+// 	if ($('.cover-box').length > 0){
+// 		movingPicture = false;
+// 		$('.cover-box').mousemove(function(e){
+// 			cursorY = -(($('.cover-box img').height() - ($('.cover-box img').height() * (e.screenY/200)))+300)
+// 			if (cursorY > 0){
+// 				cursorY = 0;
+// 			} else {
+// 				if (cursorY < -($('.cover-box img').height() - 200)) {
+// 					cursorY = -($('.cover-box img').height() - 200)
+// 				}
+// 			}
+// 		})
+// 		$('.cover-box').mouseover(function(e){
+// 			$(this).attr('hovering','1')
+// 			movingPicture ? false : clearInterval(movingPicture)
+// 			movingPicture = setInterval(function(){
+// 				if ($('.cover-box').attr('hovering').length > 0){
+// 					$('.cover-box img').css({'bottom':cursorY+'px'})
+// 				} else {
+// 					clearInterval(movingPicture)
+// 				}
+// 			}, 50)
+// 		})
+// 		$('.cover-box').mouseout(function(e){
+// 			$(this).attr('hovering','')
+// 			clearInterval(movingPicture);
+// 			$('.cover-box img').css({'bottom':$('.cover-box img').css('bottom')})
+// 		})
+// 	}
+// })
 
 function css(a) {
     var sheets = document.styleSheets, o = {};
