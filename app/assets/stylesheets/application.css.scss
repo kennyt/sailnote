@@ -458,8 +458,10 @@
   width : 100%;
   /*border : 1px solid #ccc;*/
   position : relative;
+  margin: 0px;
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: -10px;
   word-wrap: normal;
 }
 
@@ -1401,7 +1403,7 @@ iframe {
 	font-weight: bold;
 	padding-left: 30px;
 	padding-right: 30px;
-	padding-bottom: 10px;
+	padding-bottom: 7px;
 	top:115px;
 	cursor: pointer;
 	min-height: 82px;
@@ -1636,7 +1638,7 @@ body {
 	font-weight: bold;
 	padding-left: 30px;
 	padding-right: 30px;
-	padding-bottom: 10px;
+	padding-bottom: 7px;
 	margin-top: 50px;
 	/*background: #D5DED9;*/
 	color: #181818;
@@ -2114,6 +2116,7 @@ div[data-placeholder]:not(:focus):not([data-div-placeholder-content]):before {
 
 .outlined {
 	border: 1px solid grey;
+	border-radius: 3px;
 }
 
 .color_choice {
@@ -2167,6 +2170,55 @@ div[data-placeholder]:not(:focus):not([data-div-placeholder-content]):before {
 	width: 20px;
 	height: 20px;
 	background: #008080;
+}
+#color_image {
+	background-image: url('add_image.png');
+	background-size: cover;
+	width: 20px;
+	height: 20px;
+	overflow: hidden;
+	position: relative;
+	&:hover{
+		overflow: visible;
+	}
+}
+#color_image::after{
+	content:'image background';
+	position: absolute;
+	left: -45px;
+	top: -36px;
+	z-index: 20;
+	padding: 5px;
+	border: 1px solid grey;
+	background: white;
+	border-radius: 3px;
+
+}
+
+.font-color-chooser {
+	position: fixed;
+	bottom: 30px;
+	width: 200px;
+	height: 100px;
+	border: 2px solid grey;
+	border-radius: 3px;
+	text-align: center;
+	left: 45%;
+	padding: 10px;
+	background: white;
+	z-index: 300;
+	font-family: 'raleway';
+	display: none;
+}
+
+.font-color-choice {
+	padding: 7px;
+	border: 1px solid grey;
+	cursor: pointer;
+	&:hover{
+		background: black;
+		color: white;
+	}
 }
 
 .essay-title:link {color:#2c3e50;}

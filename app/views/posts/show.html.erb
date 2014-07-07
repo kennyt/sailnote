@@ -99,6 +99,7 @@
 				<div class="chooser_choice color_choice" id="color_darkred" data-color="darkred" data-choice="color"></div>
 				<div class="chooser_choice color_choice" id="color_darkpurple" data-color="darkpurple" data-choice="color"></div>
 				<div class="chooser_choice color_choice" id="color_darkteal" data-color="darkteal" data-choice="color"></div>
+				<div class="chooser_choice color_choice" id="color_image" data-color="image" data-choice="color"></div>
 			</div>
 			<div class="detail_chooser">
 				<div class="chooser_title">Layout Style</div>
@@ -115,6 +116,12 @@
 	  <%= cl_image_upload_tag(:image_id)%>
 	<% end %>or<br>
 	<input class="post_image_getter" placeholder="paste image URL"></input>
+</div>
+
+<div class="font-color-chooser">
+	what color should the font be?<br><br>
+	<span class="font-color-choice" data-color="white">white</span>
+	<span class="font-color-choice" data-color="black">black</span>
 </div>
 
 
