@@ -2,7 +2,7 @@
 <div class="page_identifier" id="user_view" data-username="<%= @user.username %>"></div>
 <div class="cover-box">
 	<div class="user_container">
-		<% if @user.image_banner.length > 0 %>
+		<% if @user.image_banner.nil? || @user.image_banner.length > 0 %>
 			<img src="<%= @user.image_banner %>" id="cover-pic">
 		<% else %>
 			<img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D" id="cover-pic">
