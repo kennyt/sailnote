@@ -568,7 +568,7 @@
 	white-space:nowrap;
 	background-image: url('camera.png');
 	background-size: cover;
-	opacity: .3;
+	opacity: .2;
 	/*background: grey;*/
 
 	-webkit-transition: all 100ms ease-out, color 400ms ease-out;
@@ -693,8 +693,8 @@ iframe {
 	width: 70%;
 	margin-left: auto;
 	margin-right: auto;
-	margin-top: 75px;
-	margin-bottom: 75px;
+	margin-top: 50px;
+	margin-bottom: 50px;
 	font-size: 85px;
 	font-family: 'MuseoSlab-500';
 	font-weight: 500;
@@ -920,7 +920,7 @@ iframe {
 	margin-right: auto;
 	width: 70%;
 	margin-top: -50px;
-	margin-bottom: 75px;
+	margin-bottom: 50px;
 	padding-bottom: 20px;
 	font-family: 'MuseoSlab-500';
 	font-weight: 500;
@@ -1078,19 +1078,22 @@ iframe {
 
 .author_link {
 	text-decoration: none;
-	border: 1px solid black;
-	border-radius: 2px;
+	/*border: 1px solid grey;*/
+	border-radius: 3px;
 	padding: 10px;
 	margin-right: 20px;
 	color: black;
-	top: 105px;
+	top: 80px;
 	position: absolute;
 	font-weight: bold;
+	&:hover {
+		background: #bdc3c7;
+	}
 }
 
 .post-date-left {
 	position: absolute;
-	top: 75px;
+	top: 50px;
 	right: 0px;
 	width: 15%;
 	text-align: center;
@@ -1211,7 +1214,7 @@ iframe {
 	height: 100%;
 	z-index: 9;
 	text-align: center;
-	/*background: #ecf0f1;*/
+	background: #ecf0f1;
 	/*background: linear-gradient(#F5FFFF, white);*/
 
 	/*border-right: 6px solid #345A6B;*/
@@ -1380,21 +1383,19 @@ iframe {
 	position:relative;
 	color:white;
 	font-family:'source sans pro';
-	font-size: 50px;
+	font-size: 45px;
 	font-weight: bold;
 	padding-left: 30px;
 	padding-right: 30px;
-	padding-bottom: 7px;
-	top:35px;
+	padding-bottom: 0px;
+	top:7px;
 	cursor: pointer;
 	min-height: 82px;
 	text-decoration: none;
-	background: #ecf0f1;
-	background: white;
 	color: #181818;
-	border: 3px solid #181818;
+	/*border: 3px solid #181818;*/
 	border-radius: 3px;
-	/*opacity: .94;*/
+	opacity: .95;
 	text-align: center;
 	letter-spacing: -2px;
 	&:hover{
@@ -1409,6 +1410,7 @@ iframe {
 	display: block;
 	margin-top: 35px;
 	border-radius: 5px;
+	background-size: cover;
 	/*border: 8px solid #2980b9;*/
 }
 
@@ -1428,11 +1430,11 @@ iframe {
 .batman_toolbelt {
 	height: 60px;
 	width: 60px;
-	position: fixed;
+	position: absolute;
 	background-image: url('hamburger.png');
 	background-size: cover;
-	right: 15px;
-	bottom: 0px;
+	right: 90px;
+	top: 70px;
 	opacity: .18;
 	z-index: 20;
 
@@ -1453,7 +1455,7 @@ iframe {
 		background: #ecf0f1;
 		background: white;
 		display: block;
-		bottom: 0px;
+		top: 0px;
 	}
 }
 
@@ -1461,7 +1463,7 @@ iframe {
 	display: none;
 	position: absolute;
 	right: 0px;
-	bottom: 0px;
+	top: 0px;
 	border-top-left-radius: 2px;
 	border-bottom-left-radius: 2px;
 	width: 300px;
@@ -1470,6 +1472,7 @@ iframe {
 	/*border-bottom: 3px solid #7f8c8d;*/
 	box-shadow: 0px 0px 2px 1px #95a5a6;
 	padding: 15px;
+	padding-left: 25px;
 }
 
 .image_insert {
@@ -1563,8 +1566,7 @@ body {
 	margin-right: auto;
 }
 .circle-divider {
-	width: 800px;
-	height: 2px;
+	height: 1px;
 	margin-top: 0px;
 	position: relative;
 	margin-left: auto;
@@ -1917,7 +1919,7 @@ ul {
 	width: 400px;
 	margin-left: auto;
 	margin-right: auto;
-	margin-top: 62px;
+	margin-top: 7px;
 	height: 45px;
 	padding-top: 5px;
 	outline-color:grey;
@@ -1969,7 +1971,7 @@ div[data-placeholder]:not(:focus):not([data-div-placeholder-content]):before {
 	font-size: 16px;
 	font-family: 'raleway', Geneva, sans-serif;
 	position: relative;
-	height: 3px;
+	height: 1px;
 	background: #95a5a6;
 	width: 100%;
 	cursor: pointer;
@@ -2249,7 +2251,7 @@ div[data-placeholder]:not(:focus):not([data-div-placeholder-content]):before {
 }
 
 #the_editor {
-	min-height: 60%;
+	/*min-height: 60%;*/
 }
 
 .essay-title:link {color:#2c3e50;}

@@ -13,13 +13,11 @@
 	<div class="post_text"></div>
 	<% if @post.published %>
 		<div class="post-date-left"><%= @post.published_date.strftime("%-d %B %Y") %></div>
-	<% else %>
-		<div class="post-date-left"><%= @post.created_at.strftime("%-d %B %Y") %></div>
 	<% end %>
 	<%= form_for :post, url: post_path(@post), method: :put do |f| %>
 	  <div class="author_link_wrapper"><%= link_to @post.user.username, user_path(@post.user), class: 'author_link' %></div>
 	  <%= f.text_area :title, {class: 'edit-title', datatitle: @post.title.gsub(' ', '-'),  :placeholder => 'Title goes here.', data_author: @post.user.username, spellcheck: 'false'} %>
-	  <!-- <div class="circle-divider"></div> -->
+	  <div class="circle-divider"></div>
 
 	  <%= f.text_area :text, :placeholder => 'Body goes here.', class: 'edit-box' %>
 			<div class="batman_toolbelt">

@@ -3,7 +3,7 @@
 <div class="cover-box">
 	<div class="user_container">
 		<% if @user.image_banner.nil? || @user.image_banner.length > 0 %>
-			<img src="<%= @user.image_banner %>" id="cover-pic">
+			<div style="background-image:url(<%= @user.image_banner %>)" id="cover-pic"></div>
 		<% else %>
 			<img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D" id="cover-pic">
 		<% end %>
@@ -18,7 +18,7 @@
 				<div class="bio_text user_panel" contentEditable="true" data-placeholder="" data-changed="0" spellcheck="false"><%= h(@user.bio.html_safe) %></div>
 			<% end %>
 		<% else %>
-			<div class="bio_text"><%= h(@user.bio.html_safe) %></div>
+			<div class="bio_text user_panel"><%= h(@user.bio.html_safe) %></div>
 		<% end %>
 	</div>
 	<%= link_to '', root_path, :class => 'essaii_left' %>

@@ -319,7 +319,7 @@ $(document).ready(function(){
 		$('body').on('click','.essay-title', function(){
 			//only happens if you click through to link
 			setTimeout(function(){
-				if ($('.confirm-box').length < 1){
+				if ($('.confirm-box').length < 1 && !(document.queryCommandSupported('insertBrOnReturn'))){
 					$('.archive').css({'opacity':'0'})
 					$('.bio_text').css({'opacity':'0'})
 					$('.cover-box').css({'opacity':'0'})
@@ -352,7 +352,7 @@ $(document).ready(function(){
 	      { format: data.result.format, version: data.result.version})
 	    );
 	    var link = $('.hidden_image_holder img').attr('src');
-	    $('#cover-pic').attr('src', link);
+	    $('#cover-pic').attr('style', 'background-image:url('+link+')');
 			$('.image_getter').fadeOut(200);
 			saveProfilePic(link);
 		  // return true;

@@ -206,8 +206,10 @@ function createImage(that){
 	s.addRange(r);
 }
 
+
 //text_editor code. runs on every page with the class .edit-box
 $(document).ready(function(){
+	console.log('hi');
 	if ($('.page_identifier').attr('id') == 'logged_in_post'){
 
 		$('body').on('click','.edit-submit',function(ev){
@@ -217,7 +219,7 @@ $(document).ready(function(){
 				var user = $('.edit-title').attr('data_author');
 				var title = encodeURIComponent($('.edit-title').attr('datatitle').toLowerCase());
 
-				$('iframe').contents().find('section').css({'box-shadow':'0'})
+				$('iframe').contents().find('section').css({'box-shadow':'none'})
 
 				$('.edit-box').val($('iframe').contents().find('body').html())
 				$('.save_success').attr('style','display:block;background:#c0392b;');
@@ -286,7 +288,7 @@ $(document).ready(function(){
 				   var sectionStyle = 'section{width: 100%; padding-top: 50px; padding-bottom:30px;position:relative; min-height: 90px;}'
 				   var moverStyle = '.mover{position: absolute;top: 0px;right: 0px;height: 20px;width: 20px !important;background: blue; cursor:pointer;}'
 				   var stretcherStyle = '.stretcher{position: absolute;bottom: 50%;left: 0px;height: 20px;margin:0px !important;width: 20px !important;background: red; cursor:pointer;}'
-				   var pStyle = 'p{margin-top: 33px; margin-bottom: 33px;}'
+				   var pStyle = 'p{margin-top: 0px; margin-bottom: 33px;}'
 
 
 
@@ -803,7 +805,7 @@ $(document).ready(function(){
 				$(this).attr('hovered','0');
 				var section = getHoveringSection($('iframe').contents()[0].getSelection())
 				// console.log(section);
-				$(section).css({'box-shadow':'0'})
+				$(section).css({'box-shadow':'none'})
 			}
 		})
 		
@@ -886,7 +888,7 @@ $(document).ready(function(){
 		setTimeout(function(){
 			textBody.on('mouseenter','section',function(){
 				$('.edit_section_btn').css({'opacity':'.3'})
-				$(this).css({'box-shadow':'0'})
+				$(this).css({'box-shadow':'none'})
 				if (!($(this).attr('id') == 'dummy')){
 					$(this).attr('hovering','1');
 					var top = $(this).offset().top + $('iframe').offset().top + 10
@@ -897,7 +899,7 @@ $(document).ready(function(){
 				setTimeout(function(){
 					if (!($('.edit_section_btn').attr('hovered') == '1')){
 						$(that).attr('hovering','0');
-						$(that).css('box-shadow','0');
+						$(that).css('box-shadow','none');
 					}
 					// $('.edit_section_btn').css({'opacity':'0'})
 				},2)
@@ -908,7 +910,7 @@ $(document).ready(function(){
 			if (!($('.details_panel').attr('opened') =='1')) {
 				var section = getHoveringSection();
 				boldChoiceButtons(section);
-				$(section).css('box-shadow','0');
+				$(section).css('box-shadow','none');
 				$('.details_title').html('editing section');
 
 				$('.details_panel').attr('opened','1');
@@ -1182,7 +1184,7 @@ $(document).ready(function(){
 		$('.edit-title').css({'opacity':'1'})
 		$('.author_link_wrapper').css({'opacity':'.2'})
 		$('.post-date-left').css({'opacity':'.3'})
-		$('.circle-divider').css({'width':'65%'})
+		$('.circle-divider').css({'width':'100%'})
 		$($('.circle-divider')[1]).css({'margin-top':'-5px'})
 		setTimeout(function(){
 			$('.edit-title').autosize();
@@ -1230,7 +1232,7 @@ $(document).ready(function(){
 		$('.footer_name').css({'color': lastSectionColor, 'border':'3px solid '+lastSectionColor })
 
 		//transition effects
-		$('.post_title').css({'margin-top':'75px', 'opacity':'1'})
+		$('.post_title').css({'margin-top':'50px', 'opacity':'1'})
 		$('.author_link_wrapper').css({'opacity':'.2'})
 		$('.post-date-left').css({'opacity':'.3'})
 		$('.circle-divider').css({'width':'65%'})
