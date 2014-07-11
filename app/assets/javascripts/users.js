@@ -38,6 +38,22 @@ function createConfirmBox(button, method){
 	$('.confirm-box').css({'left':left,'top':top})
 }
 
+function saveProfilePic(link){
+	var username = $('.page_identifier').attr('data-username');
+	$.post('/'+username+'/update_pic',{
+		link: link
+	}, function(response){
+		if (response['yes'] == '1'){
+			$('.save_success').attr('style','display:block;')
+			$('.save_success').html('saved!')
+
+			setTimeout(function(){
+				$('.save_success').hide();
+			}, 1000)
+		}
+	})
+}
+
 
 //this is for the user show page
 $(document).ready(function(){
@@ -262,6 +278,7 @@ $(document).ready(function(){
 			// $('.post_list_header').css({'opacity':'0'})
 			$('.batman_toolbelt').attr('class','batman_toolbelt view_mode')
 			$('.bio_text').attr('contentEditable','false')
+			$('.change_pic_btn').fadeOut(200);
 
 			setTimeout(function(){
 				$('.view-count').hide()
@@ -288,6 +305,7 @@ $(document).ready(function(){
 			$('.delete_button').attr('style','')
 			$('.archive').css({'border-top':'0px'});
 			$('.bio_text').attr('contentEditable','true')
+			$('.change_pic_btn').fadeIn(200);
 
 			setTimeout(function(){
 				$('.unpublished_list').css({'opacity':'1'})
@@ -309,6 +327,37 @@ $(document).ready(function(){
 			},10)
 		})
 
+		$('body').on('click','.change_pic_btn', function(e){
+			$('.image_getter').fadeIn(200);
+			$('.image_getter').css('top','50px')
+		})
+
+		$('body').on('click','.cancel_pic', function(e){
+			$('.image_getter').fadeOut(200);
+		})
+
+		$('.post_image_getter').keyup(function(){
+			var input = $(this).val()
+			if (input.length > 6){
+	    	$('#cover-pic').attr('src', input);
+	    	$(this).val('');
+				$('.image_getter').fadeOut(200);
+				saveProfilePic(input);
+			}
+		})
+
+		$('.cloudinary-fileupload').bind('cloudinarydone', function(e, data) {
+	  	$('.hidden_image_holder').html(
+	    	$.cloudinary.image(data.result.public_id, 
+	      { format: data.result.format, version: data.result.version})
+	    );
+	    var link = $('.hidden_image_holder img').attr('src');
+	    $('#cover-pic').attr('src', link);
+			$('.image_getter').fadeOut(200);
+			saveProfilePic(link);
+		  // return true;
+		});
+
 		$('.archive').css({'width': '570px'})
 		$('.new_post_input').css({'width': $('.archive').width()})
 
@@ -317,11 +366,6 @@ $(document).ready(function(){
 		} else {
 			$('.post_line').css({'width': '430px'})
 		}
-
-		// $('.new_post_input').focus();
-
-		// $('.cover-box').css({'width': $(document).width()})
-		// $('.cover-box img').css({'width': screen.width})
 		
 
     $('div[data-placeholder]').on('keydown keypress input', function() {

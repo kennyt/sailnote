@@ -11,7 +11,11 @@
 <% if current_user && @post.user == current_user %>
 	<div class="hidden_image_holder"></div>
 	<div class="post_text"></div>
-	<div class="post-date-left" style="display:none;"><%= @post.created_at.strftime("%-d %B %Y") %></div>
+	<% if @post.published %>
+		<div class="post-date-left"><%= @post.published_date.strftime("%-d %B %Y") %></div>
+	<% else %>
+		<div class="post-date-left"><%= @post.created_at.strftime("%-d %B %Y") %></div>
+	<% end %>
 	<%= form_for :post, url: post_path(@post), method: :put do |f| %>
 	  <div class="author_link_wrapper"><%= link_to @post.user.username, user_path(@post.user), class: 'author_link' %></div>
 	  <%= f.text_area :title, {class: 'edit-title', datatitle: @post.title.gsub(' ', '-'),  :placeholder => 'Title goes here.', data_author: @post.user.username, spellcheck: 'false'} %>
@@ -31,6 +35,7 @@
 				</div>
 			</div>
 	<% end %>
+	<!-- <div class="post_text" id="the_editor" contenteditable="true"></div> -->
 <% else %>
 	<% if @post.published_date.nil? %>
 	  <div class="author_link_wrapper"><%= link_to @post.user.username, user_path(@post.user), class: 'author_link' %></div>
@@ -77,36 +82,37 @@
 <% end %>
 
 <% if current_user && @post.user == current_user %>
-	<div class="edit_section_btn">
-		<span id="edit_section_text">edit section</span>
-	</div>
 	<div class="add_section">
 		<span id="add_section_text">add section</span>
-		<div class="details_panel">
-			<div class="detail_chooser">
-				<div class="chooser_title">Font Theme</div>
-				<div class="chooser_choice font_choice" id="classic_font" data-font="classic" data-choice="font" style="font-family:georgia, serif; font-size:22px">Classy</div>
-				<div class="chooser_choice font_choice" id="graceful_font" data-font="graceful" data-choice="font" style="font-family:open sans, sans-serif;font-size: 19px">Graceful</div>
-			</div>
-			<div class="detail_chooser">
-				<div class="chooser_title">Color Theme</div>
-				<div class="chooser_choice color_choice" id="color_white" data-color="white" data-choice="color"></div>
-				<div class="chooser_choice color_choice" id="color_lightgrey" data-color="lightgrey" data-choice="color"></div>
-				<div class="chooser_choice color_choice" id="color_lightblue" data-color="lightblue" data-choice="color"></div>
-				<div class="chooser_choice color_choice" id="color_slategrey" data-color="slategrey" data-choice="color"></div>
-				<div class="chooser_choice color_choice" id="color_black" data-color="black" data-choice="color"></div>
-				<div class="chooser_choice color_choice" id="color_darkblue" data-color="darkblue" data-choice="color"></div>
-				<div class="chooser_choice color_choice" id="color_darkred" data-color="darkred" data-choice="color"></div>
-				<div class="chooser_choice color_choice" id="color_darkpurple" data-color="darkpurple" data-choice="color"></div>
-				<div class="chooser_choice color_choice" id="color_darkteal" data-color="darkteal" data-choice="color"></div>
-				<div class="chooser_choice color_choice" id="color_image" data-color="image" data-choice="color"></div>
-			</div>
-			<div class="detail_chooser">
-				<div class="chooser_title">Layout Style</div>
-				<div class="chooser_choice panel_choice" id="left_panel" data-choice="panel" data-panel="left">Left</div>
-				<div class="chooser_choice panel_choice" id="center_panel" data-choice="panel" data-panel="center">Center</div>
-				<div class="chooser_choice panel_choice" id="right_panel" data-choice="panel" data-panel="right">Right</div>
-			</div>
+	</div>
+	<div class="edit_section_btn" title="edit section">
+		<!-- <span id="edit_section_text">edit section</span> -->
+	</div>
+	<div class="details_panel">
+		<div class="details_title"></div>
+		<div class="detail_chooser">
+			<div class="chooser_title">Font Theme</div>
+			<div class="chooser_choice font_choice" id="classic_font" data-font="classic" data-choice="font" style="font-family:georgia, serif; font-size:22px">Classy</div>
+			<div class="chooser_choice font_choice" id="graceful_font" data-font="graceful" data-choice="font" style="font-family:open sans, sans-serif;font-size: 19px">Graceful</div>
+		</div>
+		<div class="detail_chooser">
+			<div class="chooser_title">Color Theme</div>
+			<div class="chooser_choice color_choice" id="color_white" data-color="white" data-choice="color"></div>
+			<div class="chooser_choice color_choice" id="color_lightgrey" data-color="lightgrey" data-choice="color"></div>
+			<div class="chooser_choice color_choice" id="color_lightblue" data-color="lightblue" data-choice="color"></div>
+			<div class="chooser_choice color_choice" id="color_slategrey" data-color="slategrey" data-choice="color"></div>
+			<div class="chooser_choice color_choice" id="color_black" data-color="black" data-choice="color"></div>
+			<div class="chooser_choice color_choice" id="color_darkblue" data-color="darkblue" data-choice="color"></div>
+			<div class="chooser_choice color_choice" id="color_darkred" data-color="darkred" data-choice="color"></div>
+			<div class="chooser_choice color_choice" id="color_darkpurple" data-color="darkpurple" data-choice="color"></div>
+			<div class="chooser_choice color_choice" id="color_darkteal" data-color="darkteal" data-choice="color"></div>
+			<div class="chooser_choice color_choice" id="color_image" data-color="image" data-choice="color"></div>
+		</div>
+		<div class="detail_chooser">
+			<div class="chooser_title">Layout Style</div>
+			<div class="chooser_choice panel_choice" id="left_panel" data-choice="panel" data-panel="left">Left</div>
+			<div class="chooser_choice panel_choice" id="center_panel" data-choice="panel" data-panel="center">Center</div>
+			<div class="chooser_choice panel_choice" id="right_panel" data-choice="panel" data-panel="right">Right</div>
 		</div>
 	</div>
 <% end %>

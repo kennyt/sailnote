@@ -58,6 +58,23 @@
 function css(a) {
     var sheets = document.styleSheets, o = {};
     for (var i in sheets) {
+		    try {
+			    // In Chrome, if stylesheet originates from a different domain,
+			    // ss.cssRules simply won't exist. I believe the same is true for IE, but
+			    // I haven't tested it.
+			    //
+			    // In Firefox, if stylesheet originates from a different domain, trying
+			    // to access ss.cssRules will throw a SecurityError. Hence, we must use
+			    // try/catch to detect this condition in Firefox.
+			    if(!sheets[i].cssRules)
+			      return;
+			  } catch(e) {
+			    // Rethrow exception if it's not a SecurityError. Note that SecurityError
+			    // exception is specific to Firefox.
+			    if(e.name !== 'SecurityError')
+			      throw e;
+			    return;
+			  }
         var rules = sheets[i].rules || sheets[i].cssRules;
         for (var r in rules) {
             if (a.is(rules[r].selectorText)) {

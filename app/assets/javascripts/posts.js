@@ -5,10 +5,20 @@
 function autoSetEditorHeight(){
 	var beforeScrollTop = $(document).scrollTop();
 	var lastChild = $($('iframe').contents().find('body').children()[$('iframe').contents().find('body').children().length - 1])
+	var sixtyDocHeight = ($(document).height() * 6) / 10
 	if ($('iframe').contents().find('body').children().length > 0){
-		$('iframe').height(lastChild.offset().top + lastChild.height() + 70)
+		var newHeight = lastChild.offset().top + lastChild.height() + 70;
+		if (newHeight > sixtyDocHeight){
+			$('iframe').height(newHeight)
+		} else {
+			$('iframe').height(sixtyDocHeight)
+		}
 	} else {
-		$('iframe').height($('iframe').contents().height())
+		var newHeight = $('iframe').contents().height();
+		if (newHeight > sixtyDocHeight){
+			$('iframe').height(newHeight)
+		}
+		$('iframe').height(newHeight);
 	}
 	setTimeout(function(){
 		$(document).scrollTop(beforeScrollTop)
@@ -21,7 +31,7 @@ function setBlockquoteTop (ele, beforeTop){
 		$(ele).css({'top':beforeTop});
 		var catchSafe = 0
 		while(checkOverlap(ele, parent)){
-			$(ele).css({'top': $(ele).offset().top + 10})
+			$(ele).css({'top': $(ele).css('top') + 10})
 			catchSafe += 1
 			if (catchSafe == 400) {
 				break
@@ -47,7 +57,7 @@ function checkOverlap (ele, parent){
 }
 
 function getSectionParent(selection){
-	var parent = selection.anchorNode;
+	var parent = selection.anchorNode || selection
 	var catchSafe = 0;
 	while(!($(parent).is('section'))){
 		if (parent == null){
@@ -63,6 +73,40 @@ function getSectionParent(selection){
 	return parent;
 }
 
+function getElementFromSelection(elType){
+	var selection = $('iframe').contents()[0].getSelection()
+	var element = selection.anchorNode || selection;
+	var catchSafe = 0;
+	while (!(element.nodeName == elType)){
+		if (element == null){
+			break
+		} else {
+			element = element.parentNode
+			if (catchSafe > 5){
+				break;
+			}
+			catchSafe += 1
+		}
+	}
+	return element
+}
+
+function getTopElement(){
+	var selection = $('iframe').contents()[0].getSelection();
+	var prevEl;
+	var ele = selection.anchorNode || selection;
+	var catchSafe = 0;
+	while (!($(ele).is('section'))){
+		prevEl = ele;
+		ele = ele.parentNode
+		if (catchSafe > 5){
+			break;
+		}
+		catchSafe += 1
+	}
+	return prevEl;
+}
+	
 function boldChoiceButtons(section){
 	var classes = $(section).attr('class').split(' ')
 	$.each($('.outlined'), function(i, ele){
@@ -85,6 +129,81 @@ function boldChoiceButtons(section){
 			$('#graceful_font').addClass('outlined');
 		}
 	})
+}
+
+function flattenChildNodes(){
+	var sections = $('iframe').contents().find('section');
+	$.each(sections, function(i, section){
+		var children = $(section).children()
+		$.each(children, function(i, child){
+			var onlyBr = ($(child).children().length == 1) && $(child).children().is('br') && !($(child).is('figure'))
+			if ( ($(child).children().length > 0) || onlyBr ){
+				// var replacer = []
+				// $.each($(child).children(), function(i, lowerChild){
+				// 	if (lowerChild.nodeName == '#text'){
+				// 		var newDiv = $('<div>').html(lowerChild)
+				// 		replacer.push(newDiv)
+				// 	} else {
+				// 		replacer.push(lowerChild)
+				// 	}
+				// })
+				$(child).replaceWith($(child).html())
+				$.each($(section).contents(), function(i, lowerChild){
+					if ((lowerChild.nodeName == '#text')) {
+						$(lowerChild).replaceWith('<div>'+lowerChild+'</div>');
+					}
+				})
+			}
+		})
+	})
+}
+
+function resetStyles(){
+	var sections = $('iframe').contents().find('section');
+	$.each(sections, function(i, section){
+		if (!($(section).attr('class').indexOf('color_image') > -1)){
+			$(section).attr('style','');
+		}
+		var children = $(section).children()
+		$.each(children, function(i, child){
+			if (!($(child).is('blockquote') || $(child).is('figure'))){
+				$(child).attr('style','');
+			}
+		})
+	})
+}
+
+function getHoveringSection(){
+	var sections = $('iframe').contents().find('section');
+	var section = false;
+	$.each(sections, function(i, checkSection){
+		if ($(checkSection).attr('hovering') == '1'){
+			section = checkSection;
+		}
+	})
+	return section;
+}
+
+function createImage(that){
+	var prevTop = $($('iframe').contents()[0].getSelection().anchorNode.parentNode).offset().top
+	var newImg = $('<img>').attr('src', $(that).data("argument"))
+	var newFigure = $('<figure>').html(newImg)
+	var section = getSectionParent($('iframe').contents()[0].getSelection());
+
+	if (!($(section).attr('class').indexOf('text_center_panel') > -1)){
+		$(section).prepend(newFigure.css({'top':prevTop})[0])
+	} else {
+		$($('iframe').contents()[0].getSelection().anchorNode).replaceWith(newFigure);
+	}
+
+	newFigure = newFigure[0]
+	var s = $('iframe')[0].contentWindow.getSelection(),
+	    r = $('iframe').contents()[0].createRange();
+	r.setStart(newFigure, 0);
+	r.setEnd(newFigure, 0);
+	r.collapse();
+	s.removeAllRanges();
+	s.addRange(r);
 }
 
 //text_editor code. runs on every page with the class .edit-box
@@ -171,40 +290,41 @@ $(document).ready(function(){
 				   var sectionStyle = 'section{width: 100%; padding-top: 50px; padding-bottom:30px;position:relative; min-height: 90px;}'
 				   var moverStyle = '.mover{position: absolute;top: 0px;right: 0px;height: 20px;width: 20px !important;background: blue; cursor:pointer;}'
 				   var stretcherStyle = '.stretcher{position: absolute;bottom: 50%;left: 0px;height: 20px;margin:0px !important;width: 20px !important;background: red; cursor:pointer;}'
+				   var pStyle = 'p{margin-top: 33px; margin-bottom: 33px;}'
 
 
 
-				   var text_left_panelStyle = '.text_left_panel div, .text_left_panel h1{ margin-left:9%; max-width:40%; width: 625px;} .text_left_panel blockquote, .text_left_panel .pullquote{right:7%; max-width:30%; width: 535px; float:right; padding-left: 20px; padding-right:20px; position: absolute; margin: 0px;} .text_left_panel h1{text-align:center;margin-bottom:15px; margin-top: 30px;} .text_left_panel figure {right:7%; max-width:50%; float:right; padding:0px; position: absolute; margin: 0px;} .text_left_panel img {width: 100%;} .text_left_panel blockquote{line-height:1.4; padding:20px;} .text_left_panel .pullquote{border:0px;font-style:italic;}'
-				   var text_center_panelStyle = '.text_center_panel div{width: 625px;margin-left:auto;margin-right:auto;} .text_center_panel figure{text-align: center;} .text_center_panel h1{text-align:center; margin-bottom:15px; margin-top: 30px;} .text_center_panel blockquote{position: relative;top:0px !important;margin:30px; margin-left: auto;margin-right: auto;padding:20px; font-size: 20px; line-height: 1.4;  width:625px;} .text_center_panel .pullquote{width: 70%;margin-left: 12%; border-top: 0px solid black; border-bottom: 0px solid black;padding-right: 40px;padding-left:40px; text-align: center; font-size: 35px; font-style:italic; margin-bottom: 5px; margin-top: 5px;}'
-				   var text_right_panelStyle= '.text_right_panel div, .text_right_panel h1{ margin-left:51%; max-width:40%; width: 625px;} .text_right_panel blockquote, .text_right_panel .pullquote{right:63%; max-width:30%; width: 535px; float:left; padding-left: 20px; padding-right:20px; position: absolute; margin: 0px;color:#95a5a6;} .text_right_panel h1{text-align:center;margin-bottom:15px; margin-top: 30px;} .text_right_panel figure {right:50%; max-width:50%; float:left; padding:0px; position: absolute; margin: 0px;} .text_right_panel img {width: 100%;} .text_right_panel blockquote{line-height:1.4; padding:20px;} .text_right_panel .pullquote{border:0px;font-style:italic; text-align: center;}'
+				   var text_left_panelStyle = '.text_left_panel div, .text_left_panel p, .text_left_panel h1{ margin-left:9%; max-width:40%; width: 625px;} .text_left_panel blockquote, .text_left_panel .pullquote{right:7%; max-width:30%; width: 535px; float:right; padding-left: 20px; padding-right:20px; position: absolute; margin: 0px;} .text_left_panel h1{text-align:center;margin-bottom:15px; margin-top: 30px;} .text_left_panel figure {right:7%; max-width:50%; float:right; padding:0px; position: absolute; margin: 0px;} .text_left_panel img {width: 100%;} .text_left_panel blockquote{line-height:1.4; padding:20px;} .text_left_panel .pullquote{border:0px;font-style:italic;}'
+				   var text_center_panelStyle = '.text_center_panel div, .text_center_panel p {width: 625px;margin-left:auto;margin-right:auto;} .text_center_panel figure{text-align: center;} .text_center_panel h1{text-align:center; margin-bottom:15px; margin-top: 30px;} .text_center_panel blockquote{position: relative;top:0px !important;margin:30px; margin-left: auto;margin-right: auto;padding:20px; font-size: 20px; line-height: 1.4;  width:625px;} .text_center_panel .pullquote{width: 70%;margin-left: 12%; border-top: 0px solid black; border-bottom: 0px solid black;padding-right: 40px;padding-left:40px; text-align: center; font-size: 35px; font-style:italic; margin-bottom: 5px; margin-top: 5px;}'
+				   var text_right_panelStyle= '.text_right_panel div, .text_right_panel p, .text_right_panel h1{ margin-left:51%; max-width:40%; width: 625px;} .text_right_panel blockquote, .text_right_panel .pullquote{right:63%; max-width:30%; width: 535px; float:left; padding-left: 20px; padding-right:20px; position: absolute; margin: 0px;color:#95a5a6;} .text_right_panel h1{text-align:center;margin-bottom:15px; margin-top: 30px;} .text_right_panel figure {right:50%; max-width:50%; float:left; padding:0px; position: absolute; margin: 0px;} .text_right_panel img {width: 100%;} .text_right_panel blockquote{line-height:1.4; padding:20px;} .text_right_panel .pullquote{border:0px;font-style:italic; text-align: center;}'
 
 
-				   var graceful_fontStyle = '.graceful_font div{font-family:source sans pro, sans-serif; font-size: 21px; letter-spacing:-0.005em;} .graceful_font blockquote{font-family: georgia,times new roman, times, serif; font-size: 20px;} .graceful_font h1 {font-family:georgia,times new roman, times, serif; font-size: 2.2em;line-height:1.3;} .graceful_font .pullquote{font-family: georgia,times new roman, times, serif; font-size: 35px;}'
-				   var classic_fontStyle = '.classic_font {font-family:georgia; font-size: 20px; } .classic_font blockquote{font-family:source sans pro; font-size:18px;} .classic_font h1{font-family:source sans pro; font-size:2.5em;line-height:1.3;}.classic_font .pullquote{font-family:source sans pro; font-size: 35px;}'
+				   var graceful_fontStyle = '.graceful_font div, .graceful_font p{font-family:source sans pro, sans-serif; font-size: 21px;} .graceful_font blockquote{font-family: georgia,times new roman, times, serif; font-size: 20px;} .graceful_font h1 {font-family:georgia,times new roman, times, serif; font-size: 2.2em;line-height:1.3;} .graceful_font .pullquote{font-family: georgia,times new roman, times, serif; font-size: 35px;}'
+				   var classic_fontStyle = '.classic_font div, .classic_font p {font-family:georgia; font-size: 20px; } .classic_font blockquote{font-family:source sans pro; font-size:18px;} .classic_font h1{font-family:source sans pro; font-size:2.5em;line-height:1.3;}.classic_font .pullquote{font-family:source sans pro; font-size: 35px;}'
 
-				   var color_whiteStyle = '.color_white {background: white;} .color_white div, .color_white h1{ color: #383838; } .color_white blockquote{color: #7f8c8d; border-top: 8px solid #bdc3c7;border-bottom: 8px solid #bdc3c7;} .color_white .pullquote{border: 0px;} .color_white .text_link{text-decoration:none; border-bottom:1px solid #2980b9;color:#202020;} .color_white .text_link:link {color:#202020;border-bottom: 1px solid #202020;} .color_white .text_link:visited {color:#202020;border-bottom: 1px solid #202020;} .color_white .text_link:active {color:red;}'
+				   var color_whiteStyle = '.color_white {background: white;} .color_white div, .color_white p, .color_white h1{ color: #383838; } .color_white blockquote{color: #7f8c8d; border-top: 8px solid #bdc3c7;border-bottom: 8px solid #bdc3c7;} .color_white .pullquote{border: 0px;} .color_white .text_link{text-decoration:none; border-bottom:1px solid #2980b9;color:#202020;} .color_white .text_link:link {color:#202020;border-bottom: 1px solid #202020;} .color_white .text_link:visited {color:#202020;border-bottom: 1px solid #202020;} .color_white .text_link:active {color:red;}'
 
-				   var color_lightgreyStyle = '.color_lightgrey {background: rgb(246, 246, 239); color: black} .color_lightgrey div, .color_lightgrey h1 { color: black; } .color_lightgrey blockquote {color:#7f8c8d; border-top: 8px solid #7f8c8d;border-bottom: 8px solid #7f8c8d;} .color_lightgrey .text_link{text-decoration:none; border-bottom:1px solid #2980b9;color:#202020;} .color_lightgrey .text_link:link {color:#202020;border-bottom: 1px solid #202020;} .color_lightgrey .text_link:visited {color:#202020;border-bottom: 1px solid #202020;} .color_lightgrey .text_link:active {color:red;}' 
+				   var color_lightgreyStyle = '.color_lightgrey {background: rgb(246, 246, 239); color: black} .color_lightgrey div, .color_lightgrey p, .color_lightgrey h1 { color: black; } .color_lightgrey blockquote {color:#7f8c8d; border-top: 8px solid #7f8c8d;border-bottom: 8px solid #7f8c8d;} .color_lightgrey .text_link{text-decoration:none; border-bottom:1px solid #2980b9;color:#202020;} .color_lightgrey .text_link:link {color:#202020;border-bottom: 1px solid #202020;} .color_lightgrey .text_link:visited {color:#202020;border-bottom: 1px solid #202020;} .color_lightgrey .text_link:active {color:red;}' 
 
-				   var color_lightblueStyle = '.color_lightblue {background: #ecf0f1; color: black} .color_lightblue div, .color_lightblue h1 { color: black; } .color_lightblue blockquote {color:#7f8c8d; border-top: 8px solid #7f8c8d;border-bottom: 8px solid #7f8c8d;} .color_lightblue .text_link{text-decoration:none; border-bottom:1px solid #2980b9;color:#202020;} .color_lightblue .text_link:link {color:#202020;border-bottom: 1px solid #202020;} .color_lightblue .text_link:visited {color:#202020;border-bottom: 1px solid #202020;} .color_lightblue .text_link:active {color:red;}'
+				   var color_lightblueStyle = '.color_lightblue {background: #ecf0f1; color: black} .color_lightblue div, .color_lightblue p, .color_lightblue h1 { color: black; } .color_lightblue blockquote {color:#7f8c8d; border-top: 8px solid #7f8c8d;border-bottom: 8px solid #7f8c8d;} .color_lightblue .text_link{text-decoration:none; border-bottom:1px solid #2980b9;color:#202020;} .color_lightblue .text_link:link {color:#202020;border-bottom: 1px solid #202020;} .color_lightblue .text_link:visited {color:#202020;border-bottom: 1px solid #202020;} .color_lightblue .text_link:active {color:red;}'
 
-				   var color_slategreyStyle = '.color_slategrey {background: #708090;} .color_slategrey div {color: white} .color_slategrey h1 { color: white; } .color_slategrey blockquote {color:#bdc3c7; border-top: 8px solid #A0A0A0;border-bottom: 8px solid #A0A0A0;} .color_slategrey .text_link{text-decoration:none; border-bottom:1px solid white;color:white;} .color_slategrey .text_link:link {color:white;border-bottom: 1px solid white;} .color_slategrey .text_link:visited {color:white;border-bottom: 1px solid white;} .color_slategrey .text_link:active {color:red;}'
+				   var color_slategreyStyle = '.color_slategrey {background: #708090;} .color_slategrey div, .color_slategrey p {color: white} .color_slategrey h1 { color: white; } .color_slategrey blockquote {color:#bdc3c7; border-top: 8px solid #A0A0A0;border-bottom: 8px solid #A0A0A0;} .color_slategrey .text_link{text-decoration:none; border-bottom:1px solid white;color:white;} .color_slategrey .text_link:link {color:white;border-bottom: 1px solid white;} .color_slategrey .text_link:visited {color:white;border-bottom: 1px solid white;} .color_slategrey .text_link:active {color:red;}'
 
-				   var color_blackStyle = '.color_black {background: #181818;} .color_black div {color: white} .color_black h1 { color: white; } .color_black blockquote {color:#909090; border-top: 8px solid #A0A0A0;border-bottom: 8px solid #A0A0A0;} .color_black .text_link{text-decoration:none; border-bottom:1px solid white;color:white;} .color_black .text_link:link {color:white;border-bottom: 1px solid white;} .color_black .text_link:visited {color:white;border-bottom: 1px solid white;} .color_black .text_link:active {color:red;}'
+				   var color_blackStyle = '.color_black {background: #181818;} .color_black div, .color_black p {color: white} .color_black h1 { color: white; } .color_black blockquote {color:#909090; border-top: 8px solid #A0A0A0;border-bottom: 8px solid #A0A0A0;} .color_black .text_link{text-decoration:none; border-bottom:1px solid white;color:white;} .color_black .text_link:link {color:white;border-bottom: 1px solid white;} .color_black .text_link:visited {color:white;border-bottom: 1px solid white;} .color_black .text_link:active {color:red;}'
 
-				   var color_darkblueStyle = '.color_darkblue {background: #2980b9;} .color_darkblue div {color: white} .color_darkblue h1 { color: white; } .color_darkblue blockquote {color:#ADD8E6; border-top: 8px solid #87CEFA;border-bottom: 8px solid #87CEFA;} .color_darkblue .text_link{text-decoration:none; border-bottom:1px solid white;color:white;} .color_darkblue .text_link:link {color:white;border-bottom: 1px solid white;} .color_darkblue .text_link:visited {opacity: .5;} .color_darkblue .text_link:active {color:red;}'
+				   var color_darkblueStyle = '.color_darkblue {background: #2980b9;} .color_darkblue div, .color_darkblue p {color: white} .color_darkblue h1 { color: white; } .color_darkblue blockquote {color:#ADD8E6; border-top: 8px solid #87CEFA;border-bottom: 8px solid #87CEFA;} .color_darkblue .text_link{text-decoration:none; border-bottom:1px solid white;color:white;} .color_darkblue .text_link:link {color:white;border-bottom: 1px solid white;} .color_darkblue .text_link:visited {opacity: .5;} .color_darkblue .text_link:active {color:red;}'
 
-				   var color_darkredStyle = '.color_darkred {background: #c0392b;} .color_darkred div {color: white} .color_darkred h1 { color: white; } .color_darkred blockquote {color:#FFA07A; border-top: 8px solid #E9967A;border-bottom: 8px solid #E9967A;} .color_darkred .text_link{text-decoration:none; border-bottom:1px solid white;color:white;} .color_darkred .text_link:link {color:white;border-bottom: 1px solid white;} .color_darkred .text_link:visited {opacity: .5;} .color_darkred .text_link:active {color:red;}'
+				   var color_darkredStyle = '.color_darkred {background: #c0392b;} .color_darkred div, .color_darkred p {color: white} .color_darkred h1 { color: white; } .color_darkred blockquote {color:#FFA07A; border-top: 8px solid #E9967A;border-bottom: 8px solid #E9967A;} .color_darkred .text_link{text-decoration:none; border-bottom:1px solid white;color:white;} .color_darkred .text_link:link {color:white;border-bottom: 1px solid white;} .color_darkred .text_link:visited {opacity: .5;} .color_darkred .text_link:active {color:red;}'
 
-				   var color_darkpurpleStyle = '.color_darkpurple {background: #8e44ad;} .color_darkpurple div {color: white} .color_darkpurple h1 { color: white; } .color_darkpurple blockquote {color:#D8BFD8; border-top: 8px solid #DDA0DD;border-bottom: 8px solid #DDA0DD;} .color_darkpurple .text_link{text-decoration:none; border-bottom:1px solid white;color:white;} .color_darkpurple .text_link:link {color:white;border-bottom: 1px solid white;} .color_darkpurple .text_link:visited {opacity: .5;} .color_darkpurple .text_link:active {color:red;}'
+				   var color_darkpurpleStyle = '.color_darkpurple {background: #8e44ad;} .color_darkpurple div, .color_darkpurple p {color: white} .color_darkpurple h1 { color: white; } .color_darkpurple blockquote {color:#D8BFD8; border-top: 8px solid #DDA0DD;border-bottom: 8px solid #DDA0DD;} .color_darkpurple .text_link{text-decoration:none; border-bottom:1px solid white;color:white;} .color_darkpurple .text_link:link {color:white;border-bottom: 1px solid white;} .color_darkpurple .text_link:visited {opacity: .5;} .color_darkpurple .text_link:active {color:red;}'
 
-				   var color_darktealStyle = '.color_darkteal {background: #008080;} .color_darkteal div {color: white} .color_darkteal h1 { color: white; } .color_darkteal blockquote {color:#B0E0E6; border-top: 8px solid #87CEEB;border-bottom: 8px solid #87CEEB;} .color_darkteal .text_link{text-decoration:none; border-bottom:1px solid white;color:white;} .color_darkteal .text_link:link {color:white;border-bottom: 1px solid white;} .color_darkteal .text_link:visited {opacity: .5;} .color_darkteal .text_link:active {color:red;}'
+				   var color_darktealStyle = '.color_darkteal {background: #008080;} .color_darkteal div, .color_darkteal p {color: white} .color_darkteal h1 { color: white; } .color_darkteal blockquote {color:#B0E0E6; border-top: 8px solid #87CEEB;border-bottom: 8px solid #87CEEB;} .color_darkteal .text_link{text-decoration:none; border-bottom:1px solid white;color:white;} .color_darkteal .text_link:link {color:white;border-bottom: 1px solid white;} .color_darkteal .text_link:visited {opacity: .5;} .color_darkteal .text_link:active {color:red;}'
 
-				   var color_imageStyle = '.color_image {background: white;} .color_image div {color: inherit} .color_image h1 { color: inherit; } .color_image blockquote {color:grey; border-top: 8px solid grey;border-bottom: 8px solid grey;} .color_image .text_link{text-decoration:none; border-bottom:1px solid inherit;color:inherit;} .color_image .text_link:link {color:inherit;border-bottom: 1px solid inherit;} .color_image .text_link:visited {opacity: .5;} .color_image .text_link:active {color:red;}'
+				   var color_imageStyle = '.color_image {background: white;} .color_image div, .color_image p {color: inherit} .color_image h1 { color: inherit; } .color_image blockquote {color:grey; border-top: 8px solid grey;border-bottom: 8px solid grey;} .color_image .text_link{text-decoration:none; border-bottom:1px solid inherit;color:inherit;} .color_image .text_link:link {color:inherit;border-bottom: 1px solid inherit;} .color_image .text_link:visited {opacity: .5;} .color_image .text_link:active {color:red;}'
 
 
 				   $('iframe').contents().find('body').attr('spellcheck','false')
-					 $('iframe').contents().find('head').append($('<style>').html(importFont+textLinkStyle+selectionStyle+sectionStyle+classic_fontStyle+graceful_fontStyle+text_center_panelStyle+text_left_panelStyle+text_right_panelStyle+color_whiteStyle+color_lightgreyStyle+color_lightblueStyle+color_blackStyle+color_slategreyStyle+color_darkblueStyle+color_darkredStyle+color_darkpurpleStyle+color_darktealStyle+color_imageStyle+moverStyle+stretcherStyle))
+					 $('iframe').contents().find('head').append($('<style>').html(importFont+pStyle+textLinkStyle+selectionStyle+sectionStyle+classic_fontStyle+graceful_fontStyle+text_center_panelStyle+text_left_panelStyle+text_right_panelStyle+color_whiteStyle+color_lightgreyStyle+color_lightblueStyle+color_blackStyle+color_slategreyStyle+color_darkblueStyle+color_darkredStyle+color_darkpurpleStyle+color_darktealStyle+color_imageStyle+moverStyle+stretcherStyle))
 					var buttonPane = $("<div/>",{
 					    "class" : "editor-btns"
 					}).prependTo($('body'));
@@ -232,11 +352,12 @@ $(document).ready(function(){
 					var btnImage = $("<a/>",{
 						"class": "image-btn",
 					    href : "#",
-					    text : "add image",
+					    text : "",
 					    data : {
 					        commandName : "insertImage",
 					        argument : ""
 					    },
+					    title : 'add image',
 					    click : getImageLink 
 					}).appendTo($('body'));
 
@@ -269,7 +390,7 @@ $(document).ready(function(){
 					    data : {
 					        commandName : "formatBlock",
 					        argument: "<BLOCKQUOTE>",
-					        type: "normal"
+					        type: ""
 					    },
 					    click : execCommand
 					}).appendTo(buttonPane);
@@ -286,16 +407,14 @@ $(document).ready(function(){
 					    click : execCommand
 					}).appendTo(buttonPane);
 
-					// $('iframe').contents().find('body').attr('style','background:white;width:620px;margin:0px;padding-left:75px;padding-right:75px;font-family:"open sans";font-size:18px;line-height:1.45;word-wrap:break-word; border:0px;-webkit-font-smoothing: antialiased;-webkit-text-stroke-width: .2px;-webkit-text-stroke-color: #2c3e50;height:'+$('iframe').contents().height()+';')
-					$('iframe').contents().find('body').css(css($('.post_text')))
-					$('iframe').contents().find('body').css({'border':'0px', 'padding':'0px', 'margin':'0px', 'width':'100%'})
-					// $('iframe').after('<div class="below-edit-border"></div>')
-					// $('.share_buttons').appendTo($('.txt_editor'))
-					// $('.end_post_archive').appendTo($('.txt_editor'))
-					// $('.txt_editor').css({height: settings.height})
-					// $('.txt_editor').css({left: (screen.width - 700)/2})
-					// $('.txt_editor').css({left: $('.edit-title').offset().left - 75})
+
+					// $('iframe').contents().find('body').css(css($('.post_text')))
+					$('iframe').contents().find('body').css({'border':'0px', 'padding':'0px', 'margin':'0px', 'width':'100%', 'font-size': '21px','line-height': '1.6','word-wrap':'break-word'})
 					$('.editor-btns').css({left: $('iframe').offset().left - 30})
+
+					editor.contentWindow.document.execCommand("insertBrOnReturn", false, false)
+					editor.contentWindow.document.execCommand('defaultParagraphSeparator', false, 'p')
+
 
 					function execCommand (e) {
 						if (e){
@@ -304,38 +423,83 @@ $(document).ready(function(){
 
 						var beforeFormat;
 						var beforeTop;
+						var changed = false;
+
+					  var contentWindow = editor.contentWindow;
 						$('iframe').contents().find('.mover').remove();
 						$('iframe').contents().find('.stretcher').remove();
 
 						if ($(this).data("commandName") == "formatBlock"){
-				    	beforeFormat = $('iframe').contents()[0].getSelection().baseNode.parentNode
+				    	beforeFormat = $($('iframe').contents()[0].getSelection().anchorNode.parentNode)
+				    	if ($(beforeFormat).is('section')){
+				    		beforeFormat = $($('iframe').contents()[0].getSelection().anchorNode)
+				    	}
 				    	beforeClass = $(beforeFormat).attr('class')
-				    	beforeTop = $(getSectionParent($('iframe').contents()[0].getSelection())).offset().top - $($('iframe').contents()[0].getSelection().baseNode.parentNode).offset().top
+				    	beforeTop =  $($('iframe').contents()[0].getSelection().anchorNode.parentNode).offset().top - $(getSectionParent($('iframe').contents()[0].getSelection())).offset().top
 				    }
 
 				    if ($(this).data("commandName") == "insertImage"){
-				    	var prevTop = $($('iframe').contents()[0].getSelection().baseNode.parentNode).offset().top
-				    	var newFigure = $('<figure>').html('<br>')
-				    	var section = getSectionParent($('iframe').contents()[0].getSelection());
+				    	createImage(this);
+				    } else {
+				    	if ($(this).data("commandName") == "formatBlock"){
 
-				    	if (!($(section).attr('class').indexOf('text_center_panel') > -1)){
-			    			$(section).prepend(newFigure.css({'top':prevTop})[0])
+				    		if ($(this).data("argument") == "<BLOCKQUOTE>"){
+
+					    		if ($(beforeFormat)[0].nodeName == 'BLOCKQUOTE' || $(beforeFormat)[0].nodeName == 'H1'){
+
+					    			if ($(beforeFormat).attr('class') == undefined){
+					    				$(beforeFormat).attr('class','');
+					    			}
+
+					    			if ($(beforeFormat).attr('class') == $(this).data("type") && !($(beforeFormat)[0].nodeName == 'H1')){
+						    			$(beforeFormat).attr('style','');
+						    			var newP = $('<p>').html($(beforeFormat).html())
+							    		$(beforeFormat).replaceWith(newP)
+							    		beforeFormat = newP
+					    			} else {
+						    			var newBlock = $('<blockquote>').html($(beforeFormat).html())
+						    			$(newBlock).attr('class', $(this).data("type"))
+					    				$(beforeFormat).replaceWith(newBlock)
+					    				beforeFormat = newBlock
+					    			}
+					    		} else {
+					    			console.log('zen')
+								    contentWindow.focus();
+								    contentWindow.document.execCommand($(this).data("commandName"), false, $(this).data("argument") || "");
+								    contentWindow.focus();
+								    beforeFormat = getElementFromSelection('BLOCKQUOTE')
+						    		$(beforeFormat).attr('class', $(this).data("type"))
+						    		// console.log(beforeFormat)
+					    			changed = true;
+						    	}
+				    		
+				    		} else {
+				    			if ($(beforeFormat)[0].nodeName == "H1"){
+					    			console.log('inhere');
+								    contentWindow.focus();
+				    				contentWindow.document.execCommand('formatBlock', false, 'p')
+								    contentWindow.focus();
+								    beforeFormat = getElementFromSelection('P')
+				    			} else {
+				    				if ($(beforeFormat)[0].nodeName == "BLOCKQUOTE"){
+				    					var newH1 = $('<h1>').html($(beforeFormat).html())
+					    				$(beforeFormat).replaceWith(newH1)
+					    				beforeFormat = newH1
+				    				} else {
+									    contentWindow.focus();
+									    contentWindow.document.execCommand($(this).data("commandName"), false, $(this).data("argument") || "");
+									    contentWindow.focus();
+									    beforeFormat = getElementFromSelection('H1')
+				    				}
+				    			}
+				    		}
 				    	} else {
-				    		$($('iframe').contents()[0].getSelection().baseNode).replaceWith(newFigure);
+						    contentWindow.focus();
+						    contentWindow.document.execCommand($(this).data("commandName"), false, $(this).data("argument") || "");
+						    contentWindow.focus();
 				    	}
-				    	newFigure = newFigure[0]
-			    		var s = window.getSelection(),
-							    r = document.createRange();
-							r.setStart(newFigure, 0);
-							r.setEnd(newFigure, 0);
-							s.removeAllRanges();
-							s.addRange(r);
-				    }
 
-				    var contentWindow = editor.contentWindow;
-				    contentWindow.focus();
-				    contentWindow.document.execCommand($(this).data("commandName"), false, $(this).data("argument") || "");
-				    contentWindow.focus();
+				    }
 
 				    if ($(this).data("commandName") == "insertImage"){
 				    	setTimeout(function(){
@@ -346,11 +510,26 @@ $(document).ready(function(){
 				    }
 
 				    if ($(this).data("commandName") == "formatBlock"){
-				    	var ele = $('iframe').contents()[0].getSelection().baseNode.parentNode
-				    	if ($(ele).is('section')){
-				    		ele = $('iframe').contents()[0].getSelection().baseNode
+				    	var ele = $('iframe').contents()[0].getSelection().anchorNode.parentNode
+				    	if ($(ele).is('section') || $(ele).is('body')){
+				    		ele = $('iframe').contents()[0].getSelection().anchorNode
 				    	}
-				    	if ($(this).data("argument") == "<BLOCKQUOTE>"){
+
+
+				    	if ($(this).data("argument") == "<BLOCKQUOTE>" && changed && document.queryCommandSupported('insertBrOnReturn')){
+				    		console.log(beforeFormat.parentNode)
+				    		var newFormat = beforeFormat.parentNode
+				    		console.log(newFormat)
+				    		// console.log(newFormat)
+				    		if (!($(newFormat).is('section'))){
+					    		$(newFormat).html($(beforeFormat).html())
+					    		beforeFormat = newFormat
+				    		} else {
+				    			$.each($(beforeFormat).find('p'), function(i, childP){
+				    				$(childP).replaceWith($(childP).html())
+				    			})
+				    		}
+
 				    		if ($(this).data("type") == "pullquote"){
 				    			$(ele).attr('class','pullquote')
 				    		} else {
@@ -358,12 +537,34 @@ $(document).ready(function(){
 				    		}
 				    	}
 
-				    	var afterFormat = ele
-				    	var afterClass = $(afterFormat).attr('class')
-				    	if ((beforeFormat == afterFormat) && (beforeClass == afterClass)){
-				    		$(ele).attr('style','');
-				    		contentWindow.document.execCommand('formatBlock', false, 'div')
+				    	// var afterFormat = ele
+				    	// var afterClass = $(afterFormat).attr('class')
+				    	// if (afterClass == undefined){
+				    	// 	afterClass = ''
+				    	// }
+				    	// if (beforeClass == undefined){
+				    	// 	beforeClass = ''
+				    	// }
+				    	// // console.log(beforeFormat)
+				    	// // console.log(afterFormat)
+
+				    	// console.log(beforeFormat);
+				    	if (beforeFormat.length == 1){
+				    		beforeFormat = beforeFormat[0]
 				    	}
+			    		var selection = contentWindow.getSelection();        
+			        var range = $('iframe').contents()[0].createRange();
+			        range.selectNodeContents(beforeFormat);
+			        selection.removeAllRanges();
+			        selection.addRange(range);
+				    	// if ((beforeFormat.nodeName == afterFormat.nodeName) && (beforeClass == afterClass)){
+
+				    	// 	console.log('hi')
+				    	// 	$(ele).attr('style','');
+				    	// 	var newP = $('<p>').html($(afterFormat).html())
+				    	// 	$(afterFormat).replaceWith(newP)
+				    	// 	// contentWindow.document.execCommand('formatBlock', false, 'p')
+				    	// }
 
 				    	if ($(ele).css('position') == 'absolute'){
 				    		setBlockquoteTop(ele, beforeTop);
@@ -385,7 +586,7 @@ $(document).ready(function(){
 								$('.post_image_getter').remove();
 							}
 						})
-						$('iframe').contents().find('body').focus(function(){
+						$('iframe').contents().find('body').on('click',function(){
 							$('.image_getter').fadeOut(200);
 						})
 						return false;
@@ -394,12 +595,12 @@ $(document).ready(function(){
 					function getLink(){
 						var that = this;
 						$('.editor-btns').append('<input class="text_link_getter" placeholder="link here. press enter when done"></input>');
-						// $('.text_link_getter').css({position: 'absolute', right: 1, width: 200, padding: '5px', top:70})
 						$('.text_link_getter').focus()
 						$('.text_link_getter').keydown(function(ev){
 							if (ev.keyCode == 13){
+								ev.preventDefault();
 								var link = $('.text_link_getter').val()
-								if ((link.indexOf('http://')) > 0 || (link.indexOf('http://') > 0)) {
+								if ((link.indexOf('http://')) > -1 || (link.indexOf('http://') > -1)) {
 									link = link
 								} else {
 									link = 'http://' + link
@@ -492,67 +693,100 @@ $(document).ready(function(){
     		}
     		if ($(parent).html() == '' || (empty_child) || ($(parent).html() == '<br>')){
     			ev.preventDefault();
-    			var newDiv = $('<div>').html('<br>')[0]
-    			$(parent).html(newDiv)
-	    			var s = window.getSelection(),
-					    	r = document.createRange();
-					r.setStart(newDiv, 0);
-					r.setEnd(newDiv, 0);
+    			var newP = $('<p>').html('<br>')[0]
+    			$(parent).html(newP)
+    			$(parent).append('<p><br></p>');
+	    			var s = $('iframe')[0].contentWindow.getSelection(),
+					    	r = $('iframe')[0].contentWindow.document.createRange();
+					r.setStart(newP, 0);
+					r.setEnd(newP, 0);
 					s.removeAllRanges();
 					s.addRange(r);
     		}
     		setTimeout(function(){
     			var parent = getSectionParent($('iframe').contents()[0].getSelection())
-	    		var empty_child;
+	    		// var empty_child;
 	    		if (parent.children.length == 1){
-	    			if ($(parent.children[0]).html() == '<br>'){
-	    				empty_child = true;
-	    			}
+	    			$(parent).append('<p><br></p>');
+	    			// if ($(parent.children[0]).html() == '<br>'){
+	    			// 	empty_child = true;
+	    			// }
 	    		}
-	    		if ($(parent).html() == '' || (empty_child) || ($(parent).html() == '<br>')){
-	    			ev.preventDefault();
-	    			var newDiv = $('<div>').html('<br>')[0]
-	    			$(parent).html(newDiv)
-		    			var s = window.getSelection(),
-						    	r = document.createRange();
-						r.setStart(newDiv, 0);
-						r.setEnd(newDiv, 0);
-						s.removeAllRanges();
-						s.addRange(r);
-	    		}
-    		},0)
+	    	// 	if ($(parent).html() == '' || (empty_child) || ($(parent).html() == '<br>')){
+	    	// 		ev.preventDefault();
+	    	// 		var newP = $('<p>').html('<br>')[0]
+	    	// 		$(parent).html(newP)
+		    // 			var s = $('iframe')[0].contentWindow.getSelection(),
+						//     	r = $('iframe')[0].contentWindow.document.createRange();
+						// r.setStart(newP, 0);
+						// r.setEnd(newP, 0);
+						// s.removeAllRanges();
+						// s.addRange(r);
+	    	// 	}
+    		},10)
 	    }
 
 	    if(ev.keyCode == 13){
 	    	var beforeBlock = $('iframe').contents()[0].getSelection().anchorNode.parentNode
-		    	setTimeout(function(){
+	    	if (document.queryCommandSupported('insertBrOnReturn')){
+	    		ev.preventDefault()
+			    var newP = $('<p>').html('<br>');
+			    $(getTopElement()).after(newP);
+			    var s = $('iframe')[0].contentWindow.getSelection(),
+					    r = $('iframe')[0].contentWindow.document.createRange();
+					r.setStart(newP[0], 0);
+					r.setEnd(newP[0], 0);
+					s.removeAllRanges();
+					s.addRange(r);
+	    	}
+	    	setTimeout(function(){
+    			if (!document.queryCommandSupported('insertBrOnReturn')){
 		    		//won't duplicate blockquote if pressing enter
 		    		$('iframe').contents().find('.mover').remove()
 			    	var block = $('iframe').contents()[0].getSelection().anchorNode
-		  			var newDiv = $('<div>').html('<br>')[0];
+		  			var newP = $('<p>').html('<br>')[0];
 		  			if ($(block).html() == "<br>"){
-				    	block.parentNode.replaceChild(newDiv, block)
+				    	block.parentNode.replaceChild(newP, block)
 		    			var s = window.getSelection(),
 							    r = document.createRange();
-							r.setStart(newDiv, 0);
-							r.setEnd(newDiv, 0);
+							r.setStart(newP, 0);
+							r.setEnd(newP, 0);
 							s.removeAllRanges();
 							s.addRange(r);
 		  			}
 
-		  			//random spans showing up. replacing them with text.
-		  			$.each($('iframe').contents().find('span'), function(i, span){
-		  				var span_html = $(span).html()
-		  				$(span).replaceWith(span_html)
-		  			})
-		    	}, 0)
+		  		} else {
+		  			// var selection = window.getSelection(),
+			    //       range = selection.getRangeAt(0),
+			    //       p = document.createElement("p")
+			    //   range.deleteContents();//required or not?
+			    //   range.insertNode(p);
+			    //   range.collapse(false);
+
+			    //   selection.removeAllRanges();
+			    //   selection.addRange(range);
+			    //   return false;
+
+		  		}
+
+		  		//random spans showing up. replacing them with text.
+	  			$.each($('iframe').contents().find('span'), function(i, span){
+	  				var span_html = $(span).html()
+	  				$(span).replaceWith(span_html)
+	  			})
+	    	}, 0)
 		  }
 		})
 
 		textBody.on('paste', function(e){
 			setTimeout(function(){
 				autoSetEditorHeight();
+				// flattenChildNodes();
+				resetStyles();
 			},0)
+			e.preventDefault();
+			var text = (e.originalEvent || e).clipboardData.getData('text/plain') || prompt('Paste something..');
+  		$('iframe')[0].contentWindow.document.execCommand('insertText', false, text);
 		})
 
 		textBody.on('keyup',function(e){
@@ -561,41 +795,22 @@ $(document).ready(function(){
 		    autoSetEditorHeight();
 		  },0)
 		})
+
 		$('.edit_section_btn').hover(function(){
-			if ($(this).css('height') != '200px'){
-				var section = getSectionParent($('iframe').contents()[0].getSelection())
-				if (section == null){
-					section = $('iframe').contents().find('section')[0]
-				}
-				$(section).css({'opacity':'.4'})
+			if (!($('.details_panel').attr('opened') =='1')){
+				$(this).attr('hovered','1');
+				var section = getHoveringSection($('iframe').contents()[0].getSelection())
+				$(section).css({'box-shadow': '0px 0px 50px 10px #bdc3c7 inset'})
 			}
 		}, function(){
-			if ($(this).css('height') != '200px'){
-				var section = getSectionParent($('iframe').contents()[0].getSelection())
-				if (section == null){
-					section = $('iframe').contents().find('section')[0]
-				}
-				$(section).css({'opacity':'1'})
+			if (!($('.details_panel').attr('opened') =='1')){
+				$(this).attr('hovered','0');
+				var section = getHoveringSection($('iframe').contents()[0].getSelection())
+				// console.log(section);
+				$(section).css({'box-shadow':'0'})
 			}
 		})
-		$('.edit_section_btn').on('click', function(){
-			if ($(this).css('height') != '200px'){
-				var section = getSectionParent($('iframe').contents()[0].getSelection())
-				if (section == null){
-					section = $('iframe').contents().find('section')[0]
-				}
-				boldChoiceButtons(section);
-
-				$(section).attr('data-beforeclass', $(section).attr('class'))
-				$(section).attr('id','being_edited');
-				$(this).append('<div class="cancel_edit_section">cancel</div>');
-				$(this).append('<div class="confirm_edit_section">save</div>');
-				$(this).append($('.details_panel'));
-
-				$(this).css({'width':'100%', 'height':'200px', 'background':'#7f8c8d','color':'white','bottom':'0px','top':'auto','border':'5px','padding-left':'15px','cursor':'default'})
-				$('#edit_section_text').html('editing section');
-			}
-		})
+		
 
 		textBody.on('mouseenter','blockquote, figure', function(e){
 			if ($(this).css('position') == 'absolute'){
@@ -629,11 +844,11 @@ $(document).ready(function(){
 				var mouseHandler = function(ev){
 					if ($(that).attr('moving') == '1'){
 						var parent = $($(that)[0].parentNode)
-						var parentTop = $(parent[0].parentNode).offset().top
+						var sectionTop = $(getSectionParent(that)).offset().top;
 						if ((parent.attr('class') == 'pullquote') || (parent.is('figure'))){
-							var newTop = (ev.clientY - 10) - parentTop
+							var newTop = (ev.clientY - 10) - sectionTop
 						} else {
-							var newTop = (ev.clientY - 20) - parentTop
+							var newTop = (ev.clientY - 20) - sectionTop
 						}
 						if (parent.is('figure')){
 							var newRight = (($(document).width() - ev.clientX - 10) / $(document).width())*100
@@ -672,21 +887,59 @@ $(document).ready(function(){
 			}
 		})
 
+		setTimeout(function(){
+			textBody.on('mouseenter','section',function(){
+				$('.edit_section_btn').css({'opacity':'.3'})
+				$(this).css({'box-shadow':'0'})
+				if (!($(this).attr('id') == 'dummy')){
+					$(this).attr('hovering','1');
+					var top = $(this).offset().top + $('iframe').offset().top + 10
+					$('.edit_section_btn').css({'top':top,'right':'100px'})
+				}
+			}).on('mouseleave','section', function(){
+				var that = this;
+				setTimeout(function(){
+					if (!($('.edit_section_btn').attr('hovered') == '1')){
+						$(that).attr('hovering','0');
+					}
+					// $('.edit_section_btn').css({'opacity':'0'})
+				},2)
+			})	
+		}, 600)
+
+		$('body').on('click', '.edit_section_btn', function(){
+			if (!($('.details_panel').attr('opened') =='1')) {
+				var section = getHoveringSection();
+				boldChoiceButtons(section);
+				$(section).css('box-shadow','0');
+				$('.details_title').html('editing section');
+
+				$('.details_panel').attr('opened','1');
+				$(section).attr('data-beforeclass', $(section).attr('class'))
+				$(section).attr('id','being_edited');
+				$('.details_panel').append('<div class="cancel_edit_section">cancel</div>');
+				$('.details_panel').append('<div class="confirm_edit_section">save</div>');
+				$('.details_panel').height(200);
+				$('iframe').css({'border-bottom':'200px solid white'})
+
+				// $(this).css({'width':'100%', 'height':'200px', 'background':'#7f8c8d','color':'white','bottom':'0px','top':'auto','border':'5px','padding-left':'15px','cursor':'default'})
+				// $('#edit_section_text').html('editing section');
+			} else {
+				$('.cancel_edit_section').trigger('click');
+			}
+		})
+
 		$('body').on('click','.add_section', function(){
-			if (!($(this).attr('style'))){
-			// 	$(this).attr('style','');
-			// 	$('#add_section_text').html('add section');
-			// } else {
-				$(this).css({'width':'100%', 'height':'200px', 'background':'#7f8c8d','color':'white','bottom':'0px','top':'auto','border':'5px','padding-left':'15px','cursor':'default'})
-				$('iframe').contents().find('body').css({'border-bottom':'200px solid white'})
-				$('#add_section_text').html('creating new section!');
-				$(this).append('<div class="cancel_add_section">cancel</div>');
-				$(this).append('<div class="confirm_add_section">add</div>');
-				$(this).append($('.details_panel'));
+			if (!($('.details_panel').attr('opened') == '1' )) {
+				$('iframe').css({'border-bottom':'200px solid white'})
+				$('.details_title').html('creating new section');
+				$('.details_panel').append('<div class="cancel_add_section">cancel</div>');
+				$('.details_panel').append('<div class="confirm_add_section">add</div>');
+				$('.details_panel').height(200);
 		
-				var dummySection = $('<section>').html('<blockquote style="top:100px;">This is a profound quote</blockquote><div>Isaacson said Steve Jobs would pick a couple of things that were important and brutally reject everything that he didn\'t care about. Strong intuition.</div> <blockquote style="top:400px" class="pullquote">This is some emphasized text</blockquote><h1>This is an Example Header</h1><div>Brutally honest meetings where everyone said what needed to be said. Would constantly go over his products with his hands and get a sense of them; get a sense of their essence, almost their soul; then iterating them. focused on building a great team.</div>')[0]
+				var dummySection = $('<section>').html('<blockquote style="top:100px;">This is a profound quote</blockquote><p>Isaacson said Steve Jobs would pick a couple of things that were important and brutally reject everything that he didn\'t care about. Strong intuition.</p> <blockquote style="top:400px" class="pullquote">This is some emphasized text</blockquote><h1>This is an Example Header</h1><p>Brutally honest meetings where everyone said what needed to be said. Would constantly go over his products with his hands and get a sense of them; get a sense of their essence, almost their soul; then iterating them. focused on building a great team.</p>')[0]
 				$(dummySection).attr('id','dummy');
-				$(dummySection).attr('style','height:900px');
+				$(dummySection).attr('style','height:800px');
 				$(dummySection).attr('class','text_center_panel classic_font color_white');
 				boldChoiceButtons(dummySection);
 				$('iframe').contents().find('body').append(dummySection)
@@ -699,54 +952,57 @@ $(document).ready(function(){
 				autoSetEditorHeight();
 
 				setTimeout(function(){
-					// $(document).scrollTop($(document).height())
 					$('html,body').animate({ scrollTop: $(document).height() }, 500)
 				},300)
 			}
 
 		})
 		$('body').on('click','.cancel_add_section',function(){
-			console.log('g')
 			setTimeout(function(){
-				$('.add_section').attr('style','');
-				$('#add_section_text').html('add section');
 				$('.cancel_add_section').remove();
+				$('.confirm_add_section').remove();
 				$('iframe').contents().find('#dummy').remove();
 				$('.image_getter').fadeOut(100);
 				$('.font-color-chooser').fadeOut(100);
+				$('.details_panel').attr('opened','0');
+				$('.details_panel').height(0);
 				autoSetEditorHeight();
+				$('iframe').css({'border-bottom':'0px solid white'})
 			},0)
 		})
 		$('body').on('click','.confirm_add_section', function(){
 			var classes = $('iframe').contents().find('#dummy').attr('class')
 			$('.cancel_add_section').trigger('click');
-			var newSection = $('<section>').html('<div><br></div>')[0];
+			var newSection = $('<section>').html('<p><br></p><p><br></p>')[0];
 			$(newSection).attr('class', classes);
 			$('iframe').contents().find('body').append(newSection);
 			$('.image_getter').fadeOut(100);
 			$('.font-color-chooser').fadeOut(100);
+			$('.cancel_add_section').remove();
+			$('.confirm_add_section').remove();
+			$('.details_panel').attr('opened','0');
+			$('.details_panel').height(0);
+			$('iframe').css({'border-bottom':'0px solid white'})
 			autoSetEditorHeight();
 		})
 		$('body').on('click','.cancel_edit_section',function(){
 			var beingEdited = $('iframe').contents().find('#being_edited')
-			beingEdited.fadeOut(100);
 			setTimeout(function(){
-				$('.edit_section_btn').attr('style','');
-				$('#edit_section_text').html('edit section');
 				$('.cancel_edit_section').remove();
 				$('.confirm_edit_section').remove();
 				var beforeClass = beingEdited.attr('data-beforeclass');
 				beingEdited.attr('data-beforeclass','');
 				beingEdited.attr('class', beforeClass);
 				beingEdited.attr('id','');
-				beingEdited.fadeIn(100);
 				$('.image_getter').fadeOut(100);
 				$('.font-color-chooser').fadeOut(100);
+				$('.details_panel').height(0);
+				$('.details_panel').attr('opened','0');
+				$('iframe').css({'border-bottom':'0px solid white'})
 				autoSetEditorHeight();
 			},100)
 		})
 		$('body').on('click','.confirm_edit_section', function(){
-			$('.edit_section_btn').attr('style','');
 			$('#edit_section_text').html('edit section');
 			var beingEdited = $('iframe').contents().find('#being_edited')
 			beingEdited.attr('id','');
@@ -755,6 +1011,9 @@ $(document).ready(function(){
 			$('.cancel_edit_section').remove();
 			$('.image_getter').fadeOut(100);
 			$('.font-color-chooser').fadeOut(100);
+			$('.details_panel').height(0);
+			$('.details_panel').attr('opened','0');
+			$('iframe').css({'border-bottom':'0px solid white'})
 			autoSetEditorHeight();
 		})
 
@@ -777,6 +1036,10 @@ $(document).ready(function(){
 			},0)
 		})
 
+		textBody.on('click','p, div, blockquote', function(){
+			// console.log('kenny')
+		})
+
 		$('body').on('click','.chooser_choice',function(){
 			var choice;
 			var anti_choice;
@@ -788,7 +1051,6 @@ $(document).ready(function(){
 			var that = this;
 
 			setTimeout(function(){
-				console.log($(that).attr('data-choice'))
 				//if they chose font
 				if ($(that).attr('data-choice') == 'font'){
 					choice = $(that).attr('data-font')+'_font'
@@ -815,7 +1077,6 @@ $(document).ready(function(){
 						}
 					})
 					dummy.attr('class', dummy.attr('class').replace(anti_choice, choice))
-					console.log(choice);
 
 					if (choice == 'color_image'){
 						$('.image_getter').attr('data-color-background','1');
@@ -827,9 +1088,6 @@ $(document).ready(function(){
 								$('.post_image_getter').remove();
 							}
 						})
-						$('iframe').contents().find('body').focus(function(){
-							$('.image_getter').fadeOut(200);
-						})
 					} else {
 						$(dummy).css({'background-image':'', 'color':'', 'background-size':''})
 					}
@@ -837,6 +1095,9 @@ $(document).ready(function(){
 				dummy.fadeIn(100);
 				boldChoiceButtons(dummy);
 			},101)
+		})
+		$('iframe').contents().find('body').focus(function(){
+			$('.image_getter').fadeOut(200);
 		})
 
 		$('body').on('click','.font-color-choice', function(){
@@ -886,11 +1147,11 @@ $(document).ready(function(){
 	        ev.preventDefault();
 	  });
 
-	  $('.batman_toolbelt').hover(function(){
-	  	$(this).height($('.hidden_toolbelt').height())
-	  }, function(){
-	  	$(this).height(100)
-	  })
+	  // $('.batman_toolbelt').hover(function(){
+	  // 	$(this).height($('.hidden_toolbelt').height())
+	  // }, function(){
+	  // 	$(this).height(100)
+	  // })
 
 		document.onkeyup=function(e){
 		    if(e.keyCode == 17) isCtrl=false;
@@ -972,7 +1233,7 @@ $(document).ready(function(){
 		$('.footer_name').css({'color': lastSectionColor, 'border':'3px solid '+lastSectionColor })
 
 		//transition effects
-		$('.post_title').css({'margin-top':'00px', 'opacity':'1'})
+		$('.post_title').css({'margin-top':'75px', 'opacity':'1'})
 		$('.author_link_wrapper').css({'opacity':'.2'})
 		$('.post-date-left').css({'opacity':'.3'})
 		$('.circle-divider').css({'width':'65%'})
