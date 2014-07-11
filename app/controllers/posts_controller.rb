@@ -26,7 +26,7 @@ class PostsController < ApplicationController
 		@post = @user.posts.first(:conditions => ["url = ?", CGI.escape(params[:title])])
 		if ( !@post.nil? && @post.published) || ( !@post.nil? && current_user && @user == current_user)
 			# @text = clean_text(@post.text)
-			@text = @post.text || "<div><br></div>"
+			@text = @post.text || "<p><br></p><p><br></p>"
 		else
 			redirect_to user_path(@user)
 		end
