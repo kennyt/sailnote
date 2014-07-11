@@ -217,41 +217,37 @@ $(document).ready(function(){
 				var user = $('.edit-title').attr('data_author');
 				var title = encodeURIComponent($('.edit-title').attr('datatitle').toLowerCase());
 
+				$('iframe').contents().find('section').css({'box-shadow':'0'})
+
 				$('.edit-box').val($('iframe').contents().find('body').html())
 				$('.save_success').attr('style','display:block;background:#c0392b;');
 				$('.save_success').html('saving..')
 
-				if ($('.edit-title').val().indexOf('-') == -1){
-					$.post('/'+user+'/'+title+'/update_post_json',{post:
-					{	id: $('.edit-submit').attr('data_id'),
-						title: $('.edit-title').val(),
-						text: $('.edit-box').val(),
-						url: $('.url_input').val()
-					}}, function(response){
-						if (response['yes'] == '1'){
-							$('.save_success').attr('style','display:block;')
-							$('.save_success').html('saved!')
-							$('#post_error').hide();
-							var title = encodeURIComponent($('.edit-title').val().replace(/ /g, '-').toLowerCase());
-							$('.edit-title').attr('datatitle', title)
-							$('.edit_back_button').attr('href','/' + $('.edit-title').attr('data_author') + '/'+title)
+				$.post('/'+user+'/'+title+'/update_post_json',{post:
+				{	id: $('.edit-submit').attr('data_id'),
+					title: $('.edit-title').val(),
+					text: $('.edit-box').val(),
+					url: $('.url_input').val()
+				}}, function(response){
+					if (response['yes'] == '1'){
+						$('.save_success').attr('style','display:block;')
+						$('.save_success').html('saved!')
+						$('#post_error').hide();
+						var title = encodeURIComponent($('.edit-title').val().replace(/ /g, '-').toLowerCase());
+						$('.edit-title').attr('datatitle', title)
 
-							var user = $('.page_identifier').attr('data-username')
-							if (document.URL.split('/'+user+'/')[1] != response['url']){
-								location.href = '/'+user+'/'+response['url']
-							}
-							setTimeout(function(){
-								$('.save_success').hide();
-							}, 300)
-						} else {
-							$('.save_success').html(response['no'])
+						var user = $('.page_identifier').attr('data-username')
+						if (document.URL.split('/'+user+'/')[1] != response['url']){
+							location.href = '/'+user+'/'+response['url']
 						}
-					})
-				} else {
-					$('.save_success').html('Title cannot have hyphen');
-				}
-
-			}
+						setTimeout(function(){
+							$('.save_success').hide();
+						}, 300)
+					} else {
+						$('.save_success').html(response['no'])
+					}
+				})
+		}
 		})
 
 		$.fn.myTextEditor = function(options){
@@ -901,6 +897,7 @@ $(document).ready(function(){
 				setTimeout(function(){
 					if (!($('.edit_section_btn').attr('hovered') == '1')){
 						$(that).attr('hovering','0');
+						$(that).css('box-shadow','0');
 					}
 					// $('.edit_section_btn').css({'opacity':'0'})
 				},2)
