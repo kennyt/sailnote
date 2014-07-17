@@ -11,7 +11,7 @@ function autoSetEditorHeight(){
 		if (newHeight > sixtyDocHeight){
 			$('iframe').height(newHeight)
 		} else {
-			$('iframe').height(sixtyDocHeight)
+			$('iframe').height(newHeight)
 		}
 	} else {
 		var newHeight = $('iframe').contents().height();
@@ -23,6 +23,20 @@ function autoSetEditorHeight(){
 	setTimeout(function(){
 		$(document).scrollTop(beforeScrollTop)
 	},0)
+}
+
+function showTopSection(){
+	var iframeTop = $('iframe').offset().top
+	var scrollTop = $(document).scrollTop();
+	var sections = $('iframe').contents().find('section');
+	var screenBottom = scrollTop + screen.height
+	$.each(sections, function(i, section){
+		var sectionTop = $(section).offset().top + iframeTop - (screen.height/4)
+		var sectionBottom = $(section).offset().top + $(section).height() + iframeTop
+		if (scrollTop > sectionTop || sectionBottom < screenBottom){
+			$(section).css('opacity','1');
+		}
+	})
 }
 
 function setBlockquoteTop (ele, beforeTop){
@@ -71,6 +85,13 @@ function getSectionParent(selection){
 		}
 	}
 	return parent;
+}
+
+function resetSectionHovering(){
+	var sections = $('iframe').contents().find('section')
+	$.each(sections, function(i, section){
+		$(section).attr('hovering', 0);
+	})
 }
 
 function getElementFromSelection(elType){
@@ -209,7 +230,6 @@ function createImage(that){
 
 //text_editor code. runs on every page with the class .edit-box
 $(document).ready(function(){
-	console.log('hi');
 	if ($('.page_identifier').attr('id') == 'logged_in_post'){
 
 		$('body').on('click','.edit-submit',function(ev){
@@ -285,15 +305,15 @@ $(document).ready(function(){
 				   var importFont = '@import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:400italic,700italic,400,700);';
 				   var textLinkStyle = '.text_link{text-decoration:none; border-bottom:1px solid #2980b9;color:#202020;} .text_link:link {color:#202020;border-bottom: 1px solid #202020;}.text_link:visited {color:#202020;border-bottom: 1px solid #202020;}.text_link:active {color:red;}'
 				   var selectionStyle = '::selection {background: #D8D8D8; color:black;} ::-moz-selection {background: #D8D8D8;color:black;}'
-				   var sectionStyle = 'section{width: 100%; padding-top: 50px; padding-bottom:30px;position:relative; min-height: 90px;}'
+				   var sectionStyle = 'section{width: 100%; padding-top: 50px; padding-bottom:30px;position:relative; min-height: 90px;opacity:0; -webkit-transition: all 1000ms ease-out;-moz-transition: all 1000ms ease-out;-o-transition: all 1000ms ease-out;-ms-transition: all 1000ms ease-out;transition: all 1000ms ease-out;}'
 				   var moverStyle = '.mover{position: absolute;top: 0px;right: 0px;height: 20px;width: 20px !important;background: blue; cursor:pointer;}'
 				   var stretcherStyle = '.stretcher{position: absolute;bottom: 50%;left: 0px;height: 20px;margin:0px !important;width: 20px !important;background: red; cursor:pointer;}'
 				   var pStyle = 'p{margin-top: 0px; margin-bottom: 33px;}'
 
 
 
-				   var text_left_panelStyle = '.text_left_panel div, .text_left_panel p, .text_left_panel h1{ margin-left:9%; max-width:40%; width: 625px;} .text_left_panel blockquote, .text_left_panel .pullquote{right:7%; max-width:30%; width: 535px; float:right; padding-left: 20px; padding-right:20px; position: absolute; margin: 0px;} .text_left_panel h1{text-align:center;margin-bottom:15px; margin-top: 30px;} .text_left_panel figure {right:7%; max-width:50%; float:right; padding:0px; position: absolute; margin: 0px;} .text_left_panel img {width: 100%;} .text_left_panel blockquote{line-height:1.4; padding:20px;} .text_left_panel .pullquote{border:0px;font-style:italic;}'
-				   var text_center_panelStyle = '.text_center_panel div, .text_center_panel p {width: 625px;margin-left:auto;margin-right:auto;} .text_center_panel figure{text-align: center;} .text_center_panel h1{text-align:center; margin-bottom:15px; margin-top: 30px;} .text_center_panel blockquote{position: relative;top:0px !important;margin:30px; margin-left: auto;margin-right: auto;padding:20px; font-size: 20px; line-height: 1.4;  width:625px;} .text_center_panel .pullquote{width: 70%;margin-left: 12%; border-top: 0px solid black; border-bottom: 0px solid black;padding-right: 40px;padding-left:40px; text-align: center; font-size: 35px; font-style:italic; margin-bottom: 5px; margin-top: 5px;}'
+				   var text_left_panelStyle = '.text_left_panel div, .text_left_panel p, .text_left_panel h1{ margin-left:9%; max-width:40%; width: 625px;} .text_left_panel blockquote, .text_left_panel .pullquote{right:7%; max-width:30%; width: 535px; float:right; padding-left: 20px; padding-right:20px; position: absolute; margin: 0px;} .text_left_panel h1{text-align:center;margin-bottom:15px; margin-top: 30px;} .text_left_panel figure {right:7%; max-width:50%; float:right; padding:0px; position: absolute; margin: 0px;} .text_left_panel img {width: 100%;} .text_left_panel blockquote{line-height:1.4; padding:20px;} .text_left_panel .pullquote{border:0px;font-style:italic; text-align:center;}'
+				   var text_center_panelStyle = '.text_center_panel div, .text_center_panel p, .text_center_panel h1 {width: 625px;margin-left:auto;margin-right:auto;} .text_center_panel figure{text-align: center;} .text_center_panel h1{text-align:center; margin-bottom:15px; margin-top: 30px;} .text_center_panel blockquote{position: relative;top:0px !important;margin:30px; margin-left: auto;margin-right: auto;padding:20px; font-size: 20px; line-height: 1.4;  width:625px;} .text_center_panel .pullquote{width: 70%;margin-left: 12%; border-top: 0px solid black; border-bottom: 0px solid black;padding-right: 40px;padding-left:40px; text-align: center; font-size: 35px; font-style:italic; margin-bottom: 5px; margin-top: 5px;}'
 				   var text_right_panelStyle= '.text_right_panel div, .text_right_panel p, .text_right_panel h1{ margin-left:51%; max-width:40%; width: 625px;} .text_right_panel blockquote, .text_right_panel .pullquote{right:63%; max-width:30%; width: 535px; float:left; padding-left: 20px; padding-right:20px; position: absolute; margin: 0px;color:#95a5a6;} .text_right_panel h1{text-align:center;margin-bottom:15px; margin-top: 30px;} .text_right_panel figure {right:50%; max-width:50%; float:left; padding:0px; position: absolute; margin: 0px;} .text_right_panel img {width: 100%;} .text_right_panel blockquote{line-height:1.4; padding:20px;} .text_right_panel .pullquote{border:0px;font-style:italic; text-align: center;}'
 
 
@@ -957,6 +977,7 @@ $(document).ready(function(){
 
 		})
 		$('body').on('click','.cancel_add_section',function(){
+			resetSectionHovering();
 			setTimeout(function(){
 				$('.cancel_add_section').remove();
 				$('.confirm_add_section').remove();
@@ -970,6 +991,7 @@ $(document).ready(function(){
 			},0)
 		})
 		$('body').on('click','.confirm_add_section', function(){
+			resetSectionHovering();
 			var classes = $('iframe').contents().find('#dummy').attr('class')
 			$('.cancel_add_section').trigger('click');
 			var newSection = $('<section>').html('<p><br></p><p><br></p>')[0];
@@ -986,6 +1008,7 @@ $(document).ready(function(){
 		})
 		$('body').on('click','.cancel_edit_section',function(){
 			var beingEdited = $('iframe').contents().find('#being_edited')
+			resetSectionHovering();
 			setTimeout(function(){
 				$('.cancel_edit_section').remove();
 				$('.confirm_edit_section').remove();
@@ -1002,6 +1025,7 @@ $(document).ready(function(){
 			},100)
 		})
 		$('body').on('click','.confirm_edit_section', function(){
+			resetSectionHovering();
 			$('#edit_section_text').html('edit section');
 			var beingEdited = $('iframe').contents().find('#being_edited')
 			beingEdited.attr('id','');
@@ -1146,6 +1170,10 @@ $(document).ready(function(){
 	        ev.preventDefault();
 	  });
 
+	  $(window).bind('scroll', function(){
+	  	showTopSection();
+	  })
+
 	  // $('.batman_toolbelt').hover(function(){
 	  // 	$(this).height($('.hidden_toolbelt').height())
 	  // }, function(){
@@ -1186,6 +1214,8 @@ $(document).ready(function(){
 		$('.post-date-left').css({'opacity':'.3'})
 		$('.circle-divider').css({'width':'100%'})
 		$($('.circle-divider')[1]).css({'margin-top':'-5px'})
+		$($('iframe').contents().find('section')[0]).css('opacity','1');
+		resetSectionHovering();
 		setTimeout(function(){
 			$('.edit-title').autosize();
 		},300)

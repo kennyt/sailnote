@@ -1,4 +1,4 @@
-<% @title=@post.title + ' by ' + @post.user.username %>
+<% @title=@post.title + ' by ' + @post.user.username + ' - sailnote' %>
 <% if current_user && @post.user == current_user %>
 	<div class="page_identifier" id="logged_in_post" data-username="<%=@post.user.username%>"></div>
 	<%= cloudinary_js_config %>
@@ -12,7 +12,7 @@
 	<div class="hidden_image_holder"></div>
 	<div class="post_text"></div>
 	<% if @post.published %>
-		<div class="post-date-left"><%= @post.published_date.strftime("%-d %B %Y") %></div>
+		<div class="post-date-left" style="display:none;"><%= @post.published_date.strftime("%-d %B %Y") %></div>
 	<% end %>
 	<%= form_for :post, url: post_path(@post), method: :put do |f| %>
 	  <div class="author_link_wrapper"><%= link_to @post.user.username, user_path(@post.user), class: 'author_link' %></div>

@@ -1,4 +1,4 @@
-<% @title=@user.username %>
+<% @title=@user.username + ' - sailnote' %>
 <div class="page_identifier" id="user_view" data-username="<%= @user.username %>"></div>
 <div class="cover-box">
 	<div class="user_container">
@@ -25,7 +25,6 @@
 	<div class="ocean"></div>
 </div>
 <div class="save_success">saved!</div>
-
 <% if @authored_bool %>
 	<div class="batman_toolbelt">
 		<div class="hidden_toolbelt">

@@ -28,14 +28,14 @@ gem 'bcrypt-ruby', '3.0.0'
 gem 'strong_parameters'
 gem 'cloudinary'
 gem 'carrierwave'
-gem 'iconv', '~> 1.0.3'
 
-# group :production do
+gem 'iconv', '~> 1.0.3'
+group :production do
 gem 'pg'
 gem 'heroku'
 gem 'rails_12factor', group: :production
 ruby "2.1.1"
-# end
+end
 
 # To use ActiveModel has_secure_password
 # gem 'bcrypt-ruby', '~> 3.0.0'
