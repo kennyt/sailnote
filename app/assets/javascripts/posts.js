@@ -320,7 +320,7 @@ $(document).ready(function(){
 				   var importFont = '@import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:400italic,700italic,400,700);';
 				   var textLinkStyle = '.text_link{text-decoration:none; border-bottom:1px solid #2980b9;color:#202020;} .text_link:link {color:#202020;border-bottom: 1px solid #202020;}.text_link:visited {color:#202020;border-bottom: 1px solid #202020;}.text_link:active {color:red;}'
 				   var selectionStyle = '::selection {background: #D8D8D8; color:black;} ::-moz-selection {background: #D8D8D8;color:black;}'
-				   var sectionStyle = 'section{width: 100%; padding-top: 50px; padding-bottom:30px;position:relative; min-height: 90px;opacity:0; -webkit-transition: opacity 500ms linear;-moz-transition: opacity 500ms linear;-o-transition: opacity 500ms linear;-ms-transition: opacity 500ms linear;transition: opacity 500ms linear;}'
+				   var sectionStyle = 'section{width: 100%; padding-top: 50px; padding-bottom:30px;position:relative; min-height: 90px;opacity:0; -webkit-transition: opacity 350ms linear;-moz-transition: opacity 350ms linear;-o-transition: opacity 350ms linear;-ms-transition: opacity 350ms linear;transition: opacity 350ms linear;}'
 				   var moverStyle = '.mover{position: absolute;top: 0px;right: 0px;height: 20px;width: 20px !important;background: blue; cursor:pointer;}'
 				   var stretcherStyle = '.stretcher{position: absolute;bottom: 50%;left: 0px;height: 20px;margin:0px !important;width: 20px !important;background: red; cursor:pointer;}'
 				   var pStyle = 'p{margin-top: 0px; margin-bottom: 33px;}'
