@@ -633,7 +633,7 @@ $(document).ready(function(){
 							if (ev.keyCode == 13){
 								ev.preventDefault();
 								var link = $('.text_link_getter').val()
-								if ((link.indexOf('http://')) > -1 || (link.indexOf('http://') > -1)) {
+								if ((link.indexOf('http://')) > -1 || (link.indexOf('https://') > -1)) {
 									link = link
 								} else {
 									link = 'http://' + link
