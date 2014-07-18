@@ -22,7 +22,7 @@
 		<% end %>
 	</div>
 	<%= link_to '', root_path, :class => 'essaii_left' %>
-	<div class="ocean"></div>
+	<!-- <div class="ocean"></div> -->
 </div>
 <div class="save_success">saved!</div>
 <% if @authored_bool %>
@@ -50,6 +50,7 @@
   <% if @authored_bool %>
   	<div class="press_enter_info">press enter to create draft</div>
   	<input class="new_post_input" placeholder="enter new post title"></input>
+		<div class="list_loading_bar" style="position:absolute;top: 43px;left:0px;"></div>
   <% end %>
 
 	<div class="post_list">
@@ -71,6 +72,7 @@
 			</div>
 		<% end %>
 			<div class="published_list">
+				<div class="list_loading_bar" style="margin-top:-3px;"></div>
 				<% if @published_posts.count > 0 %>
 				  <% @published_posts.each do |post| %>
 				  	<a class="essay-title" href="/<%= post.user.username %>/<%= post.url %>">

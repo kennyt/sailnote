@@ -32,7 +32,7 @@ function showTopSection(){
 
 	$.each(sections, function(i, section){
 		if ($(section).css('opacity') == '0'){
-			var sectionTop = $(section).offset().top + iframeTop - (screen.height/6)
+			var sectionTop = $(section).offset().top + iframeTop - (screen.height/4.5)
 			if (scrollTop > sectionTop){
 				$(section).css('opacity','1');
 			}
@@ -183,8 +183,8 @@ function flattenChildNodes(){
 	})
 }
 
-function resetStyles(){
-	var sections = $('iframe').contents().find('section');
+function resetStyles(body){
+	var sections = body.find('section');
 	$.each(sections, function(i, section){
 		if (!($(section).attr('class').indexOf('color_image') > -1)){
 			$(section).attr('style','');
@@ -216,7 +216,7 @@ function createImage(that){
 	var section = getSectionParent($('iframe').contents()[0].getSelection());
 
 	if (!($(section).attr('class').indexOf('text_center_panel') > -1)){
-		$(section).prepend(newFigure.css({'top':prevTop})[0])
+		$(section).prepend(newFigure[0])
 	} else {
 		$($('iframe').contents()[0].getSelection().anchorNode).replaceWith(newFigure);
 	}
@@ -243,7 +243,7 @@ $(document).ready(function(){
 				var user = $('.edit-title').attr('data_author');
 				var title = encodeURIComponent($('.edit-title').attr('datatitle').toLowerCase());
 				var clone = $('iframe').contents().find('body').clone();
-				$(clone).find('section').attr('style','');
+				resetStyles($(clone));
 				var cloneHtml = $(clone).html()
 				$('iframe').contents().find('section').css({'box-shadow':'none'})
 
@@ -342,7 +342,7 @@ $(document).ready(function(){
 
 				   var color_darkpurpleStyle = '.color_darkpurple {background: #8e44ad;} .color_darkpurple div, .color_darkpurple p {color: white} .color_darkpurple h1 { color: white; } .color_darkpurple blockquote {color:#D8BFD8; border-top: 8px solid #DDA0DD;border-bottom: 8px solid #DDA0DD;} .color_darkpurple .text_link{text-decoration:none; border-bottom:1px solid white;color:white;} .color_darkpurple .text_link:link {color:white;border-bottom: 1px solid white;} .color_darkpurple .text_link:visited {opacity: .5;} .color_darkpurple .text_link:active {color:red;}'
 
-				   var color_darktealStyle = '.color_darkteal {background: #008080;} .color_darkteal div, .color_darkteal p {color: white} .color_darkteal h1 { color: white; } .color_darkteal blockquote {color:#B0E0E6; border-top: 8px solid #87CEEB;border-bottom: 8px solid #87CEEB;} .color_darkteal .text_link{text-decoration:none; border-bottom:1px solid white;color:white;} .color_darkteal .text_link:link {color:white;border-bottom: 1px solid white;} .color_darkteal .text_link:visited {opacity: .5;} .color_darkteal .text_link:active {color:red;}'
+				   var color_darktealStyle = '.color_darkteal {background: #003333;} .color_darkteal div, .color_darkteal p {color: white} .color_darkteal h1 { color: white; } .color_darkteal blockquote {color:#B0E0E6; border-top: 8px solid #87CEEB;border-bottom: 8px solid #87CEEB;} .color_darkteal .text_link{text-decoration:none; border-bottom:1px solid white;color:white;} .color_darkteal .text_link:link {color:white;border-bottom: 1px solid white;} .color_darkteal .text_link:visited {opacity: .5;} .color_darkteal .text_link:active {color:red;}'
 
 				   var color_imageStyle = '.color_image {background: white;} .color_image div, .color_image p {color: inherit} .color_image h1 { color: inherit; } .color_image blockquote {color:grey; border-top: 8px solid grey;border-bottom: 8px solid grey;} .color_image .text_link{text-decoration:none; border-bottom:1px solid inherit;color:inherit;} .color_image .text_link:link {color:inherit;border-bottom: 1px solid inherit;} .color_image .text_link:visited {opacity: .5;} .color_image .text_link:active {color:red;}'
 
@@ -806,7 +806,7 @@ $(document).ready(function(){
 			setTimeout(function(){
 				autoSetEditorHeight();
 				// flattenChildNodes();
-				resetStyles();
+				resetStyles($('iframe').contents().find('body'));
 			},0)
 			e.preventDefault();
 			var text = (e.originalEvent || e).clipboardData.getData('text/plain') || prompt('Paste something..');

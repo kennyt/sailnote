@@ -96,13 +96,21 @@
 
 .essaii_left {
 	position: absolute;
-	bottom: 20px;
+	bottom: 40px;
 	left: 43%;
 	width: 60px;
 	height: 60px;
-	background-image: url('sailboat5.png');
+	border-radius: 4px;
+	background-image: url('sailboat6.png');
 	background-size: cover;
+	/*background-color: #bdc3c7;*/
+	box-shadow: 0px 0px 1px 1px white;
 	z-index: 1000000;
+	opacity: .6;
+	&:hover{
+		box-shadow: 0px 0px 4px 2px white;
+		opacity: 1;
+	}
 }
 .ocean {
 	width: 100%;
@@ -823,11 +831,11 @@ iframe {
 	background-repeat: no-repeat;
 	background-position: 2% 50%;
 
-	-webkit-transition: all 225ms ease-out, background-color 100ms ease-out;
-  -moz-transition: all 225ms ease-out, background-color 100ms ease-out;
-  -o-transition: all 225ms ease-out, background-color 100ms ease-out;
-  -ms-transition: all 225ms ease-out, background-color 100ms ease-out;
-  transition: all 225ms ease-out, background-color 100ms ease-out;
+	-webkit-transition: background-color 100ms ease-out;
+  -moz-transition: background-color 100ms ease-out;
+  -o-transition: background-color 100ms ease-out;
+  -ms-transition: background-color 100ms ease-out;
+  transition: background-color 100ms ease-out;
 
 
 	&:hover {
@@ -856,8 +864,8 @@ iframe {
 }
 .essay-title {
 	font-size: 20px;
-	font-family: 'raleway';
-	font-weight: bold;
+	font-family: 'Montserrat';
+	/*font-weight: bold;*/
 	text-decoration: none;
 	/*padding-left: 10px;*/
 
@@ -871,6 +879,8 @@ iframe {
 	font-weight: normal;
 	opacity: 1;
 	margin-left: 10px;
+	font-family: 'raleway';
+	font-size: 18px;
 	-webkit-transition: all 100ms ease-out;
   -moz-transition: all 100ms ease-out;
   -o-transition: all 100ms ease-out;
@@ -878,7 +888,7 @@ iframe {
   transition: all 100ms ease-out;
   position: absolute;
   right: 10px;
-  bottom: 10px;
+  bottom: 15px;
 }
 
 .view-count {
@@ -1213,10 +1223,12 @@ iframe {
 	height: 100%;
 	z-index: 9;
 	text-align: center;
-	background: #E8E8E8;
-	/*background: linear-gradient(#F5FFFF, white);*/
+	background: #202020 ;
+	background: -webkit-radial-gradient(#383838, #202020); /* Safari 5.1 to 6.0 */
+  background: -o-radial-gradient(#383838, #202020); /* For Opera 11.6 to 12.0 */
+  background: -moz-radial-gradient(#383838, #202020); /* For Firefox 3.6 to 15 */
+  background: radial-gradient(#383838, #202020); /* Standard syntax */
 
-	/*border-right: 6px solid #345A6B;*/
 
 	-webkit-transition: all 370ms cubic-bezier(.25,0,.3,1);
   -moz-transition: all 370ms cubic-bezier(.25,0,.3,1);
@@ -1293,13 +1305,13 @@ iframe {
 }
 
 .new_post_input {
-	width: 500px;
+	width: 570px;
 	font-size: 20px;
-	font-family: 'raleway';
-	font-weight: bold;
+	font-family: 'Montserrat';
+	/*font-weight: bold;*/
 	margin-top: 0px;
 	text-align: center;
-	border-bottom: 3px solid #E8E8E8;
+	border-bottom: 2px solid #2c3e50;
 	border-left: 0px;
 	border-right: 0px;
 	border-top: 0px;
@@ -1344,19 +1356,20 @@ iframe {
 
 .published_list {
 	position: relative;
-	border-top: 3px solid #E8E8E8;
+	border-top: 2px solid #2c3e50;
 	margin-top: 25px;
 }
 .published_list::after {
 	content: 'published';
-	font-size: 20px;
-	font-family: 'MuseoSlab-500';
-	color: #bdc3c7;
+	font-size: 17px;
+	font-family: 'raleway';
+	color: #7f8c8d;
 	text-align: center;
 	padding-bottom: 5px;
 	position: absolute;
 	top: -15px;
-	right: -110px;
+	right: -100px;
+	font-weight: bold;
 }
 
 .line-break {
@@ -1380,7 +1393,6 @@ iframe {
 .cover-header {
 	z-index:10;
 	position:relative;
-	color:white;
 	font-family:'source sans pro';
 	font-size: 45px;
 	font-weight: bold;
@@ -1392,6 +1404,7 @@ iframe {
 	min-height: 82px;
 	text-decoration: none;
 	color: #181818;
+	color: white;
 	/*border: 3px solid #181818;*/
 	border-radius: 3px;
 	opacity: .95;
@@ -1424,6 +1437,7 @@ iframe {
 	cursor: pointer;
 	font-family: 'raleway';
 	opacity: .6;
+	color: white;
 }
 
 .batman_toolbelt {
@@ -1912,7 +1926,7 @@ ul {
 .bio_text {
 	position: relative;
 	font-family: 'source sans pro';
-	color: #A0A0A0;
+	color: #7f8c8d;
 	font-size: 18px;
 	text-align: center;
 	width: 400px;
@@ -2269,6 +2283,28 @@ div[data-placeholder]:not(:focus):not([data-div-placeholder-content]):before {
     border-bottom: 500px solid #4679BD;
     z-index: 99999999999999999999999999999999999999999999;
 }
+
+.insta_transition{
+	-webkit-transition: opacity 500ms ease-out;
+  -moz-transition: opacity 500ms ease-out;
+  -o-transition: opacity 500ms ease-out;
+  -ms-transition: opacity 500ms ease-out;
+  transition: opacity 500ms ease-out;
+}
+
+.list_loading_bar {
+	height: 4px;
+	width: 0px;
+	background: #16a085;
+	margin-top: -2px;
+	z-index: 1000000000000;
+	-webkit-transition: all 400ms ease-out;
+  -moz-transition: all 400ms ease-out;
+  -o-transition: all 400ms ease-out;
+  -ms-transition: all 400ms ease-out;
+  transition: all 400ms ease-out;
+}
+
 .essay-title:link {color:#2c3e50;}
 .essay-title:link {color:#001429;}
 .essay-title:visited {color:#95a5a6;}

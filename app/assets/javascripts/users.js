@@ -54,6 +54,17 @@ function saveProfilePic(link){
 	})
 }
 
+function rollInPostList(){
+	var posts = $('.post_line');
+	var startingTimeout = 0;
+	$.each(posts, function(i, post){
+		setTimeout(function(){
+			$(post).css('opacity','1');
+		}, startingTimeout);
+		startingTimeout += 55;
+	})
+}
+
 
 //this is for the user show page
 $(document).ready(function(){
@@ -403,5 +414,15 @@ $(document).ready(function(){
     		}
     	},1000)
     })
+
+    $('.post_line').css('opacity','0');
+    setTimeout(function(){
+    	$('.post_line').attr('class','post_line insta_transition');
+    	$('.list_loading_bar').width(570);
+    	setTimeout(function(){
+    		$('.list_loading_bar').css('opacity','0');
+   			rollInPostList();
+    	}, 400)
+    },0)
 	}
 })
