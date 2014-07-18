@@ -32,7 +32,7 @@ function showTopSection(){
 
 	$.each(sections, function(i, section){
 		if ($(section).css('opacity') == '0'){
-			var sectionTop = $(section).offset().top + iframeTop - (screen.height/4.5)
+			var sectionTop = $(section).offset().top + iframeTop - (screen.height/3.5)
 			if (scrollTop > sectionTop){
 				$(section).css('opacity','1');
 			}
@@ -1263,6 +1263,10 @@ $(document).ready(function(){
 			$(img).css({'opacity':'1'})
 			centerImage(i);
 		})
+		
+	  $(window).bind('scroll', function(){
+	  	showTopSection();
+	  })
 
 		$('.post_text a').attr('class','text_link')
 		var lastSectionColor = $($('.post_text').find('section').find('div').slice(-1)[0]).css('color')
