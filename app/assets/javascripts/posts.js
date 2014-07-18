@@ -188,6 +188,8 @@ function resetStyles(body){
 	$.each(sections, function(i, section){
 		if (!($(section).attr('class').indexOf('color_image') > -1)){
 			$(section).attr('style','');
+		} else {
+			$(section).css({'opacity':'0', 'box-shadow':'none'});
 		}
 		var children = $(section).children()
 		$.each(children, function(i, child){
