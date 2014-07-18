@@ -26,9 +26,16 @@ function autoSetEditorHeight(){
 }
 
 function showTopSection(){
-	var iframeTop = $('iframe').offset().top
+	var iframeTop;
+	var sections;
+	if ($('iframe').length > 0){
+		iframeTop = $('iframe').offset().top
+	  sections = $('iframe').contents().find('section');
+	} else {
+		iframeTop = 0;
+		sections = $('section');
+	}
 	var scrollTop = $(document).scrollTop();
-	var sections = $('iframe').contents().find('section');
 
 	$.each(sections, function(i, section){
 		if ($(section).css('opacity') == '0'){
@@ -1263,7 +1270,7 @@ $(document).ready(function(){
 			$(img).css({'opacity':'1'})
 			centerImage(i);
 		})
-		
+
 	  $(window).bind('scroll', function(){
 	  	showTopSection();
 	  })
