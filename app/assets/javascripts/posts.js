@@ -98,12 +98,12 @@ function getSectionParent(selection){
 	return parent;
 }
 
-function resetSectionHovering(){
-	var sections = $('iframe').contents().find('section')
-	$.each(sections, function(i, section){
-		$(section).attr('hovering', 0);
-	})
-}
+// function resetSectionHovering(){
+// 	var sections = $('iframe').contents().find('section')
+// 	$.each(sections, function(i, section){
+// 		$(section).attr('hovering', 0);
+// 	})
+// }
 
 function getElementFromSelection(elType){
 	var selection = $('iframe').contents()[0].getSelection()
@@ -207,14 +207,9 @@ function resetStyles(body){
 	})
 }
 
-function getHoveringSection(){
+function getHoveringSection(index){
 	var sections = $('iframe').contents().find('section');
-	var section = false;
-	$.each(sections, function(i, checkSection){
-		if ($(checkSection).attr('hovering') == '1'){
-			section = checkSection;
-		}
-	})
+	var section = sections[parseInt(index)];
 	return section;
 }
 
@@ -238,6 +233,17 @@ function createImage(that){
 	r.collapse();
 	s.removeAllRanges();
 	s.addRange(r);
+}
+
+function getSectionIndex(section){
+	var sections = $('iframe').contents().find('section');
+	var index = 0;
+	$.each(sections, function(i, checkSection){
+		if (checkSection == section){
+			index = i;
+		}
+	})
+	return index;
 }
 
 
@@ -327,9 +333,9 @@ $(document).ready(function(){
 
 
 
-				   var text_left_panelStyle = '.text_left_panel div, .text_left_panel p, .text_left_panel h1{ margin-left:9%; max-width:40%; width: 625px;} .text_left_panel blockquote, .text_left_panel .pullquote{right:7%; max-width:30%; width: 535px; float:right; padding-left: 20px; padding-right:20px; position: absolute; margin: 0px;} .text_left_panel h1{text-align:center;margin-bottom:25px; margin-top: 30px;} .text_left_panel figure {right:7%; max-width:50%; float:right; padding:0px; position: absolute; margin: 0px;} .text_left_panel img {width: 100%;} .text_left_panel blockquote{line-height:1.4; padding:20px;} .text_left_panel .pullquote{border:0px;font-style:italic; text-align:center;}'
-				   var text_center_panelStyle = '.text_center_panel div, .text_center_panel p, .text_center_panel h1 {width: 625px;margin-left:auto;margin-right:auto;} .text_center_panel figure{text-align: center;} .text_center_panel h1{text-align:center; margin-bottom:25px; margin-top: 30px;} .text_center_panel blockquote{position: relative;top:0px !important;margin:30px; margin-left: auto;margin-right: auto;padding:20px; font-size: 20px; line-height: 1.4;  width:625px;} .text_center_panel .pullquote{width: 70%;margin-left: 12%; border-top: 0px solid black; border-bottom: 0px solid black;padding-right: 40px;padding-left:40px; text-align: center; font-size: 35px; font-style:italic; margin-bottom: 5px; margin-top: 5px;}'
-				   var text_right_panelStyle= '.text_right_panel div, .text_right_panel p, .text_right_panel h1{ margin-left:51%; max-width:40%; width: 625px;} .text_right_panel blockquote, .text_right_panel .pullquote{right:63%; max-width:30%; width: 535px; float:left; padding-left: 20px; padding-right:20px; position: absolute; margin: 0px;color:#95a5a6;} .text_right_panel h1{text-align:center;margin-bottom:25px; margin-top: 30px;} .text_right_panel figure {right:50%; max-width:50%; float:left; padding:0px; position: absolute; margin: 0px;} .text_right_panel img {width: 100%;} .text_right_panel blockquote{line-height:1.4; padding:20px;} .text_right_panel .pullquote{border:0px;font-style:italic; text-align: center;}'
+				   var text_left_panelStyle = '.text_left_panel div, .text_left_panel p, .text_left_panel h1{ margin-left:9%; max-width:40%; width: 650px;} .text_left_panel blockquote, .text_left_panel .pullquote{right:7%; max-width:30%; width: 535px; float:right; padding-left: 20px; padding-right:20px; position: absolute; margin: 0px;} .text_left_panel h1{text-align:center;margin-bottom:25px; margin-top: 30px;} .text_left_panel figure {right:7%; max-width:50%; float:right; padding:0px; position: absolute; margin: 0px;} .text_left_panel img {width: 100%;} .text_left_panel blockquote{line-height:1.4; padding:20px;} .text_left_panel .pullquote{border:0px;font-style:italic; text-align:center;}'
+				   var text_center_panelStyle = '.text_center_panel div, .text_center_panel p, .text_center_panel h1 {width: 650px;margin-left:auto;margin-right:auto;} .text_center_panel figure{text-align: center;} .text_center_panel h1{text-align:center; margin-bottom:25px; margin-top: 30px;} .text_center_panel blockquote{position: relative;top:0px !important;margin:30px; margin-left: auto;margin-right: auto;padding:20px; font-size: 20px; line-height: 1.4;  width:625px;} .text_center_panel .pullquote{width: 70%;margin-left: 12%; border-top: 0px solid black; border-bottom: 0px solid black;padding-right: 40px;padding-left:40px; text-align: center; font-size: 35px; font-style:italic; margin-bottom: 5px; margin-top: 5px;}'
+				   var text_right_panelStyle= '.text_right_panel div, .text_right_panel p, .text_right_panel h1{ margin-left:51%; max-width:40%; width: 650px;} .text_right_panel blockquote, .text_right_panel .pullquote{right:63%; max-width:30%; width: 535px; float:left; padding-left: 20px; padding-right:20px; position: absolute; margin: 0px;color:#95a5a6;} .text_right_panel h1{text-align:center;margin-bottom:25px; margin-top: 30px;} .text_right_panel figure {right:50%; max-width:50%; float:left; padding:0px; position: absolute; margin: 0px;} .text_right_panel img {width: 100%;} .text_right_panel blockquote{line-height:1.4; padding:20px;} .text_right_panel .pullquote{border:0px;font-style:italic; text-align: center;}'
 
 
 				   var graceful_fontStyle = '.graceful_font div, .graceful_font p{font-family:source sans pro, sans-serif; font-size: 21px;} .graceful_font blockquote{font-family: georgia,times new roman, times, serif; font-size: 20px;} .graceful_font h1 {font-family:georgia,times new roman, times, serif; font-size: 2.2em;line-height:1.1;} .graceful_font .pullquote{font-family: georgia,times new roman, times, serif; font-size: 35px;}'
@@ -831,14 +837,12 @@ $(document).ready(function(){
 
 		$('.edit_section_btn').hover(function(){
 			if (!($('.details_panel').attr('opened') =='1')){
-				$(this).attr('hovered','1');
-				var section = getHoveringSection($('iframe').contents()[0].getSelection())
+				var section = getHoveringSection($(this).attr('data-section-index'))
 				$(section).css({'box-shadow': '0px 0px 50px 10px #bdc3c7 inset'})
 			}
 		}, function(){
 			if (!($('.details_panel').attr('opened') =='1')){
-				$(this).attr('hovered','0');
-				var section = getHoveringSection($('iframe').contents()[0].getSelection())
+				var section = getHoveringSection($(this).attr('data-section-index'))
 				// console.log(section);
 				$(section).css({'box-shadow':'none'})
 			}
@@ -925,15 +929,14 @@ $(document).ready(function(){
 				$('.edit_section_btn').css({'opacity':'.3'})
 				$(this).css({'box-shadow':'none'})
 				if (!($(this).attr('id') == 'dummy')){
-					$(this).attr('hovering','1');
 					var top = $(this).offset().top + $('iframe').offset().top + 10
 					$('.edit_section_btn').css({'top':top,'right':'100px'})
+					$('.edit_section_btn').attr('data-section-index', getSectionIndex(this));
 				}
 			}).on('mouseleave','section', function(){
 				var that = this;
 				setTimeout(function(){
 					if (!($('.edit_section_btn').attr('hovered') == '1')){
-						$(that).attr('hovering','0');
 						$(that).css('box-shadow','none');
 					}
 					// $('.edit_section_btn').css({'opacity':'0'})
@@ -943,7 +946,7 @@ $(document).ready(function(){
 
 		$('body').on('click', '.edit_section_btn', function(){
 			if (!($('.details_panel').attr('opened') =='1')) {
-				var section = getHoveringSection();
+				var section = getHoveringSection($(this).attr('data-section-index'));
 				boldChoiceButtons(section);
 				$(section).css('box-shadow','none');
 				$('.details_title').html('editing section');
@@ -992,7 +995,7 @@ $(document).ready(function(){
 
 		})
 		$('body').on('click','.cancel_add_section',function(){
-			resetSectionHovering();
+			// resetSectionHovering();
 			setTimeout(function(){
 				$('.cancel_add_section').remove();
 				$('.confirm_add_section').remove();
@@ -1006,7 +1009,7 @@ $(document).ready(function(){
 			},0)
 		})
 		$('body').on('click','.confirm_add_section', function(){
-			resetSectionHovering();
+			// resetSectionHovering();
 			var classes = $('iframe').contents().find('#dummy').attr('class')
 			$('.cancel_add_section').trigger('click');
 			var newSection = $('<section>').html('<p><br></p><p><br></p>')[0];
@@ -1023,7 +1026,7 @@ $(document).ready(function(){
 		})
 		$('body').on('click','.cancel_edit_section',function(){
 			var beingEdited = $('iframe').contents().find('#being_edited')
-			resetSectionHovering();
+			// resetSectionHovering();
 			setTimeout(function(){
 				$('.cancel_edit_section').remove();
 				$('.confirm_edit_section').remove();
@@ -1040,7 +1043,7 @@ $(document).ready(function(){
 			},100)
 		})
 		$('body').on('click','.confirm_edit_section', function(){
-			resetSectionHovering();
+			// resetSectionHovering();
 			$('#edit_section_text').html('edit section');
 			var beingEdited = $('iframe').contents().find('#being_edited')
 			beingEdited.attr('id','');
@@ -1230,7 +1233,8 @@ $(document).ready(function(){
 		$('.circle-divider').css({'width':'100%'})
 		$($('.circle-divider')[1]).css({'margin-top':'-5px'})
 		$($('iframe').contents().find('section')[0]).css('opacity','1');
-		resetSectionHovering();
+		// $('iframe').contents().find('section').css({'min-height': screen.height})
+		// resetSectionHovering();
 		setTimeout(function(){
 			$('.edit-title').autosize();
 		},300)
