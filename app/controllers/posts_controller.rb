@@ -7,7 +7,7 @@ class PostsController < ApplicationController
 		params[:post][:title] = params[:post][:title].gsub('-',' ')
 		@post = current_user.posts.build(post_params)
 		@post.url = uniquify_url(CGI.escape(@post.title.gsub(' ','-').downcase))
-		@post.text = "<section class='text_center_panel color_white graceful_font'><p><br></p> <p><br></p></section>"
+		@post.text = "<section class='text_center_panel color_white classic_font'><p><br></p> <p><br></p></section>"
 		if @post.save
 			respond_to do |format|
 				format.json { render :json => {'yes' => '1', 'id' => @post.id.to_s, 'date' => @post.updated_at.strftime("%0d %b %y"), 'url' => @post.url}.to_json }

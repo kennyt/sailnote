@@ -61,7 +61,7 @@ function rollInPostList(){
 		setTimeout(function(){
 			$(post).css('opacity','1');
 		}, startingTimeout);
-		startingTimeout += 55;
+		startingTimeout += 20;
 	})
 }
 
