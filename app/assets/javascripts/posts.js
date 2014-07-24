@@ -476,12 +476,13 @@ $(document).ready(function(){
 				   var moverStyle = '.mover{position: absolute;top: 0px;right: 0px;height: 20px;width: 20px !important;background: blue; cursor:pointer;}'
 				   var stretcherStyle = '.stretcher{position: absolute;bottom: 50%;left: 0px;height: 20px;margin:0px !important;width: 20px !important;background: red; cursor:pointer;}'
 				   var pStyle = 'p{margin-top: 0px; margin-bottom: 33px;}'
+				   var maxWidth = 'p, blockquote, h1, div {max-width: 95%;}'
 
 
 
-				   var text_left_panelStyle = '.text_left_panel div, .text_left_panel p, .text_left_panel h1{ margin-left:9%; max-width:40%; width: 675px;} .text_left_panel blockquote, .text_left_panel .pullquote{right:7%; max-width:30%; width: 535px; float:right; padding-left: 20px; padding-right:20px; position: absolute; margin: 0px;} .text_left_panel h1{text-align:center;margin-bottom:25px;} .text_left_panel figure {right:7%; max-width:50%; float:right; padding:0px; position: absolute; margin: 0px;} .text_left_panel img {width: 100%;} .text_left_panel blockquote{line-height:1.4; padding:20px;} .text_left_panel .pullquote{border:0px; text-align:center;}'
-				   var text_center_panelStyle = '.text_center_panel div, .text_center_panel p, .text_center_panel h1 {width: 675px;margin-left:auto;margin-right:auto;} .text_center_panel figure{text-align: center;} .text_center_panel h1{text-align:center; margin-bottom:25px;} .text_center_panel blockquote{position: relative;top:0px !important;margin:30px; margin-left: auto;margin-right: auto;padding:20px; font-size: 20px; line-height: 1.4;  width:625px;} .text_center_panel .pullquote{width: 70%;margin-left: 12%; border-top: 0px solid black; border-bottom: 0px solid black;padding-right: 40px;padding-left:40px; text-align: center; font-size: 35px; margin-bottom: 5px; margin-top: 5px;}'
-				   var text_right_panelStyle= '.text_right_panel div, .text_right_panel p, .text_right_panel h1{ margin-left:51%; max-width:40%; width: 675px;} .text_right_panel blockquote, .text_right_panel .pullquote{right:63%; max-width:30%; width: 535px; float:left; padding-left: 20px; padding-right:20px; position: absolute; margin: 0px;color:#95a5a6;} .text_right_panel h1{text-align:center;margin-bottom:25px;} .text_right_panel figure {right:50%; max-width:50%; float:left; padding:0px; position: absolute; margin: 0px;} .text_right_panel img {width: 100%;} .text_right_panel blockquote{line-height:1.4; padding:20px;} .text_right_panel .pullquote{border:0px; text-align: center;}'
+				   var text_left_panelStyle = '.text_left_panel div, .text_left_panel p, .text_left_panel h1{ margin-left:9%; max-width:40%; width: 675px;} .text_left_panel blockquote, .text_left_panel .pullquote{right:7%; max-width:30%; width: 535px; float:right; padding-left: 20px; padding-right:20px; position: absolute; margin: 0px;} .text_left_panel h1{text-align:center;margin-bottom:25px; margin-top: 0px;} .text_left_panel figure {right:7%; max-width:50%; float:right; padding:0px; position: absolute; margin: 0px;} .text_left_panel img {width: 100%;} .text_left_panel blockquote{line-height:1.4; padding:20px;} .text_left_panel .pullquote{border:0px; text-align:center;}'
+				   var text_center_panelStyle = '.text_center_panel div, .text_center_panel p, .text_center_panel h1 {width: 675px;margin-left:auto;margin-right:auto;} .text_center_panel figure{text-align: center;} .text_center_panel h1{text-align:center; margin-bottom:25px; margin-top: 0px;} .text_center_panel blockquote{position: relative;top:0px !important;margin:30px; margin-left: auto;margin-right: auto;padding:20px; font-size: 20px; line-height: 1.4;  width:625px;} .text_center_panel .pullquote{width: 70%;margin-left: auto;margin-right:auto; border-top: 0px solid black; border-bottom: 0px solid black;padding-right: 40px;padding-left:40px; text-align: center; font-size: 35px; margin-bottom: 5px; margin-top: 5px;}'
+				   var text_right_panelStyle= '.text_right_panel div, .text_right_panel p, .text_right_panel h1{ margin-left:51%; max-width:40%; width: 675px;} .text_right_panel blockquote, .text_right_panel .pullquote{right:63%; max-width:30%; width: 535px; float:left; padding-left: 20px; padding-right:20px; position: absolute; margin: 0px;color:#95a5a6;} .text_right_panel h1{text-align:center;margin-bottom:25px; margin-top: 0px;} .text_right_panel figure {right:50%; max-width:50%; float:left; padding:0px; position: absolute; margin: 0px;} .text_right_panel img {width: 100%;} .text_right_panel blockquote{line-height:1.4; padding:20px;} .text_right_panel .pullquote{border:0px; text-align: center;}'
 
 
 				   var graceful_fontStyle = '.graceful_font div, .graceful_font p{font-family:source sans pro, sans-serif; font-size: 24px;} .graceful_font blockquote{font-family: georgia,times new roman, times, serif; font-size: 20px;} .graceful_font h1 {font-family:georgia,times new roman, times, serif; font-size: 2.2em;line-height:1.1;} .graceful_font .pullquote{font-family: georgia,times new roman, times, serif; font-size: 35px;}'
@@ -505,11 +506,11 @@ $(document).ready(function(){
 
 				   var color_darktealStyle = '.color_darkteal {background: #003333;} .color_darkteal div, .color_darkteal p {color: white} .color_darkteal h1 { color: white; } .color_darkteal blockquote {color:#B0E0E6; border-top: 8px solid #87CEEB;border-bottom: 8px solid #87CEEB;} .color_darkteal .text_link{text-decoration:none; border-bottom:1px solid white;color:white;} .color_darkteal .text_link:link {color:white;border-bottom: 1px solid white;} .color_darkteal .text_link:visited {opacity: .5;} .color_darkteal .text_link:active {color:red;}'
 
-				   var color_imageStyle = '.color_image {background: white; background-repeat:no-repeat;} .color_image div, .color_image p {color: inherit} .color_image h1 { color: inherit; } .color_image blockquote {color:grey; border-top: 8px solid grey;border-bottom: 8px solid grey;} .color_image .text_link{text-decoration:none; border-bottom:1px solid inherit;color:inherit;} .color_image .text_link:link {color:inherit;border-bottom: 1px solid inherit;} .color_image .text_link:visited {opacity: .5;} .color_image .text_link:active {color:red;}'
+				   var color_imageStyle = '.color_image {background: white; background-repeat:no-repeat; background-size: auto 100%;} .color_image div, .color_image p {color: inherit} .color_image h1 { color: inherit; } .color_image blockquote {color:grey; border-top: 8px solid grey;border-bottom: 8px solid grey;} .color_image .text_link{text-decoration:none; border-bottom:1px solid inherit;color:inherit;} .color_image .text_link:link {color:inherit;border-bottom: 1px solid inherit;} .color_image .text_link:visited {opacity: .5;} .color_image .text_link:active {color:red;}'
 
 
 				   $('iframe').contents().find('body').attr('spellcheck','false')
-					 $('iframe').contents().find('head').append($('<style>').html(importFont+pStyle+textLinkStyle+selectionStyle+sectionStyle+classic_fontStyle+graceful_fontStyle+text_center_panelStyle+text_left_panelStyle+text_right_panelStyle+color_whiteStyle+color_lightgreyStyle+color_lightblueStyle+color_blackStyle+color_slategreyStyle+color_darkblueStyle+color_darkredStyle+color_darkpurpleStyle+color_darktealStyle+color_imageStyle+moverStyle+stretcherStyle))
+					 $('iframe').contents().find('head').append($('<style>').html(importFont+maxWidth+pStyle+textLinkStyle+selectionStyle+sectionStyle+classic_fontStyle+graceful_fontStyle+text_center_panelStyle+text_left_panelStyle+text_right_panelStyle+color_whiteStyle+color_lightgreyStyle+color_lightblueStyle+color_blackStyle+color_slategreyStyle+color_darkblueStyle+color_darkredStyle+color_darkpurpleStyle+color_darktealStyle+color_imageStyle+moverStyle+stretcherStyle))
 					var buttonPane = $("<div/>",{
 					    "class" : "editor-btns"
 					}).prependTo($('body'));
@@ -953,10 +954,10 @@ $(document).ready(function(){
 		  		}
 
 		  		//random spans showing up. replacing them with text.
-	  			$.each($('iframe').contents().find('span'), function(i, span){
-	  				var span_html = $(span).html()
-	  				$(span).replaceWith(span_html)
-	  			})
+	  			// $.each($('iframe').contents().find('span'), function(i, span){
+	  			// 	var span_html = $(span).html()
+	  			// 	$(span).replaceWith(span_html)
+	  			// })
 	    	}, 0)
 		  }
 		})
