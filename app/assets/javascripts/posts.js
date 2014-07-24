@@ -122,14 +122,14 @@ function snapScroll(top, direction, user){
 				}
 			}
 		}
-		$('html,body').animate({ scrollTop: sectionTop}, 1000)
+		$('html,body').animate({ scrollTop: sectionTop}, 750)
 
 
 		var beforeSection = sections[previousSection];
 		if (beforeSection != undefined){
 			var paddingTop = parseInt($(beforeSection).css('padding-top')) + 20
-			$($(beforeSection).children()).animate({ opacity: 0}, 200)
-			$(beforeSection).animate({'padding-top': paddingTop+'px'}, 200)
+			$($(beforeSection).children()).animate({ opacity: 0}, 160)
+			$(beforeSection).animate({'padding-top': paddingTop+'px'}, 160)
 		}
 
 		//make image light to have the focus transition effect
@@ -143,11 +143,11 @@ function snapScroll(top, direction, user){
 				$($(section).children()).animate({ opacity: 1}, 400)
 				$(section).animate({'padding-top': paddingTop+'px', opacity: 1}, 500)
 			}
-		}, 850);
+		}, 600);
 		setTimeout(function(){
 			lastScroll = $(document).scrollTop();
 			textBody.attr('scrollz','0');
-		}, 1050)
+		}, 800)
 	}
 }
 
