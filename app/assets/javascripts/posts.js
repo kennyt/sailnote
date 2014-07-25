@@ -162,8 +162,9 @@ function verticalAlignSections(user){
 	$.each(sections, function(i, section){
 		var height = $(section).height();
 		var children = $(section).children()
-		var lastChildTop = $(children[children.length-1]).offset().top - $(section).offset().top
-		$(section).css('padding-top', (height - lastChildTop)/2 +'px');
+		var lastChildDim = children[children.length-1].getBoundingClientRect()
+		var lastChildBottom = lastChildDim.bottom - $(section).offset().top
+		$(section).css('padding-top', (height - lastChildBottom)/2 +'px');
 	})
 }
 
@@ -476,7 +477,7 @@ $(document).ready(function(){
 				   var moverStyle = '.mover{position: absolute;top: 0px;right: 0px;height: 20px;width: 20px !important;background: blue; cursor:pointer;}'
 				   var stretcherStyle = '.stretcher{position: absolute;bottom: 50%;left: 0px;height: 20px;margin:0px !important;width: 20px !important;background: red; cursor:pointer;}'
 				   var pStyle = 'p{margin-top: 0px; margin-bottom: 33px;}'
-				   var maxWidth = 'p, blockquote, h1, div {max-width: 95%;}'
+				   var maxWidth = 'p, blockquote, h1, div {max-width: 95%;} figure{max-width: 100%;}'
 
 
 
@@ -809,7 +810,7 @@ $(document).ready(function(){
 							if ($(dummy).length == 0){
 								dummy = $('iframe').contents().find('#being_edited')
 							}
-				    	$(dummy).css({'background-image':'url('+link+')', 'background-size':'100%'})
+				    	$(dummy).css({'background-image':'url('+link+')'})
 				    	$('.font-color-chooser').fadeIn(100);
 							$('.image_getter').fadeOut(100);
 				    } else {
@@ -1271,7 +1272,7 @@ $(document).ready(function(){
 						$('.post_image_getter').keyup(function(){
 							var input = $(this).val()
 							if (input.length > 6){
-								$(dummy).css({'background-image':'url('+input+')', 'background-size':'100%'})
+								$(dummy).css({'background-image':'url('+input+')'})
 								$('font-color-chooser').fadeIn(200);
 								$('.post_image_getter').remove();
 							}
