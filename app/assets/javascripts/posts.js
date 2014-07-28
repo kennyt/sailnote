@@ -51,8 +51,6 @@ function showTopSection(){
 }
 
 function bindScroll(element, user){
-	var lastY,
-    timer;
   var scrollDirection;
 	element.on('DOMMouseScroll wheel',function(e){
   	// showTopSection();
@@ -68,23 +66,27 @@ function bindScroll(element, user){
 	  	return false;
   	}
   })
+
+	var lastY = 0,
+    	timer;
   element.on('touchmove', function(e){
-  	clearTimeout(timer);
-    var currentY = e.originalEvent.touches ? e.originalEvent.touches[0].pageY : e.pageY;
-    if (Math.abs(currentY-lastY) < 10) { return; }
+  	// clearTimeout(timer);
+  	var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0]
+    var currentY = touch.pageY || e.pageY
+    // if (Math.abs(currentY-lastY) < 10) { return; }
     if (currentY > lastY) {
         scrollDirection = 'down';
     } else {
         scrollDirection = 'up';
     }
     lastY = currentY;
-    
+
   	var scrollTop = $(document).scrollTop();
   	snapScroll(scrollTop, scrollDirection, user);
 
-    timer = setTimeout(function(){
-        // lastY = 0;
-    }, 500);
+    // timer = setTimeout(function(){
+    //     // lastY = 0;
+    // }, 500);
   })
 }
 
