@@ -82,7 +82,7 @@ function bindScroll(element, user){
   	var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0]
     var currentY = touch.pageY || e.pageY
     // if (Math.abs(currentY-ts) < 10) { return; }
-    if (currentY > ts) {
+    if (currentY < ts) {
         scrollDirection = 'down';
     } else {
         scrollDirection = 'up';
