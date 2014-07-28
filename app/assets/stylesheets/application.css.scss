@@ -698,7 +698,7 @@ iframe {
 }
 
 .edit-title {
-	width: 70%;
+	width: 95%;
 	margin-left: auto;
 	margin-right: auto;
 	margin-top: 0px;
@@ -928,7 +928,7 @@ iframe {
 	font-size: 110px;
 	margin-left: auto;
 	margin-right: auto;
-	width: 70%;
+	width: 95%;
 	margin-top: -50px;
 	margin-bottom: 50px;
 	padding-bottom: 20px;
@@ -970,6 +970,7 @@ iframe {
 		display: block;
 		margin: auto;
 		position: relative;
+		vertical-align: middle;
 	}
 	.text_link:link {color:#202020;border-bottom: 1px solid #95a5a6;}
 	.text_link:hover{border-bottom: 1px solid black;}
