@@ -956,7 +956,7 @@ $(document).ready(function(){
 
 		  		// random spans showing up. replacing them with text.
 	  			$.each($('iframe').contents().find('span'), function(i, span){
-	  				if ($(span).css('font-weight') != 'normal'){
+	  				if ($(span).css('font-weight') != '400'){
 		  				var span_html = $(span).html()
 		  				$(span).replaceWith(span_html)
 	  				}
