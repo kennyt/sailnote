@@ -1445,13 +1445,13 @@ $(document).ready(function(){
 		// $('.cover-box').css({'width': $(document).width()})
 		// $('.cover-box img').css({'width': screen.width})
 
-		$.each($('.post_text img'), function(i, img){
-			$(img).attr('onClick','goToSource('+i+')')
-			$(img).css({'max-width': $(document).width()/1.6})
-			$(img).attr('onload','centerImage('+i+')');
-			$(img).css({'opacity':'1'})
-			centerImage(i);
-		})
+		// $.each($('.post_text img'), function(i, img){
+		// 	$(img).attr('onClick','goToSource('+i+')')
+		// 	$(img).css({'max-width': $(document).width()/1.6})
+		// 	$(img).attr('onload','centerImage('+i+')');
+		// 	$(img).css({'opacity':'1'})
+		// 	centerImage(i);
+		// })
 
 	  $(window).bind('scroll', function(){
 	  	showTopSection();
