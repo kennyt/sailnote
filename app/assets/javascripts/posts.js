@@ -83,7 +83,7 @@ function bindScroll(element, user){
   	snapScroll(scrollTop, scrollDirection, user);
 
     timer = setTimeout(function(){
-        lastY = 0;
+        // lastY = 0;
     }, 500);
   })
 }
