@@ -51,9 +51,11 @@ function showTopSection(){
 }
 
 function bindScroll(element, user){
+	var lastY,
+    timer;
+  var scrollDirection;
 	element.on('DOMMouseScroll wheel',function(e){
   	// showTopSection();
-  	var scrollDirection;
   	var theEvent = e.originalEvent.wheelDelta || e.originalEvent.detail*-1
   	if (theEvent != 0){
 	  	if( theEvent /120 > 0) { //alternative options for wheelData: wheelDeltaX & wheelDeltaY
@@ -65,6 +67,24 @@ function bindScroll(element, user){
 	  	snapScroll(scrollTop, scrollDirection, user);
 	  	return false;
   	}
+  })
+  element.on('touchmove', function(e){
+  	clearTimeout(timer);
+    var currentY = e.originalEvent.touches ? e.originalEvent.touches[0].pageY : e.pageY;
+    if (Math.abs(currentY-lastY) < 10) { return; }
+    if (currentY > lastY) {
+        scrollDirection = 'down';
+    } else {
+        scrollDirection = 'up';
+    }
+    lastY = currentY;
+    
+  	var scrollTop = $(document).scrollTop();
+  	snapScroll(scrollTop, scrollDirection, user);
+
+    timer = setTimeout(function(){
+        lastY = 0;
+    }, 500);
   })
 }
 
