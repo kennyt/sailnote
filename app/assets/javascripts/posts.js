@@ -68,22 +68,33 @@ function bindScroll(element, user){
   })
 
 	var lastY = 0,
-    	timer;
-  element.on('touchmove', function(e){
+    	timer,
+    	ts;
+
+	element.on('touchstart', function (e){
+  	var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0]
+	  ts = touch.pageY || e.pageY;
+	});
+
+  element.on('touchmove', function (e){
   	// clearTimeout(timer);
   	e.preventDefault();
   	var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0]
     var currentY = touch.pageY || e.pageY
-    // if (Math.abs(currentY-lastY) < 10) { return; }
-    if (currentY > lastY) {
+    // if (Math.abs(currentY-ts) < 10) { return; }
+    if (currentY > ts) {
         scrollDirection = 'down';
     } else {
         scrollDirection = 'up';
     }
-    lastY = currentY;
 
   	var scrollTop = $(document).scrollTop();
   	snapScroll(scrollTop, scrollDirection, user);
+  	// lastY = 'no'
+  	// setTimeout(function(){
+   //  	lastY = currentY;
+  	// }, 800);
+
 
     // timer = setTimeout(function(){
     //     // lastY = 0;
