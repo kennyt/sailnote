@@ -71,6 +71,7 @@ function bindScroll(element, user){
     	timer;
   element.on('touchmove', function(e){
   	// clearTimeout(timer);
+  	e.preventDefault();
   	var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0]
     var currentY = touch.pageY || e.pageY
     // if (Math.abs(currentY-lastY) < 10) { return; }
