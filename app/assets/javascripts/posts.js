@@ -937,24 +937,9 @@ $(document).ready(function(){
     		}
     		setTimeout(function(){
     			var parent = getSectionParent($('iframe').contents()[0].getSelection())
-	    		// var empty_child;
 	    		if (parent.children.length == 1){
 	    			$(parent).append('<p><br></p>');
-	    			// if ($(parent.children[0]).html() == '<br>'){
-	    			// 	empty_child = true;
-	    			// }
 	    		}
-	    	// 	if ($(parent).html() == '' || (empty_child) || ($(parent).html() == '<br>')){
-	    	// 		ev.preventDefault();
-	    	// 		var newP = $('<p>').html('<br>')[0]
-	    	// 		$(parent).html(newP)
-		    // 			var s = $('iframe')[0].contentWindow.getSelection(),
-						//     	r = $('iframe')[0].contentWindow.document.createRange();
-						// r.setStart(newP, 0);
-						// r.setEnd(newP, 0);
-						// s.removeAllRanges();
-						// s.addRange(r);
-	    	// 	}
     		},10)
 	    }
 
@@ -987,18 +972,6 @@ $(document).ready(function(){
 							s.addRange(r);
 		  			}
 
-		  		} else {
-		  			// var selection = window.getSelection(),
-			    //       range = selection.getRangeAt(0),
-			    //       p = document.createElement("p")
-			    //   range.deleteContents();//required or not?
-			    //   range.insertNode(p);
-			    //   range.collapse(false);
-
-			    //   selection.removeAllRanges();
-			    //   selection.addRange(range);
-			    //   return false;
-
 		  		}
 
 		  		// random spans showing up. replacing them with text.
@@ -1008,6 +981,7 @@ $(document).ready(function(){
 		  				$(span).replaceWith(span_html)
 	  				}
 	  			})
+	  			verticalAlignSections();
 	    	}, 0)
 		  }
 		})
@@ -1171,7 +1145,7 @@ $(document).ready(function(){
 				$('.details_panel').append('<div class="confirm_add_section">add</div>');
 				$('.details_panel').height(200);
 		
-				var dummySection = $('<section>').html('<blockquote style="top:100px;">This is a profound quote</blockquote><p>Isaacson said Steve Jobs would pick a couple of things that were important and brutally reject everything that he didn\'t care about. Strong intuition.</p> <blockquote style="top:400px" class="pullquote">This is some emphasized text</blockquote><h1>This is an Example Header</h1><p>Brutally honest meetings where everyone said what needed to be said. Would constantly go over his products with his hands and get a sense of them; get a sense of their essence, almost their soul; then iterating them. focused on building a great team.</p>')[0]
+				var dummySection = $('<section>').html('<h1>This is an Example Header</h1><p>This is example body text</p>')[0]
 				$(dummySection).attr('id','dummy');
 				$(dummySection).attr('style','height:'+$(window).height()+'px');
 				$(dummySection).attr('class','text_center_panel classic_font color_white');

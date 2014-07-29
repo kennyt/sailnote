@@ -2111,12 +2111,13 @@ div[data-placeholder]:not(:focus):not([data-div-placeholder-content]):before {
 .detail_chooser {
 	box-sizing: border-box;
 	width: 33.3%;
+	margin-left: 33%;
 	padding: 30px;
 	padding-top: 10px;
 	background: white;
 	height: 100%;
 	float: left;
-	border-left: 1px solid grey;
+	/*border-left: 1px solid grey;*/
 }
 
 .chooser_title {
