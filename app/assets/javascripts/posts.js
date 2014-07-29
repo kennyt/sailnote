@@ -434,7 +434,7 @@ function getSectionIndex(section){
 
 function enlargeForMobile(){
 	if(window.mobilecheck) {
-		$('.text_center_panel').find('p').css('font-size','32px');
+		$('.text_center_panel').find('p').css('font-size','40px');
 	}
 }
 
