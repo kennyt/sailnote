@@ -433,7 +433,7 @@ function getSectionIndex(section){
 }
 
 function enlargeForMobile(){
-	if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+	if(window.mobilecheck) {
 		$('.text_center_panel').find('p').css('font-size','32px');
 	}
 }
@@ -1449,6 +1449,7 @@ $(document).ready(function(){
 		$('iframe').contents().find('section').css({'min-height': $(window).height()})
 		verticalAlignHeader();
 		// invisibleChildren();
+		enlargeForMobile();
 		setTimeout(function(){
 	  	verticalAlignSections();
 		},300)
@@ -1477,16 +1478,14 @@ function goToSource(img_index){
 }
 $(document).ready(function(){
 	if ($('.page_identifier').attr('id') == 'guest_view_post'){
-		$('.twitter_share').attr('href', 'https://twitter.com/intent/tweet?url='+encodeURIComponent(document.URL)+'&text="'+$('.post_title').html()+'"')
-		$('.facebook_share').attr('href','http://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(document.URL))
+		// $('.twitter_share').attr('href', 'https://twitter.com/intent/tweet?url='+encodeURIComponent(document.URL)+'&text="'+$('.post_title').html()+'"')
+		// $('.facebook_share').attr('href','http://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(document.URL))
 
-		if (!($('.control_button').length > 0)){
-			setTimeout(function(){
-				var user = $('.page_identifier').attr('data-username');
-				var title = document.URL.split('/'+user+'/')[1]
-				$.post('/'+user+'/'+title+'/increment_viewcount')
-			}, 1000)
-		}
+		setTimeout(function(){
+			var user = $('.page_identifier').attr('data-username');
+			var title = document.URL.split('/'+user+'/')[1]
+			$.post('/'+user+'/'+title+'/increment_viewcount')
+		}, 1000)
 		// $('.cover-box').css({'width': $(document).width()})
 		// $('.cover-box img').css({'width': screen.width})
 
@@ -1513,7 +1512,7 @@ $(document).ready(function(){
 		verticalAlignHeader('guest');
 		// invisibleChildren('guest');
 		$('.sfooter').height($(window).height())
-		// enlargeForMobile();
+		enlargeForMobile();
 		setTimeout(function(){
 	  	verticalAlignSections('guest');
 		},300)
