@@ -1,4 +1,6 @@
 class UsersController < ApplicationController
+	include ActionView::Helpers::DateHelper
+	
 	def new
 		@user = User.new
 	end
@@ -23,6 +25,10 @@ class UsersController < ApplicationController
 		if @authored_bool
 			@unpublished_posts = @user.posts.where(:published => false).order('updated_at DESC')
 			@email_follower_number = @user.email_followers.split(',').length
+		end
+		if current_user && current_user.username == 'kennyt' && params[:godeye] == '1'
+			@posts = Post.last(20).reverse
+			render 'analytics'
 		end
 	end
 
