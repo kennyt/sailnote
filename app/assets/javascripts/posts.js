@@ -170,6 +170,7 @@ function snapScroll(top, direction, user){
 		if (section && $(section).hasClass('color_image')){
 			$(section).css('opacity','.35');
 		}
+		hideChildren(section);
 
 		setTimeout(function(){
 			if (section != false){
@@ -229,6 +230,10 @@ function invisibleChildren(user){
 	$.each(sections, function(i, section){
 		$(section).children().css('opacity','0');
 	})
+}
+
+function hideChildren(section){
+	$(section).children().css('opacity','0');
 }
 
 function setBlockquoteTop (ele, beforeTop){
@@ -1437,7 +1442,7 @@ $(document).ready(function(){
 	  bindScroll(textBody)
 		$('iframe').contents().find('section').css({'min-height': $(window).height()})
 		verticalAlignHeader();
-		invisibleChildren();
+		// invisibleChildren();
 		setTimeout(function(){
 	  	verticalAlignSections();
 		},300)
@@ -1500,7 +1505,7 @@ $(document).ready(function(){
 		bindScroll($('html,body'), 'guest')
 		$('section').css({'min-height': $(window).height()})
 		verticalAlignHeader('guest');
-		invisibleChildren('guest');
+		// invisibleChildren('guest');
 		$('.sfooter').height($(window).height())
 		setTimeout(function(){
 	  	verticalAlignSections('guest');
