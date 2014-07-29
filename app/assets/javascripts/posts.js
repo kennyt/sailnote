@@ -1513,7 +1513,7 @@ $(document).ready(function(){
 		verticalAlignHeader('guest');
 		// invisibleChildren('guest');
 		$('.sfooter').height($(window).height())
-		enlargeForMobile();
+		// enlargeForMobile();
 		setTimeout(function(){
 	  	verticalAlignSections('guest');
 		},300)
