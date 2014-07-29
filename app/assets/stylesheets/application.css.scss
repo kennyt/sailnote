@@ -112,6 +112,26 @@
 		opacity: 1;
 	}
 }
+
+.essaii_inline {
+	width: 60px;
+	height: 60px;
+	border-radius: 4px;
+	display: inline-block;
+	vertical-align: middle;
+	margin-top: -10px;
+	background-image: url('sailboat5.png');
+	background-size: cover;
+	/*background-color: #bdc3c7;*/
+	box-shadow: 0px 0px 1px 1px white;
+	z-index: 1000000;
+	opacity: .6;
+	&:hover{
+		box-shadow: 0px 0px 4px 2px white;
+		opacity: 1;
+	}
+}
+
 .ocean {
 	width: 100%;
 	position: absolute;
@@ -2309,6 +2329,19 @@ div[data-placeholder]:not(:focus):not([data-div-placeholder-content]):before {
   -o-transition: all 400ms ease-out;
   -ms-transition: all 400ms ease-out;
   transition: all 400ms ease-out;
+}
+
+.call_to_signup{
+	margin-top: 50px;
+	font-size: 21px;
+	font-family: 'source sans pro';
+}
+
+.inline-sailboat {
+	background-size: cover;
+	padding: 25px;
+	height: 50px;
+	width: 50px;
 }
 
 .essay-title:link {color:#2c3e50;}
