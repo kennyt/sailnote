@@ -6,7 +6,7 @@ class UsersController < ApplicationController
 	def create
 		@user = User.new(user_params)
     if @user.save
-			@user.posts.create!(:title => 'Your First Post', :text => '<section class="text_center_panel classic_font color_white"><p>Highlight any text to style it. Use the left to add image. Ctrl + S to save.</p><p>Welcome to Sailnote. Writing is hard. We\'ll try to help you.</p></section>', :url => 'first')
+			@user.posts.create!(:title => 'Your First Post', :text => '<section class="text_center_panel classic_font color_white"><p>Highlight any text to style it. Use the left to add image. Ctrl + S to save.</p><p>Welcome to Sailnote. Writing is hard. Writing brief notes is easy.</p></section>', :url => 'first')
     	# image_array = ['http://i.imgur.com/iEeeRSq.jpg', 'http://i.imgur.com/S9pfRrW.jpg']
     	# @user.update_attribute(:image_banner, image_array.sample)
     	build_cookie(@user)
