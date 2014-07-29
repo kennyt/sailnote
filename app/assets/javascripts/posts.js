@@ -182,7 +182,7 @@ function snapScroll(top, direction, user){
 		setTimeout(function(){
 			lastScroll = $(document).scrollTop();
 			textBody.attr('scrollz','0');
-		}, 800)
+		}, 1100)
 	}
 }
 
@@ -430,6 +430,12 @@ function getSectionIndex(section){
 		}
 	})
 	return index;
+}
+
+function enlargeForMobile(){
+	if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+		$('.text_center_panel').find('p').css('font-size','32px');
+	}
 }
 
 
@@ -1507,6 +1513,7 @@ $(document).ready(function(){
 		verticalAlignHeader('guest');
 		// invisibleChildren('guest');
 		$('.sfooter').height($(window).height())
+		enlargeForMobile();
 		setTimeout(function(){
 	  	verticalAlignSections('guest');
 		},300)
