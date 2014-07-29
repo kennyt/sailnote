@@ -27,7 +27,7 @@
 				  <%= f.submit 'save (ctrl + s)', {class: 'edit-submit', datasubmit: '1', data_id: @post.id}%>
 				  <div class="url_label">custom url</div>
 				  <input class="url_input" value="<%= @post.url %>">
-					<li><span class="view_mode_button control_button">preview</span></li>
+					<!-- <li><span class="view_mode_button control_button">preview</span></li> -->
 					<% unless @post.published %>
 						<li><%= link_to '!publish', '/posts/'+@post.url+'/publish', method: "post", :confirm => 'Are you sure you want to publish?', :class => 'control_button' %></li>
 					<% end %>

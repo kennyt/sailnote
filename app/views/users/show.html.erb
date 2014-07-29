@@ -9,19 +9,19 @@
 		<% end %>
 		<a class="cover-header" href="/<%=@user.username%>"><%= @user.username %></a>
 		<% if @authored_bool %>
-			<div class="change_pic_btn">change picture</div>
+			<div class="change_pic_btn" title="Upload profile picture."></div>
 			<%= cloudinary_js_config %>
 			<div class="hidden_image_holder"></div>
 			<% if @user.bio.length == 0 %>
-				<div class="bio_text user_panel" contentEditable="true" data-placeholder="type short bio here" data-changed="0" spellcheck="false"><%= h(@user.bio.html_safe) %></div>
+				<div class="bio_text" contentEditable="true" data-placeholder="type short bio here" data-changed="0" spellcheck="false"><%= h(@user.bio.html_safe) %></div>
 			<% else %>
-				<div class="bio_text user_panel" contentEditable="true" data-placeholder="" data-changed="0" spellcheck="false"><%= h(@user.bio.html_safe) %></div>
+				<div class="bio_text" contentEditable="true" data-placeholder="" data-changed="0" spellcheck="false"><%= h(@user.bio.html_safe) %></div>
 			<% end %>
 		<% else %>
-			<div class="bio_text user_panel"><%= h(@user.bio.html_safe) %></div>
+			<div class="bio_text"><%= h(@user.bio.html_safe) %></div>
 		<% end %>
+		<%= link_to '', root_path, :class => 'essaii_left' %>
 	</div>
-	<%= link_to '', root_path, :class => 'essaii_left' %>
 	<!-- <div class="ocean"></div> -->
 </div>
 <div class="save_success">saved!</div>

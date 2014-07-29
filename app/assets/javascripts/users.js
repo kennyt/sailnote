@@ -30,12 +30,12 @@ function createConfirmBox(button, method){
 	$('body').append('<div class="confirm-box"><div class="confirm-message">'+method+' '+title+'?</div><span class="confirm-button '+confirmClass+'" data-method="'+method+'" data-title="'+postId+'" data-unencoded="'+postId+'">'+method+'</span><span class="confirm-cancel">cancel</span></div>')
 
 	// var right = $(document).width() - ($(button).offset().left - 70)
-	var left = $('.archive').offset().left - 3
+	// var left = $('.archive').offset().left - 3
 	var top = $(button).offset().top - $('.confirm-box').height() - 46;
 	if (top < 0){
 		top = 0;
 	}
-	$('.confirm-box').css({'left':left,'top':top})
+	$('.confirm-box').css({'top':top})
 }
 
 function saveProfilePic(link){
@@ -106,7 +106,7 @@ $(document).ready(function(){
 			})
 		})
 
-		$('.archive').hover(function(){
+		$('.post_list').hover(function(){
 			$(this).attr('hovered','1');
 		}, function(){
 			$(this).attr('hovered','0');
@@ -125,7 +125,7 @@ $(document).ready(function(){
 		})
 
 		$(".new_post_input").focusout(function(){
-			if ($('.archive').attr('hovered') == '0'){
+			if ($('.post_line').attr('hovered') == '0'){
 				$('.new_post_input').height(40);
 				$('.press_enter_info').css({'opacity':'0'});
 			}
@@ -369,8 +369,8 @@ $(document).ready(function(){
 		  // return true;
 		});
 
-		$('.archive').css({'width': '570px'})
-		$('.new_post_input').css({'width': $('.archive').width()})
+		// $('.archive').css({'width': '570px'})
+		// $('.new_post_input').css({'width': $('.archive').width()})
 
 		if ($('.new_post_input').length > 0){
 			$('.post_line').css({'width': '430px'})
@@ -418,7 +418,7 @@ $(document).ready(function(){
     $('.post_line').css('opacity','0');
     setTimeout(function(){
     	$('.post_line').attr('class','post_line insta_transition');
-    	$('.list_loading_bar').width(570);
+    	$('.list_loading_bar').width('100%');
     	setTimeout(function(){
     		$('.list_loading_bar').css('opacity','0');
    			rollInPostList();

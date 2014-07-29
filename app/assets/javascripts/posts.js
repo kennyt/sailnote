@@ -1479,6 +1479,7 @@ $(document).ready(function(){
 		var lastSectionColor = $($('.post_text').find('section').find('p').slice(-1)[0]).css('color')
 		$('.sfooter').css({'background': $($('.post_text').find('section').slice(-1)[0]).css('background')})
 		$('.footer_name').css({'color': lastSectionColor, 'border':'3px solid '+lastSectionColor })
+		$('.call_to_signup').css({'color': lastSectionColor})
 
 		//snapscroll functionality
 		bindScroll($('html,body'), 'guest')
