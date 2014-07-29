@@ -125,7 +125,7 @@ $(document).ready(function(){
 		})
 
 		$(".new_post_input").focusout(function(){
-			if ($('.post_line').attr('hovered') == '0'){
+			if ($('.post_list').attr('hovered') == '0'){
 				$('.new_post_input').height(40);
 				$('.press_enter_info').css({'opacity':'0'});
 			}
