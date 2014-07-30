@@ -1,6 +1,6 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
-  helper_method :current_user, :user_path, :about_path, :clean_text, :uniquify_url, :post_path
+  helper_method :current_user, :user_path, :about_path, :clean_text, :uniquify_url, :post_path, :clean_url
 
   def build_cookie(user)
     cookies.permanent[:token] = SecureRandom.uuid
@@ -31,5 +31,9 @@ class ApplicationController < ActionController::Base
       num += 1
     end
     return url
+  end
+
+  def clean_url(url)
+    url = url.gsub('.','')
   end
 end

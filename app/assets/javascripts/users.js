@@ -68,7 +68,7 @@ function rollInPostList(){
 function enlargeUserShowForMobile(){
 	if (window.mobilecheck()){
 		$('.essay-title').css('font-size','30px');
-		$('.bio_text').css('font-size','24px');
+		$('.bio_text').css('font-size','30px');
 		$('.cover-header').css('font-size','80px');
 		$('.post_line').css('min-height','46px');
 	}
