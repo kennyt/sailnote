@@ -455,7 +455,7 @@ function getSectionIndex(section){
 }
 
 function enlargeForMobile(){
-	if(!window.mobilecheck) {
+	if(window.mobilecheck()) {
 		$('.text_center_panel p').css({'font-size':'46px', 'width':'95%'});
 		$('.text_center_panel div').css({'font-size':'46px', 'width':'95%'});
 		$('.text_center_panel .pullquote').css({'font-size':'68px'})
