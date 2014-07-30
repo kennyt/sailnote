@@ -65,6 +65,15 @@ function rollInPostList(){
 	})
 }
 
+function enlargeUserShowForMobile(){
+	if (window.mobilecheck()){
+		$('.essay-title').css('font-size','30px');
+		$('.bio_text').css('font-size','24px');
+		$('.cover-header').css('font-size','80px');
+		$('.post_line').css('min-height','46px');
+	}
+}
+
 
 //this is for the user show page
 $(document).ready(function(){
@@ -415,6 +424,7 @@ $(document).ready(function(){
     	},1000)
     })
 
+    enlargeUserShowForMobile();
     $('.post_line').css('opacity','0');
     setTimeout(function(){
     	$('.post_line').attr('class','post_line insta_transition');
