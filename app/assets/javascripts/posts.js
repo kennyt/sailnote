@@ -455,8 +455,9 @@ function getSectionIndex(section){
 }
 
 function enlargeForMobile(){
-	if(window.mobilecheck) {
+	if(!window.mobilecheck) {
 		$('.text_center_panel p').css({'font-size':'46px', 'width':'95%'});
+		$('.text_center_panel div').css({'font-size':'46px', 'width':'95%'});
 		$('.text_center_panel .pullquote').css({'font-size':'68px'})
 		$('.text_center_panel h1').css({'font-size':'4.5em'})
 	}
@@ -1423,7 +1424,7 @@ $(document).ready(function(){
 		$('iframe').contents().find('section').css({'min-height': $(window).height()})
 		verticalAlignHeader();
 		// invisibleChildren();
-		// enlargeForMobile();
+		enlargeForMobile();
 		setTimeout(function(){
 	  	verticalAlignSections();
 		},300)
@@ -1487,7 +1488,7 @@ $(document).ready(function(){
 		verticalAlignHeader('guest');
 		// invisibleChildren('guest');
 		$('.sfooter').height($(window).height())
-		// enlargeForMobile();
+		enlargeForMobile();
 		setTimeout(function(){
 	  	verticalAlignSections('guest');
 		},300)
