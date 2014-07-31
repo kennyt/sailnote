@@ -2377,21 +2377,19 @@ div[data-placeholder]:not(:focus):not([data-div-placeholder-content]):before {
 }
 
 .progress_bar {
-	width: 0px;
+	width: 100px;
 	position: fixed;
-	height: 4px;
-	background: #2c3e50;
+	height: 100px;
+	border-radius: 50%;
 	top: 45%;
-	left: 0px;
-	border-top-right-radius: 2px;
-	border-bottom-right-radius: 2px;
-	z-index: 100000000000000000000000000000000000000000000000000;
-
-	-webkit-transition: width 470ms linear, background 400ms linear;
-  -moz-transition: width 470ms linear, background 400ms linear;
-  -o-transition: width 470ms linear, background 400ms linear;
-  -ms-transition: width 470ms linear, background 400ms linear;
-  transition: width 470ms linear, background 400ms linear;
+	left: 45%;
+	font-family: 'Montserrat';
+	opacity: 0;
+	-webkit-transition: width 500ms linear, color 500ms linear;
+  -moz-transition: width 500ms linear, color 500ms linear;
+  -o-transition: width 500ms linear, color 500ms linear;
+  -ms-transition: width 500ms linear, color 500ms linear;
+  transition: width 500ms linear, color 500ms linear;
 }
 
 .essay-title:link {color:#2c3e50;}

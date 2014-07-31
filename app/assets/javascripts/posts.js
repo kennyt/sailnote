@@ -181,6 +181,7 @@ function snapScroll(top, direction, user){
 		$('html,body').animate({ scrollTop: sectionTop}, 750)
 
 
+		//hide prev section
 		var beforeSection = sections[previousSection];
 		if (beforeSection != undefined){
 			var paddingTop = parseInt($(beforeSection).css('padding-top')) + 20
@@ -193,9 +194,14 @@ function snapScroll(top, direction, user){
 			$(section).css('opacity','.35');
 		}
 		hideChildren(section);
-		var ratio = (sectionNumber + 1) / (sections.length + 1)
-		var reachedEnd = sectionNumber > sections.length - 1
-		moveProgressBar(ratio, getBodyTextColor(section), reachedEnd)
+
+		//moving progress bar logic
+		if (sections.length > 2 && $('.page_identifier').attr('id') == 'guest_view_post'){
+			var ratio = (sectionNumber + 1) / (sections.length + 1)
+			var beforeRatio = (previousSection +1) / (sections.length + 1)
+			var reachedEnd = sectionNumber > sections.length - 1
+			moveProgressBar(ratio, beforeRatio, reachedEnd)
+		}
 
 		setTimeout(function(){
 			if (section != false){
@@ -211,49 +217,33 @@ function snapScroll(top, direction, user){
 	}
 }
 
-function moveProgressBar(ratio, newColor, reachedEnd){
-	console.log(newColor)
-	var width = $(document).width() * ratio;
-	$('.progress_bar').animate({ opacity: 1}, 600)
-	$('.progress_bar').css({'width':width, 'background':newColor});
-	setTimeout(function(){
-		$('.progress_bar').animate({ opacity: 0}, 300)
-	}, 500)
-	if (reachedEnd){
-		$('.progress_bar').css('background','#2ecc71')
-		setTimeout(function(){
-			$('.progress_bar').animate({height: 50, opacity: 1, top: '42%'}, 60)
-			setTimeout(function(){
-				$('.progress_bar').animate({height: 15, top: '44%'}, 40)
-				setTimeout(function(){
-					$('.progress_bar').animate({height: 50, top: '42%'}, 60)
-					setTimeout(function(){
-						$('.progress_bar').animate({height:4, opacity: 0, top: '45%'}, 1500)
-						setTimeout(function(){
-							$('.progress_bar').css('background','#2c3e50')
-						}, 1500)
-					}, 60)
-				},40)
-			}, 60)
-		},1000)
+function moveProgressBar(ratio, beforeRatio, reachedEnd){
+	var number = ratio * 100;
+	var currentNumber = beforeRatio * 100;
+	var differencePiece = (number - currentNumber) / 20
+	
+	for(var i=0; i < 500; i += 25){
+    setTimeout(function(){
+    	currentNumber += differencePiece
+			$('.progress_bar').val(currentNumber).trigger('change')
+    }, i)
 	}
+	$('#radial-progress').css('z-index','1000000000000');
+	$('#radial-progress').animate({ opacity: '.25'}, 300)
+	setTimeout(function(){
+		$('#radial-progress').animate({ opacity: 0}, 300)
+		setTimeout(function(){
+			$('#radial-progress').css('z-index','-1000')
+		}, 300)
+	}, 500)
 }
 
-function getBodyTextColor(section){
-	if (!section){
-		return '#2c3e50';
-	}
-	var palette = $(section).find('p');
-	if (!(palette.length)){
-		palette = $(section).find('h1');
-	}
-	if (!(palette.length)){
-		palette = $(section).find('div');
-	}
-	if (!(palette.length)){
-		palette = $(section).find('blockquote');
-	}
-	return $(palette).css('color');
+function activateKnob(){
+	var canvas = $('.progress_bar').knob({'bgColor':'rgba(189, 195, 199,.3)','fgColor':'#2c3e50', 'readOnly':'true', 'thickness':'.2'}).find('canvas');
+	var left = ($(document).width() - 240) / 2
+	var top = ($(window).height() - 240) / 2
+	canvas.css({'position':'fixed', 'top': top,'left':left,'opacity':'0'})
+	canvas.attr('id','radial-progress');
 }
 
 function verticalAlignSections(user){
@@ -1483,6 +1473,9 @@ $(document).ready(function(){
 		$('.post-date-left').css({'opacity':'.3'})
 		$('.circle-divider').css({'width':'100%'})
 		$($('.circle-divider')[1]).css({'margin-top':'-5px'})
+
+		activateKnob();
+
 		// resetSectionHovering();
 		$('.edit-title').autosize();
 	}
@@ -1541,6 +1534,7 @@ $(document).ready(function(){
 	  	verticalAlignSections('guest');
 		},300)
 
+		activateKnob();
 
 		//transition effects
 		$('.post_title').css({'opacity':'1'})
