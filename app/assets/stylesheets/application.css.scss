@@ -2376,6 +2376,22 @@ div[data-placeholder]:not(:focus):not([data-div-placeholder-content]):before {
 	width: 50px;
 }
 
+.progress_bar {
+	width: 0px;
+	position: fixed;
+	height: 4px;
+	background: #2c3e50;
+	top: 45%;
+	left: 0px;
+	z-index: 100000000000000000000000000000000000000000000000000;
+
+	-webkit-transition: width 570ms linear, background 400ms linear;
+  -moz-transition: width 570ms linear, background 400ms linear;
+  -o-transition: width 570ms linear, background 400ms linear;
+  -ms-transition: width 570ms linear, background 400ms linear;
+  transition: width 570ms linear, background 400ms linear;
+}
+
 .essay-title:link {color:#2c3e50;}
 .essay-title:link {color:#001429;}
 .essay-title:visited {color:#95a5a6;}

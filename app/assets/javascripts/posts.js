@@ -193,6 +193,8 @@ function snapScroll(top, direction, user){
 			$(section).css('opacity','.35');
 		}
 		hideChildren(section);
+		var ratio = (sectionNumber + 1) / (sections.length + 1)
+		moveProgressBar(ratio, getBodyTextColor(section))
 
 		setTimeout(function(){
 			if (section != false){
@@ -206,6 +208,33 @@ function snapScroll(top, direction, user){
 			textBody.attr('scrollz','0');
 		}, 1100)
 	}
+}
+
+function moveProgressBar(ratio, newColor){
+	console.log(newColor)
+	var width = $(document).width() * ratio;
+	$('.progress_bar').animate({ opacity: 1}, 300)
+	$('.progress_bar').css({'width':width, 'background':newColor});
+	setTimeout(function(){
+		$('.progress_bar').animate({ opacity: 0}, 400)
+	}, 600)
+}
+
+function getBodyTextColor(section){
+	if (!section){
+		return '#2c3e50';
+	}
+	var palette = $(section).find('p');
+	if (!(palette.length)){
+		palette = $(section).find('h1');
+	}
+	if (!(palette.length)){
+		palette = $(section).find('div');
+	}
+	if (!(palette.length)){
+		palette = $(section).find('blockquote');
+	}
+	return $(palette).css('color');
 }
 
 function verticalAlignSections(user){

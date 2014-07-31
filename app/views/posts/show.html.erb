@@ -5,7 +5,7 @@
 <% else %>
 	<div class="page_identifier" id="guest_view_post" data-username="<%=@post.user.username%>"></div>
 <% end %>
-
+<div class="progress_bar"></div>
 <div class="save_success">saved!</div>
 
 <% if current_user && @post.user == current_user %>
