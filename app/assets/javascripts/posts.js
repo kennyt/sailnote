@@ -231,7 +231,7 @@ function moveProgressBar(ratio, beforeRatio, color, reachedEnd){
     }, i)
 	}
 	// setTimeout(function(){
-		$('.progress_bar').trigger('configure', {'fgColor':color})
+		// $('.progress_bar').trigger('configure', {'fgColor':color})
 	// }, 100)
 	$('#radial-progress').css('z-index','1000000000000');
 	$('#radial-progress').animate({ opacity: '.55'}, 300)
@@ -244,7 +244,7 @@ function moveProgressBar(ratio, beforeRatio, color, reachedEnd){
 }
 
 function activateKnob(){
-	var canvas = $('.progress_bar').knob({'bgColor':'rgba(189, 195, 199,.3)','fgColor':'#2c3e50', 'readOnly':'true', 'thickness':'.2'}).find('canvas');
+	var canvas = $('.progress_bar').knob({'bgColor':'#ecf0f1','fgColor':'#2c3e50', 'readOnly':'true', 'thickness':'.2'}).find('canvas');
 	var left = ($(document).width() - 240) / 2
 	var top = ($(window).height() - 240) / 2
 	canvas.css({'position':'fixed', 'top': top,'left':left,'opacity':'0'})
