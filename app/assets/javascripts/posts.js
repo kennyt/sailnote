@@ -198,9 +198,9 @@ function snapScroll(top, direction, user){
 		//moving progress bar logic
 		if (sections.length > 2 && $('.page_identifier').attr('id') == 'guest_view_post'){
 			var ratio = (sectionNumber + 1) / (sections.length + 1)
-			var beforeRatio = (previousSection +1) / (sections.length + 1)
+			var beforeRatio = (previousSection + 1) / (sections.length + 1)
 			var reachedEnd = sectionNumber > sections.length - 1
-			moveProgressBar(ratio, beforeRatio, reachedEnd)
+			moveProgressBar(ratio, beforeRatio, getBodyTextColor(section), reachedEnd)
 		}
 
 		setTimeout(function(){
@@ -217,19 +217,24 @@ function snapScroll(top, direction, user){
 	}
 }
 
-function moveProgressBar(ratio, beforeRatio, reachedEnd){
+function moveProgressBar(ratio, beforeRatio, color, reachedEnd){
+	var width = $(document).width() * ratio;
 	var number = ratio * 100;
 	var currentNumber = beforeRatio * 100;
 	var differencePiece = (number - currentNumber) / 20
 	
+
 	for(var i=0; i < 500; i += 25){
     setTimeout(function(){
     	currentNumber += differencePiece
 			$('.progress_bar').val(currentNumber).trigger('change')
     }, i)
 	}
+	// setTimeout(function(){
+		$('.progress_bar').trigger('configure', {'fgColor':color})
+	// }, 100)
 	$('#radial-progress').css('z-index','1000000000000');
-	$('#radial-progress').animate({ opacity: '.25'}, 300)
+	$('#radial-progress').animate({ opacity: '.55'}, 300)
 	setTimeout(function(){
 		$('#radial-progress').animate({ opacity: 0}, 300)
 		setTimeout(function(){
@@ -244,6 +249,23 @@ function activateKnob(){
 	var top = ($(window).height() - 240) / 2
 	canvas.css({'position':'fixed', 'top': top,'left':left,'opacity':'0'})
 	canvas.attr('id','radial-progress');
+}
+
+function getBodyTextColor(section){
+	if (!section){
+		return '#2c3e50';
+	}
+	var palette = $(section).find('p');
+	if (!(palette.length)){
+		palette = $(section).find('h1');
+	}
+	if (!(palette.length)){
+		palette = $(section).find('div');
+	}
+	if (!(palette.length)){
+		palette = $(section).find('blockquote');
+	}
+	return $(palette).css('color');
 }
 
 function verticalAlignSections(user){
