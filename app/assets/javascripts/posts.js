@@ -217,8 +217,8 @@ function moveProgressBar(ratio, newColor, reachedEnd){
 	$('.progress_bar').animate({ opacity: 1}, 600)
 	$('.progress_bar').css({'width':width, 'background':newColor});
 	setTimeout(function(){
-		$('.progress_bar').animate({ opacity: 0}, 400)
-	}, 600)
+		$('.progress_bar').animate({ opacity: 0}, 300)
+	}, 500)
 	if (reachedEnd){
 		$('.progress_bar').css('background','#2ecc71')
 		setTimeout(function(){
@@ -1401,9 +1401,9 @@ $(document).ready(function(){
 			$('.sfooter').fadeIn(200);
 			$('.save_success').attr('style','display:block;background:#34495e;')
 			$('.save_success').html('preview mode on')
-			var lastSectionColor = $($('iframe').contents().find('section').find('p').slice(-1)[0]).css('color')
-			$('.sfooter').css({'background': $($('iframe').contents().find('section').slice(-1)[0]).css('background')})
-			$('.footer_name').css({'color': lastSectionColor, 'border':'3px solid '+lastSectionColor })
+			// var lastSectionColor = $($('iframe').contents().find('section').find('p').slice(-1)[0]).css('color')
+			// $('.sfooter').css({'background': $($('iframe').contents().find('section').slice(-1)[0]).css('background')})
+			// $('.footer_name').css({'color': lastSectionColor, 'border':'3px solid '+lastSectionColor })
 			$('.share_buttons').show()
 			setTimeout(function(){
 				$('.save_success').attr('style','display:none')
@@ -1525,10 +1525,10 @@ $(document).ready(function(){
 	  // })
 
 		$('.post_text a').attr('class','text_link')
-		var lastSectionColor = $($('.post_text').find('section').find('p').slice(-1)[0]).css('color')
-		$('.sfooter').css({'background': $($('.post_text').find('section').slice(-1)[0]).css('background')})
-		$('.footer_name').css({'color': lastSectionColor, 'border':'3px solid '+lastSectionColor })
-		$('.call_to_signup').css({'color': lastSectionColor})
+		// var lastSectionColor = $($('.post_text').find('section').find('p').slice(-1)[0]).css('color')
+		// $('.sfooter').css({'background': $($('.post_text').find('section').slice(-1)[0]).css('background')})
+		// $('.footer_name').css({'color': lastSectionColor, 'border':'3px solid '+lastSectionColor })
+		// $('.call_to_signup').css({'color': lastSectionColor})
 
 		//snapscroll functionality
 		bindScroll($('html,body'), 'guest')

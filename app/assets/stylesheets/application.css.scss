@@ -2383,13 +2383,15 @@ div[data-placeholder]:not(:focus):not([data-div-placeholder-content]):before {
 	background: #2c3e50;
 	top: 45%;
 	left: 0px;
+	border-top-right-radius: 2px;
+	border-bottom-right-radius: 2px;
 	z-index: 100000000000000000000000000000000000000000000000000;
 
-	-webkit-transition: width 570ms linear, background 400ms linear;
-  -moz-transition: width 570ms linear, background 400ms linear;
-  -o-transition: width 570ms linear, background 400ms linear;
-  -ms-transition: width 570ms linear, background 400ms linear;
-  transition: width 570ms linear, background 400ms linear;
+	-webkit-transition: width 470ms linear, background 400ms linear;
+  -moz-transition: width 470ms linear, background 400ms linear;
+  -o-transition: width 470ms linear, background 400ms linear;
+  -ms-transition: width 470ms linear, background 400ms linear;
+  transition: width 470ms linear, background 400ms linear;
 }
 
 .essay-title:link {color:#2c3e50;}
