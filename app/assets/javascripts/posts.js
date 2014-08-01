@@ -150,6 +150,9 @@ function snapScroll(top, direction, user){
 		var previousSection = sectionNumber
 		if (direction == 'down'){
 			sectionNumber += 1;
+			if (sectionNumber > sections.length - 1){
+				sectionNumber = sections.length
+			}
 		} else {
 			sectionNumber -= 1;
 			if (sectionNumber < -1){
@@ -168,7 +171,7 @@ function snapScroll(top, direction, user){
 			if (sectionNumber > sections.length - 1){
 				// sectionNumber = sections.length - 1
 				section = false;
-				sectionTop = $(document).height() - $(window).height();
+				sectionTop = $(document).height() - $(window).height() + 20;
 			} else {
 				section = sections[sectionNumber];
 				if (user == 'guest'){
@@ -196,7 +199,7 @@ function snapScroll(top, direction, user){
 		hideChildren(section);
 
 		//moving progress bar logic
-		if (sections.length > 2 && $('.page_identifier').attr('id') == 'guest_view_post'){
+		if (sections.length > 2 && $('.page_identifier').attr('id') == 'guest_view_post' && ($(section).hasClass('color_white') || !section) ){
 			var ratio = (sectionNumber + 1) / (sections.length + 1)
 			var beforeRatio = (previousSection + 1) / (sections.length + 1)
 			var reachedEnd = sectionNumber > sections.length - 1

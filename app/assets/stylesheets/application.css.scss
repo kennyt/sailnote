@@ -1115,11 +1115,11 @@ iframe {
 	font-family: 'source sans pro';
 	opacity: 0;
 
-	-webkit-transition: all 2500ms cubic-bezier(.25,0,.3,1);
-  -moz-transition: all 2500ms cubic-bezier(.25,0,.3,1);
-  -o-transition: all 2500ms cubic-bezier(.25,0,.3,1);
-  -ms-transition: all 2500ms cubic-bezier(.25,0,.3,1);
-  transition: all 2500ms cubic-bezier(.25,0,.3,1);
+	-webkit-transition: opacity 2500ms cubic-bezier(.25,0,.3,1);
+  -moz-transition: opacity 2500ms cubic-bezier(.25,0,.3,1);
+  -o-transition: opacity 2500ms cubic-bezier(.25,0,.3,1);
+  -ms-transition: opacity 2500ms cubic-bezier(.25,0,.3,1);
+  transition: opacity 2500ms cubic-bezier(.25,0,.3,1);
 }
 
 .author_link {
@@ -1152,11 +1152,11 @@ iframe {
 	font-size: 30px;
 	opacity: 0;
 	margin-top: 42px;
-	-webkit-transition: all 2500ms cubic-bezier(.25,0,.3,1);
-  -moz-transition: all 2500ms cubic-bezier(.25,0,.3,1);
-  -o-transition: all 2500ms cubic-bezier(.25,0,.3,1);
-  -ms-transition: all 2500ms cubic-bezier(.25,0,.3,1);
-  transition: all 2500ms cubic-bezier(.25,0,.3,1);
+	-webkit-transition: opacity 2500ms cubic-bezier(.25,0,.3,1);
+  -moz-transition: opacity 2500ms cubic-bezier(.25,0,.3,1);
+  -o-transition: opacity 2500ms cubic-bezier(.25,0,.3,1);
+  -ms-transition: opacity 2500ms cubic-bezier(.25,0,.3,1);
+  transition: opacity 2500ms cubic-bezier(.25,0,.3,1);
 }
 
 .user_post_controls {
