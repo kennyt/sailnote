@@ -10,7 +10,7 @@ $(document).ready(function(){
 		setTimeout(function(){
 			$('.essaii_big').css({'opacity':'1'})
 		}, 200)
-		$('.hero_blog_wrapper').css({'top':$('.below_big').offset().top})
+		// $('.hero_blog_wrapper').css({'top':$('.below_big').offset().top})
 
 		$('body').on('click','.word_join', function(){
 			$('.user_form').css({'background':'#bdc3c7','height':'250px'})
