@@ -35,6 +35,6 @@ class ApplicationController < ActionController::Base
 
   def clean_url(url)
     url = CGI.unescape(url)
-    url = url.gsub('.','').gsub('?','').gsub('!','')
+    url = CGI.escape(url.gsub('.','').gsub('?','').gsub('!',''))
   end
 end
