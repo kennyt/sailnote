@@ -91,7 +91,7 @@ class PostsController < ApplicationController
 
 	def update_post_json
 		title = CGI.unescape(params[:post][:title].gsub('-',' '))
-		url = CGI.escape(params[:post][:url].gsub(' ','-').downcase)
+		url = clean_url(uniquify_url(CGI.escape(params[:post][:url].gsub(' ','-').downcase)))
 		@post = current_user.posts.find_by_id(params[:post][:id])
 		if @post.update_attributes(:text => params[:post][:text], :title => title, :url => url)
 			respond_to do |format|
