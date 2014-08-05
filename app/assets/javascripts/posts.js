@@ -5,21 +5,14 @@
 function autoSetEditorHeight(){
 	var beforeScrollTop = $(document).scrollTop();
 	var lastChild = $($('iframe').contents().find('body').children()[$('iframe').contents().find('body').children().length - 1])
-	var sixtyDocHeight = ($(document).height() * 6) / 10
 	if ($('iframe').contents().find('body').children().length > 0){
-		var newHeight = lastChild.offset().top + lastChild.height() + 70;
-		if (newHeight > sixtyDocHeight){
-			$('iframe').height(newHeight)
-		} else {
-			$('iframe').height(newHeight)
-		}
+		var newHeight = lastChild[0].getBoundingClientRect().bottom;
+		$('iframe').height(newHeight)
 	} else {
 		var newHeight = $('iframe').contents().height();
-		if (newHeight > sixtyDocHeight){
-			$('iframe').height(newHeight)
-		}
 		$('iframe').height(newHeight);
 	}
+
 	setTimeout(function(){
 		$(document).scrollTop(beforeScrollTop)
 	},0)
@@ -53,10 +46,11 @@ function showTopSection(){
 function bindScroll(element, user){
   var scrollDirection;
 	element.on('DOMMouseScroll wheel',function(e){
-  	// showTopSection();
+		if ($('iframe').contents().find('.editing-note').length){ return true }
+
   	var theEvent = e.originalEvent.wheelDelta || e.originalEvent.detail*-1
   	if (theEvent != 0){
-	  	if( theEvent /120 > 0) { //alternative options for wheelData: wheelDeltaX & wheelDeltaY
+	  	if( theEvent /120 > 0) {
 		    scrollDirection = 'up';
 		  } else {
 		    scrollDirection = 'down';
@@ -77,11 +71,9 @@ function bindScroll(element, user){
 	});
 
   element.on('touchmove', function (e){
-  	// clearTimeout(timer);
   	e.preventDefault();
   	var touch = e.originalEvent.touches[0] || e.originalEvent.changedTouches[0]
     var currentY = touch.pageY || e.pageY
-    // if (Math.abs(currentY-ts) < 10) { return; }
     if (currentY < ts) {
         scrollDirection = 'down';
     } else {
@@ -90,18 +82,10 @@ function bindScroll(element, user){
 
   	var scrollTop = $(document).scrollTop();
   	snapScroll(scrollTop, scrollDirection, user);
-  	// lastY = 'no'
-  	// setTimeout(function(){
-   //  	lastY = currentY;
-  	// }, 800);
-
-
-    // timer = setTimeout(function(){
-    //     // lastY = 0;
-    // }, 500);
   })
 
   $('html,body').on('keydown', function(e){
+		if ($('iframe').contents().find('.editing-note').length){ return true }
   	var UP = 38;
 		var DOWN = 40;
   	var scrollTop = $(document).scrollTop();
@@ -133,7 +117,7 @@ function snapScroll(top, direction, user){
 		conditional = $('.post_text').attr('scrollz') == '0' || $('.post_text').attr('scrollz') == undefined
 	}
 	else {
-		conditional = $('iframe').attr('scrollz') == '0' || $('iframe').attr('scrollz') == undefined
+		conditional = ($('iframe').attr('scrollz') == '0' || $('iframe').attr('scrollz') == undefined) && $('iframe').contents().find('.editing-note').length == 0
 	}
 	if (conditional){
 		var sections;
@@ -171,25 +155,28 @@ function snapScroll(top, direction, user){
 			if (sectionNumber > sections.length - 1){
 				// sectionNumber = sections.length - 1
 				section = false;
-				sectionTop = $(document).height() - $(window).height() + 20;
+				sectionTop = $(document).height() - $(window).height();
 			} else {
 				section = sections[sectionNumber];
 				if (user == 'guest'){
-					sectionTop = $(section).offset().top + 20
+					sectionTop = $(section).offset().top
 				} else {
-					sectionTop = $(section).offset().top + textBody.offset().top + 20
+					sectionTop = $(section).offset().top + textBody.offset().top
 				}
 			}
 		}
-		$('html,body').animate({ scrollTop: sectionTop}, 750)
+		var startingTop = $(document).scrollTop();
+		var ratio = (sectionNumber + 1) / (sections.length + 1)
+		var beforeRatio = (previousSection + 1) / (sections.length + 1)
+		$('html,body').animate({ scrollTop: sectionTop}, {duration: 750, easing: 'easeInOutCubic', step: function(){
+			stepMoveProgressBar(startingTop, sectionTop, ratio, beforeRatio);
+		}})
 
 
 		//hide prev section
 		var beforeSection = sections[previousSection];
 		if (beforeSection != undefined){
-			var paddingTop = parseInt($(beforeSection).css('padding-top')) + 20
 			$($(beforeSection).children()).animate({ opacity: 0}, 160)
-			$(beforeSection).animate({'padding-top': paddingTop+'px'}, 160)
 		}
 
 		//make image light to have the focus transition effect
@@ -200,19 +187,17 @@ function snapScroll(top, direction, user){
 
 		//moving progress bar logic
 		if (sections.length > 2 && $('.page_identifier').attr('id') == 'guest_view_post' && ($(section).hasClass('color_white') || !section) ){
-			var ratio = (sectionNumber + 1) / (sections.length + 1)
-			var beforeRatio = (previousSection + 1) / (sections.length + 1)
-			var reachedEnd = sectionNumber > sections.length - 1
-			moveProgressBar(ratio, beforeRatio, getBodyTextColor(section), reachedEnd)
+			opacityProgressBar()
 		}
 
+		$(section).animate({'padding-top': parseInt($(section).css('padding-top')) + 20 + 'px'}, 160)
 		setTimeout(function(){
 			if (section != false){
 				var paddingTop = parseInt($(section).css('padding-top')) - 20
 				$($(section).children()).animate({ opacity: 1}, 400)
 				$(section).animate({'padding-top': paddingTop+'px', opacity: 1}, 500)
 			}
-		}, 600);
+		}, 700);
 		setTimeout(function(){
 			lastScroll = $(document).scrollTop();
 			textBody.attr('scrollz','0');
@@ -220,24 +205,25 @@ function snapScroll(top, direction, user){
 	}
 }
 
-function moveProgressBar(ratio, beforeRatio, color, reachedEnd){
-	var width = $(document).width() * ratio;
-	var number = ratio * 100;
-	var currentNumber = beforeRatio * 100;
-	var differencePiece = (number - currentNumber) / 20
-	
+function stepMoveProgressBar(startingTop, futureTop, ratio, beforeRatio){
+	if (startingTop == futureTop){
+		$('.progress_bar').val(100).trigger('change')
+	} else {
+		var futureNumber = ratio * 100;
+		var currentNumber = beforeRatio * 100;
+		var currentTop = $(document).scrollTop() ;
+		var progress = currentTop - startingTop
+		var progressPercent = progress / (futureTop - startingTop)
+		var numberDifference = futureNumber - currentNumber
+		var value = (numberDifference * progressPercent) + currentNumber
 
-	for(var i=0; i < 500; i += 25){
-    setTimeout(function(){
-    	currentNumber += differencePiece
-			$('.progress_bar').val(currentNumber).trigger('change')
-    }, i)
+		$('.progress_bar').val(value).trigger('change')
 	}
-	// setTimeout(function(){
-		// $('.progress_bar').trigger('configure', {'fgColor':color})
-	// }, 100)
+}
+
+function opacityProgressBar(){
 	$('#radial-progress').css('z-index','1000000000000');
-	$('#radial-progress').animate({ opacity: '.55'}, 300)
+	$('#radial-progress').animate({ opacity: '.55'}, 150)
 	setTimeout(function(){
 		$('#radial-progress').animate({ opacity: 0}, 300)
 		setTimeout(function(){
@@ -250,7 +236,7 @@ function activateKnob(){
 	var canvas = $('.progress_bar').knob({'bgColor':'#ecf0f1','fgColor':'#2c3e50', 'readOnly':'true', 'thickness':'.2'}).find('canvas');
 	var left = ($(document).width() - 240) / 2
 	var top = ($(window).height() - 240) / 2
-	canvas.css({'position':'fixed', 'top': top,'left':left,'opacity':'0'})
+	canvas.css({'position':'fixed', 'top': top,'left':left,'opacity':'0', 'z-index':'-1000000'})
 	canvas.attr('id','radial-progress');
 }
 
@@ -283,8 +269,9 @@ function verticalAlignSections(user){
 		var height = $(section).height();
 		var children = $(section).children()
 		var lastChildDim = children[children.length-1].getBoundingClientRect()
-		var lastChildBottom = lastChildDim.bottom - $(section).offset().top
-		$(section).css('padding-top', (height - lastChildBottom)/2 +'px');
+		var firstChildDim = children[0].getBoundingClientRect()
+		var lastChildBottom = lastChildDim.bottom - firstChildDim.top
+		$(section).css({'padding-top': (height - lastChildBottom)/2 +'px', 'box-sizing': 'border-box'});
 	})
 }
 
@@ -296,12 +283,12 @@ function verticalAlignHeader(user){
 		title = $('.edit-title');
 	}
 
-	var height = title.height();
+	var height = title.height() + $('.post-date-left').height() + $('.author_link').height();
 	var windowHeight = $(window).height();
 	var marginTop = (windowHeight-height)/2
-	title.animate({'margin-top' : marginTop, 'margin-bottom' : marginTop }, 0)
-	$('.author_link_wrapper').css('top', marginTop - 110);
-	$('.post-date-left').css('top', marginTop - 200);
+	title.animate({'margin-top' : marginTop + 160, 'margin-bottom' : marginTop  }, 0)
+	$('.author_link_wrapper').css('top', marginTop + 60);
+	$('.post-date-left').css('top', marginTop - 30);
 }
 
 function invisibleChildren(user){
@@ -314,6 +301,13 @@ function invisibleChildren(user){
 	}
 	$.each(sections, function(i, section){
 		$(section).children().css('opacity','0');
+	})
+}
+
+function visibleChildren(){
+	sections = $('iframe').contents().find('section')
+	$.each(sections, function(i, section){
+		$(section).children().css('opacity','1');
 	})
 }
 
@@ -464,6 +458,7 @@ function flattenChildNodes(){
 function resetStyles(body){
 	var sections = body.find('section');
 	$.each(sections, function(i, section){
+		$(section).removeClass('editing-note')
 		if (!($(section).attr('class').indexOf('color_image') > -1)){
 			$(section).attr('style','');
 		} else {
@@ -526,6 +521,53 @@ function enlargeForMobile(){
 	}
 }
 
+function turnOnEditing(){
+	var sections = $('iframe').contents().find('section');
+	sections.addClass('editing-note');
+	sections.css({'padding-top':'0px', 'padding-bottom':'30px', 'min-height':'90px'})
+	visibleChildren()
+	checkLastSectionForEmpty()
+	autoSetEditorHeight();
+}
+
+function turnOnPreview(){
+	sectionNumber = -1;
+	$('html,body').animate({scrollTop : 0}, 500);
+	$('iframe').contents()[0].designMode = 'off';
+	// $('.batman_toolbelt').attr('class','batman_toolbelt view_mode')
+	$('.view_mode_button').html('edit mode')
+	$('.view_mode_button').attr('class','edit_mode_button control_button');
+	$('.save_success').attr('style','display:block;background:#34495e;')
+	$('.save_success').html('preview mode on')
+	$('.blank_note').fadeOut(200);
+
+	if (checkLastSectionForEmpty()){
+		$(checkLastSectionForEmpty()).remove();
+	}
+	var sections = $('iframe').contents().find('section');
+	$(sections).removeClass('editing-note');
+	sections.css({'min-height': $(window).height()})
+	bindScroll($('html,body'))
+  bindScroll($('iframe').contents().find('body'))
+	verticalAlignSections();
+	autoSetEditorHeight();
+}
+
+function checkLastSectionForEmpty(){
+	if ($('iframe').contents().find('.editing-note').length == 0) { return false }
+	var lastSection = $('iframe').contents().find('section')[$('iframe').contents().find('section').length - 1]
+	if ($(lastSection).text().length > 0){
+		console.log($(lastSection).text().length)
+		$('.blank_note').fadeOut(200);
+		$('iframe').contents().find('body').append('<section class="text_center_panel classic_font color_white editing-note"><p><br></p><p><br></p></section>')
+		var blankSection = $('iframe').contents().find('section')[$('iframe').contents().find('section').length - 1]
+		var top = $(blankSection).offset().top + $('iframe').offset().top + 60
+		return false
+	} else {
+		return lastSection;
+	}
+}
+
 
 //text_editor code. runs on every page with the class .edit-box
 $(document).ready(function(){
@@ -539,6 +581,10 @@ $(document).ready(function(){
 				var title = encodeURIComponent($('.edit-title').attr('datatitle').toLowerCase());
 				var clone = $('iframe').contents().find('body').clone();
 				resetStyles($(clone));
+				var lastSection = $(clone).find('section')[$(clone).find('section').length - 1]
+				if ($(lastSection).text().length == 0){
+					$(lastSection).remove();
+				}
 				var cloneHtml = $(clone).html()
 				$('iframe').contents().find('section').css({'box-shadow':'none'})
 
@@ -606,23 +652,25 @@ $(document).ready(function(){
 				   var importFont = '@import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:400italic,700italic,400,700);';
 				   var textLinkStyle = '.text_link{text-decoration:none; border-bottom:1px solid #2980b9;color:#202020;} .text_link:link {color:#202020;border-bottom: 1px solid #202020;}.text_link:visited {color:#202020;border-bottom: 1px solid #202020;}.text_link:active {color:red;}'
 				   var selectionStyle = '::selection {background: #D8D8D8; color:black;} ::-moz-selection {background: #D8D8D8;color:black;}'
-				   var sectionStyle = 'section{width: 100%; padding-top: 50px; padding-bottom:30px;position:relative; min-height: 90px;}'
+				   var sectionStyle = 'section{width: 100%; padding-top: 0px; padding-bottom:30px;position:relative; min-height: 90px;}'
 				   var moverStyle = '.mover{position: absolute;top: 0px;right: 0px;height: 20px;width: 20px !important;background: blue; cursor:pointer;}'
 				   var stretcherStyle = '.stretcher{position: absolute;bottom: 50%;left: 0px;height: 20px;margin:0px !important;width: 20px !important;background: red; cursor:pointer;}'
 				   var pStyle = 'p{margin-top: 0px; margin-bottom: 33px;}'
-				   var maxWidth = 'p, blockquote, h1, div {max-width: 95%;} figure{max-width: 100%;}'
+				   var maxWidth = 'p, blockquote, h1, div {max-width: 95%;} figure{max-width: 100%; margin:0px; overflow:hidden;}'
+				   var editingNote = '.editing-note{width:60%%; margin-left: auto; margin-right:auto; height: auto; display: list-item; list-style:disc;} .editing-note .pullquote{width: 100% !important; font-size: 40px !important;} .editing-note h1{font-size: 2.8em !important;} .editing-note div, .editing-note p {font-size: 24px !important;}'
+				   var sectionTransition = 'section{ -webkit-transition: box-shadow 180ms ease-in-out, width 180ms ease-in-out;-moz-transition: box-shadow 180ms ease-in-out;-o-transition: box-shadow 180ms ease-in-out;-ms-transition: box-shadow 180ms ease-in-out;transition: box-shadow 180ms ease-in-out;}'
 
 
 
 				   var text_left_panelStyle = '.text_left_panel div, .text_left_panel p, .text_left_panel h1{ margin-left:9%; max-width:40%; width: 675px;} .text_left_panel blockquote, .text_left_panel .pullquote{right:7%; max-width:30%; width: 535px; float:right; padding-left: 20px; padding-right:20px; position: absolute; margin: 0px;} .text_left_panel h1{text-align:center;margin-bottom:25px; margin-top: 0px;} .text_left_panel figure {right:7%; max-width:50%; float:right; padding:0px; position: absolute; margin: 0px;} .text_left_panel img {width: 100%;} .text_left_panel blockquote{line-height:1.4; padding:20px;} .text_left_panel .pullquote{border:0px; text-align:center;}'
-				   var text_center_panelStyle = '.text_center_panel div, .text_center_panel p, .text_center_panel h1 {width: 675px;margin-left:auto;margin-right:auto;} .text_center_panel figure{text-align: center;} .text_center_panel h1{text-align:center; margin-bottom:25px; margin-top: 0px;} .text_center_panel blockquote{position: relative;top:0px !important;margin:30px; margin-left: auto;margin-right: auto;padding:20px; font-size: 20px; line-height: 1.4;  width:625px;} .text_center_panel .pullquote{width: 70%;margin-left: auto;margin-right:auto; border-top: 0px solid black; border-bottom: 0px solid black;padding-right: 40px;padding-left:40px; text-align: center; margin-bottom: 5px; margin-top: 5px;}'
+				   var text_center_panelStyle = '.text_center_panel div, .text_center_panel p {width: 675px;margin-left:auto;margin-right:auto;} .text_center_panel figure{text-align: center;} .text_center_panel h1{ width: 750px;margin-left:auto;margin-right:auto;text-align:center; margin-bottom:25px; margin-top: 0px;} .text_center_panel blockquote{position: relative;top:0px !important;margin:30px; margin-left: auto;margin-right: auto;padding:20px; font-size: 20px; line-height: 1.4;  width:625px;} .text_center_panel .pullquote{width: 70%;margin-left: auto;margin-right:auto; border-top: 0px solid black; border-bottom: 0px solid black;padding-right: 40px;padding-left:40px; text-align: center; margin-bottom: 5px; margin-top: 5px;}'
 				   var text_right_panelStyle= '.text_right_panel div, .text_right_panel p, .text_right_panel h1{ margin-left:51%; max-width:40%; width: 675px;} .text_right_panel blockquote, .text_right_panel .pullquote{right:63%; max-width:30%; width: 535px; float:left; padding-left: 20px; padding-right:20px; position: absolute; margin: 0px;color:#95a5a6;} .text_right_panel h1{text-align:center;margin-bottom:25px; margin-top: 0px;} .text_right_panel figure {right:50%; max-width:50%; float:left; padding:0px; position: absolute; margin: 0px;} .text_right_panel img {width: 100%;} .text_right_panel blockquote{line-height:1.4; padding:20px;} .text_right_panel .pullquote{border:0px; text-align: center;}'
 
 
 				   var graceful_fontStyle = '.graceful_font div, .graceful_font p{font-family:source sans pro, sans-serif; font-size: 26px;} .graceful_font blockquote{font-family: georgia,times new roman, times, serif; font-size: 20px;} .graceful_font h1 {font-family:georgia,times new roman, times, serif; font-size: 3em;line-height:1.1;} .graceful_font .pullquote{font-family: georgia,times new roman, times, serif; font-size: 40px;}'
-				   var classic_fontStyle = '.classic_font div, .classic_font p {font-family:georgia; font-size: 26px; } .classic_font blockquote{font-family:source sans pro; font-size:18px;} .classic_font h1{font-family:source sans pro; font-size:3.3em;line-height:1.0;}.classic_font .pullquote{font-family:source sans pro; font-size: 40px;}'
+				   var classic_fontStyle = '.classic_font div, .classic_font p {font-family:georgia; font-size: 26px; } .classic_font blockquote{font-family:source sans pro; font-size:18px;} .classic_font h1{font-family:source sans pro; font-size:4em;line-height:1.0;}.classic_font .pullquote{font-family:source sans pro; font-size: 60px; line-height: 1.1;}'
 
-				   var color_whiteStyle = '.color_white {background: white;} .color_white div, .color_white p, .color_white h1{ color: #383838; } .color_white blockquote{color: #7f8c8d; border-top: 8px solid #bdc3c7;border-bottom: 8px solid #bdc3c7;} .color_white .pullquote{border: 0px;} .color_white .text_link{text-decoration:none; border-bottom:1px solid #2980b9;color:#202020;} .color_white .text_link:link {color:#202020;border-bottom: 1px solid #202020;} .color_white .text_link:visited {color:#202020;border-bottom: 1px solid #202020;} .color_white .text_link:active {color:red;}'
+				   var color_whiteStyle = '.color_white {background: white;} .color_white div, .color_white p, .color_white h1{ color: #383838; } .color_white blockquote{color: #606060; border-top: 8px solid #bdc3c7;border-bottom: 8px solid #bdc3c7;} .color_white .pullquote{border: 0px;} .color_white .text_link{text-decoration:none; border-bottom:1px solid #2980b9;color:#202020;} .color_white .text_link:link {color:#202020;border-bottom: 1px solid #202020;} .color_white .text_link:visited {color:#202020;border-bottom: 1px solid #202020;} .color_white .text_link:active {color:red;}'
 
 				   var color_lightgreyStyle = '.color_lightgrey {background: #f1f1f1; color: black} .color_lightgrey div, .color_lightgrey p, .color_lightgrey h1 { color: black; } .color_lightgrey blockquote {color:#7f8c8d; border-top: 8px solid #7f8c8d;border-bottom: 8px solid #7f8c8d;} .color_lightgrey .text_link{text-decoration:none; border-bottom:1px solid #2980b9;color:#202020;} .color_lightgrey .text_link:link {color:#202020;border-bottom: 1px solid #202020;} .color_lightgrey .text_link:visited {color:#202020;border-bottom: 1px solid #202020;} .color_lightgrey .text_link:active {color:red;}' 
 
@@ -644,7 +692,7 @@ $(document).ready(function(){
 
 
 				   $('iframe').contents().find('body').attr('spellcheck','false')
-					 $('iframe').contents().find('head').append($('<style>').html(importFont+maxWidth+pStyle+textLinkStyle+selectionStyle+sectionStyle+classic_fontStyle+graceful_fontStyle+text_center_panelStyle+text_left_panelStyle+text_right_panelStyle+color_whiteStyle+color_lightgreyStyle+color_lightblueStyle+color_blackStyle+color_slategreyStyle+color_darkblueStyle+color_darkredStyle+color_darkpurpleStyle+color_darktealStyle+color_imageStyle+moverStyle+stretcherStyle))
+					 $('iframe').contents().find('head').append($('<style>').html(importFont+sectionTransition+editingNote+maxWidth+pStyle+textLinkStyle+selectionStyle+sectionStyle+classic_fontStyle+graceful_fontStyle+text_center_panelStyle+text_left_panelStyle+text_right_panelStyle+color_whiteStyle+color_lightgreyStyle+color_lightblueStyle+color_blackStyle+color_slategreyStyle+color_darkblueStyle+color_darkredStyle+color_darkpurpleStyle+color_darktealStyle+color_imageStyle+moverStyle+stretcherStyle))
 					var buttonPane = $("<div/>",{
 					    "class" : "editor-btns"
 					}).prependTo($('body'));
@@ -1043,10 +1091,22 @@ $(document).ready(function(){
 					s.addRange(r);
 	    	}
 	    	setTimeout(function(){
+		  		// random spans showing up. replacing them with text.
+	  			$.each($('iframe').contents().find('span'), function(i, span){
+	  				if ($(span).attr('style') != 'font-weight: normal;'){
+		  				var span_html = $(span).html()
+		  				$(span).replaceWith(span_html)
+	  				}
+	  			})
+	  			if ($('iframe').contents().find('.editing-note').length == 0){
+	  				verticalAlignSections();
+	  			}
+
     			if (!document.queryCommandSupported('insertBrOnReturn')){
 		    		//won't duplicate blockquote if pressing enter
 		    		$('iframe').contents().find('.mover').remove()
 			    	var block = $('iframe').contents()[0].getSelection().anchorNode
+			    	console.log(block)
 		  			var newP = $('<p>').html('<br>')[0];
 		  			if ($(block).html() == "<br>"){
 				    	block.parentNode.replaceChild(newP, block)
@@ -1057,19 +1117,11 @@ $(document).ready(function(){
 							s.removeAllRanges();
 							s.addRange(r);
 		  			}
-
 		  		}
-
-		  		// random spans showing up. replacing them with text.
-	  			$.each($('iframe').contents().find('span'), function(i, span){
-	  				if ($(span).css('font-weight') != '400'){
-		  				var span_html = $(span).html()
-		  				$(span).replaceWith(span_html)
-	  				}
-	  			})
-	  			verticalAlignSections();
 	    	}, 0)
 		  }
+
+		  checkLastSectionForEmpty();
 		})
 
 		textBody.on('paste', function(e){
@@ -1186,15 +1238,25 @@ $(document).ready(function(){
 				$('.edit_section_btn').css({'opacity':'.3'})
 				$(this).css({'box-shadow':'none'})
 				if (!($(this).attr('id') == 'dummy')){
-					var top = $(this).offset().top + $('iframe').offset().top + 40
-					$('.edit_section_btn').css({'top':top,'right':'100px'})
-					$('.edit_section_btn').attr('data-section-index', getSectionIndex(this));
+					var top = $(this).offset().top + $('iframe').offset().top + 10
+					var left = $(this).offset().left - 100
+					var index = getSectionIndex(this)
+					$('.edit_section_btn').css({'top':top,'left':left})
+					$('.edit_section_btn').attr('data-section-index', index);
+
+					if (index == $('iframe').contents().find('section').length - 1 && $('iframe').contents().find('.editing-note').length > 0){
+						$('.blank_note').css({'top': top})
+						$('.blank_note').fadeIn(50);
+					}
 				}
 			}).on('mouseleave','section', function(){
 				var that = this;
 				setTimeout(function(){
 					if (!($('.edit_section_btn').attr('hovered') == '1')){
 						$(that).css('box-shadow','none');
+						if (getSectionIndex(that) == $('iframe').contents().find('section').length - 1){
+							$('.blank_note').fadeOut(50);
+						}
 					}
 					// $('.edit_section_btn').css({'opacity':'0'})
 				},20)
@@ -1213,6 +1275,7 @@ $(document).ready(function(){
 				$(section).attr('id','being_edited');
 				$('.details_panel').append('<div class="cancel_edit_section">cancel</div>');
 				$('.details_panel').append('<div class="confirm_edit_section">save</div>');
+				$('.details_panel').append('<div class="confirm_delete_section" certain="no">delete</div>');
 				$('.details_panel').height(200);
 				$('iframe').css({'border-bottom':'200px solid white'})
 
@@ -1289,6 +1352,7 @@ $(document).ready(function(){
 			setTimeout(function(){
 				$('.cancel_edit_section').remove();
 				$('.confirm_edit_section').remove();
+				$('.confirm_delete_section').remove();
 				var beforeClass = beingEdited.attr('data-beforeclass');
 				beingEdited.attr('data-beforeclass','');
 				beingEdited.attr('class', beforeClass);
@@ -1309,12 +1373,24 @@ $(document).ready(function(){
 			beingEdited.attr('data-beforeclass','');
 			$('.confirm_edit_section').remove();
 			$('.cancel_edit_section').remove();
+			$('.cancel_delete_section').remove();
 			$('.image_getter').fadeOut(100);
 			$('.font-color-chooser').fadeOut(100);
 			$('.details_panel').height(0);
 			$('.details_panel').attr('opened','0');
 			$('iframe').css({'border-bottom':'0px solid white'})
 			autoSetEditorHeight();
+		})
+		$('body').on('click','.confirm_delete_section', function(){
+			if ($(this).attr('certain') == 'yes'){
+				var beingEdited = $('iframe').contents().find('#being_edited')
+				$(beingEdited).remove();
+				$('.cancel_edit_section').trigger('click');
+			} else {
+				$(this).attr('certain','yes');
+				$(this).html('sure?');
+				$(this).css({'background':'#c0392b', 'font-weight':'bold'})
+			}
 		})
 
 		textBody.on('click','section', function(){
@@ -1408,18 +1484,8 @@ $(document).ready(function(){
 		})
 
 		$('body').on('click','.view_mode_button',function(){
-			$('iframe').contents()[0].designMode = 'off';
-			$('.batman_toolbelt').attr('class','batman_toolbelt view_mode')
-			$(this).attr('class','edit_mode_button control_button');
-			$(this).html('edit mode')
-			// $('.post-date-left').fadeIn(200);
-			$('.sfooter').fadeIn(200);
-			$('.save_success').attr('style','display:block;background:#34495e;')
-			$('.save_success').html('preview mode on')
-			// var lastSectionColor = $($('iframe').contents().find('section').find('p').slice(-1)[0]).css('color')
-			// $('.sfooter').css({'background': $($('iframe').contents().find('section').slice(-1)[0]).css('background')})
-			// $('.footer_name').css({'color': lastSectionColor, 'border':'3px solid '+lastSectionColor })
-			$('.share_buttons').show()
+			turnOnPreview();
+
 			setTimeout(function(){
 				$('.save_success').attr('style','display:none')
 			}, 2000)
@@ -1430,11 +1496,10 @@ $(document).ready(function(){
 			$('.batman_toolbelt').attr('class','batman_toolbelt')
 			$(this).attr('class','view_mode_button control_button');
 			$(this).html('preview post')
-			// $('.post-date-left').fadeOut(200);
-			$('.sfooter').fadeOut(200);
 			$('.save_success').attr('style','display:block;background:#34495e;')
 			$('.save_success').html('now editing')
-			$('.share_buttons').hide()
+
+			turnOnEditing();
 			setTimeout(function(){
 				$('.save_success').attr('style','display:none')
 			}, 2000)
@@ -1482,27 +1547,28 @@ $(document).ready(function(){
 		// }, 200)
 
 		//snapscroll functionality
-		bindScroll($('html,body'))
-	  bindScroll(textBody)
-		$('iframe').contents().find('section').css({'min-height': $(window).height()})
+		// bindScroll($('html,body'))
+	 //  bindScroll(textBody)
+		// $('iframe').contents().find('section').css({'min-height': $(window).height()})
+		$('.edit-title').autosize();
 		verticalAlignHeader();
-		// invisibleChildren();
 		enlargeForMobile();
 		setTimeout(function(){
-	  	verticalAlignSections();
-		},300)
+			turnOnEditing();
+			// checkLastSectionForEmpty();
+		},100)
+		// setTimeout(function(){
+	 //  	verticalAlignSections();
+		// },300)
 
 		//transition effects
 		$('.edit-title').css({'opacity':'1'})
 		$('.author_link_wrapper').css({'opacity':'.2'})
 		$('.post-date-left').css({'opacity':'.3'})
-		$('.circle-divider').css({'width':'100%'})
-		$($('.circle-divider')[1]).css({'margin-top':'-5px'})
 
 		activateKnob();
 
 		// resetSectionHovering();
-		$('.edit-title').autosize();
 	}
 })
 
@@ -1550,7 +1616,7 @@ $(document).ready(function(){
 
 		//snapscroll functionality
 		bindScroll($('html,body'), 'guest')
-		$('section').css({'min-height': $(window).height()})
+		$('section').css({'min-height': $(window).height() + 20})
 		verticalAlignHeader('guest');
 		// invisibleChildren('guest');
 		$('.sfooter').height($(window).height())
@@ -1565,8 +1631,6 @@ $(document).ready(function(){
 		$('.post_title').css({'opacity':'1'})
 		$('.author_link_wrapper').css({'opacity':'.2'})
 		$('.post-date-left').css({'opacity':'.3'})
-		$('.circle-divider').css({'width':'65%'})
-		$($('.circle-divider')[1]).css({'margin-top':'-5px'})
 		// $($('section')[0]).css('opacity','1');
 	}
 })

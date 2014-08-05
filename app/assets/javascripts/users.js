@@ -164,7 +164,7 @@ $(document).ready(function(){
 								var href = '/'+$('.page_identifier').attr('data-username')+'/'+response['url'];
 								var prependTitle = title;
 								$('.unpublished_list').prepend('<a class="essay-title" href="'+href+'"><div class="post_line"><div class="publish_button"><div class="left-hover-tag">publish</div></div><div class="delete_button"><div class="right-hover-tag">delete</div></div><span class="essay-text">'+prependTitle+'</span></div></a>')
-								$('.post_line').css({'width':$('.new_post_input').width() - 140})
+								// $('.post_line').css({'width':$('.new_post_input').width() - 140})
 								$('#unpublished_empty').remove();
 								$('.press_enter_info').css({'opacity':'0'});
 							}else {

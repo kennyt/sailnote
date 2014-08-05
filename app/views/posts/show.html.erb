@@ -19,7 +19,7 @@
 	<%= form_for :post, url: post_path(@post), method: :put do |f| %>
 	  <div class="author_link_wrapper"><%= link_to @post.user.username, user_path(@post.user), class: 'author_link' %></div>
 	  <%= f.text_area :title, {class: 'edit-title', datatitle: @post.title.gsub(' ', '-'),  :placeholder => 'Title goes here.', data_author: @post.user.username, spellcheck: 'false'} %>
-	  <div class="circle-divider"></div>
+	  <!-- <div class="circle-divider"></div> -->
 
 	  <%= f.text_area :text, :placeholder => 'Body goes here.', class: 'edit-box' %>
 			<div class="batman_toolbelt">
@@ -27,7 +27,7 @@
 				  <%= f.submit 'save (ctrl + s)', {class: 'edit-submit', datasubmit: '1', data_id: @post.id}%>
 				  <div class="url_label">custom url</div>
 				  <input class="url_input" value="<%= @post.url %>">
-					<!-- <li><span class="view_mode_button control_button">preview</span></li> -->
+					<li><span class="view_mode_button control_button">preview</span></li>
 					<% unless @post.published %>
 						<li><%= link_to '!publish', '/posts/'+@post.url+'/publish', method: "post", :confirm => 'Are you sure you want to publish?', :class => 'control_button' %></li>
 					<% end %>
@@ -83,9 +83,10 @@
 <% end %>
 
 <% if current_user && @post.user == current_user %>
-	<div class="add_section">
+	<!-- <div class="add_section">
 		<span id="add_section_text">add section</span>
-	</div>
+	</div> -->
+	<div class="blank_note">This section will be removed if left blank.</div>
 	<div class="edit_section_btn" title="edit section">
 		<!-- <span id="edit_section_text">edit section</span> -->
 	</div>

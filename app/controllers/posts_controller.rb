@@ -7,7 +7,7 @@ class PostsController < ApplicationController
 		params[:post][:title] = params[:post][:title].gsub('-',' ')
 		@post = current_user.posts.build(post_params)
 		@post.url = clean_url(uniquify_url(CGI.escape(@post.title.gsub(' ','-').downcase)))
-		@post.text = "<section class='text_center_panel color_white classic_font'><p><br></p> <p><br></p></section>"
+		@post.text = "<section class='text_center_panel color_white classic_font'><p><br></p><p><br></p></section>"
 		if @post.save
 			respond_to do |format|
 				format.json { render :json => {'yes' => '1', 'id' => @post.id.to_s, 'date' => @post.updated_at.strftime("%0d %b %y"), 'url' => @post.url}.to_json }
@@ -91,8 +91,10 @@ class PostsController < ApplicationController
 
 	def update_post_json
 		title = CGI.unescape(params[:post][:title].gsub('-',' '))
-		url = clean_url(uniquify_url(CGI.escape(params[:post][:url].gsub(' ','-').downcase)))
+		url = clean_url(CGI.escape(params[:post][:url].gsub(' ','-').downcase))
 		@post = current_user.posts.find_by_id(params[:post][:id])
+		url == @post.url ? true : url = uniquify_url(url)
+
 		if @post.update_attributes(:text => params[:post][:text], :title => title, :url => url)
 			respond_to do |format|
 				format.json { render :json => {'yes' => '1', 'url' => url}.to_json }
