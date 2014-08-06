@@ -2446,6 +2446,18 @@ div[data-placeholder]:not(:focus):not([data-div-placeholder-content]):before {
 	cursor: default;
 }
 
+.down_arrow{
+	background-image: url('down_arrow.png');
+	background-size: cover;
+	background-position: center;
+	height: 11px;
+	width: 23px;
+	position: absolute;
+	left: 50%;
+	top: -100px;
+	margin-left: -12px;
+}
+
 .essay-title:link {color:#2c3e50;}
 .essay-title:link {color:#001429;}
 .essay-title:visited {color:#95a5a6;}

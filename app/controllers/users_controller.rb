@@ -25,7 +25,7 @@ class UsersController < ApplicationController
 			@email_follower_number = @user.email_followers.split(',').length
 		end
 		if current_user && current_user.username == 'kennyt' && params[:godeye] == '1'
-			@posts = Post.last(20).reverse
+			@posts = Post.order('updated_at DESC').limit(20)
 			render 'analytics'
 		end
 	end

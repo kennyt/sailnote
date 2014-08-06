@@ -240,6 +240,10 @@ function activateKnob(){
 	canvas.attr('id','radial-progress');
 }
 
+function activateDownArrow(){
+	$('.down_arrow').css('top', $(window).height() - 40);
+}
+
 function getBodyTextColor(section){
 	if (!section){
 		return '#2c3e50';
@@ -1567,6 +1571,7 @@ $(document).ready(function(){
 		$('.post-date-left').css({'opacity':'.3'})
 
 		activateKnob();
+		activateDownArrow();
 
 		// resetSectionHovering();
 	}
@@ -1626,6 +1631,7 @@ $(document).ready(function(){
 		},300)
 
 		activateKnob();
+		activateDownArrow();
 
 		//transition effects
 		$('.post_title').css({'opacity':'1'})
