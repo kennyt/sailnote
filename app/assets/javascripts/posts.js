@@ -695,7 +695,7 @@ $(document).ready(function(){
 				   var stretcherStyle = '.stretcher{position: absolute;bottom: 50%;left: 0px;height: 20px;margin:0px !important;width: 20px !important;background: red; cursor:pointer;}'
 				   var pStyle = 'p{margin-top: 0px; margin-bottom: 33px;}'
 				   var maxWidth = 'p, blockquote, h1, div {max-width: 95%;} figure{max-width: 100%; margin:0px; overflow:hidden;}'
-				   var editingNote = '.editing-note{width:60%%; margin-left: auto; margin-right:auto; height: auto; display: list-item; list-style:disc; margin-top: 10px; padding-top: 20px; box-shadow: 0px 0px 8px 0px #bdc3c7;} .editing-note .pullquote{width: 100% !important; font-size: 40px !important;} .editing-note h1{font-size: 2.8em !important;} .editing-note div, .editing-note p {font-size: 24px !important;}'
+				   var editingNote = '.editing-note{width:60%%; margin-left: auto; margin-right:auto; height: auto; display: list-item; list-style:disc; margin-top: 10px; padding-top: 20px; box-shadow: 0px 0px 8px 0px #bdc3c7;} .editing-note .pullquote{width: 100% !important; font-size: 40px !important;} .editing-note h1{font-size: 2.8em !important;} .editing-note div, .editing-note p {font-size: 20px !important;}'
 				   var sectionTransition = 'section{ -webkit-transition: box-shadow 180ms ease-in-out, width 180ms ease-in-out;-moz-transition: box-shadow 180ms ease-in-out;-o-transition: box-shadow 180ms ease-in-out;-ms-transition: box-shadow 180ms ease-in-out;transition: box-shadow 180ms ease-in-out;}'
 
 
