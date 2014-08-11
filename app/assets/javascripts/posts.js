@@ -168,7 +168,7 @@ function snapScroll(top, direction, user){
 		var startingTop = $(document).scrollTop();
 		var ratio = (sectionNumber + 1) / (sections.length + 1)
 		var beforeRatio = (previousSection + 1) / (sections.length + 1)
-		$('html,body').animate({ scrollTop: sectionTop}, {duration: 750, easing: 'easeInOutCubic', step: function(){
+		$('html,body').animate({ scrollTop: sectionTop}, {duration: 450, easing: 'easeInOutCubic', step: function(){
 			stepMoveProgressBar(startingTop, sectionTop, ratio, beforeRatio);
 		}})
 
@@ -197,11 +197,11 @@ function snapScroll(top, direction, user){
 				$($(section).children()).animate({ opacity: 1}, 400)
 				$(section).animate({'padding-top': paddingTop+'px', opacity: 1}, 500)
 			}
-		}, 700);
+		}, 400);
 		setTimeout(function(){
 			lastScroll = $(document).scrollTop();
 			textBody.attr('scrollz','0');
-		}, 1100)
+		}, 500)
 	}
 }
 
