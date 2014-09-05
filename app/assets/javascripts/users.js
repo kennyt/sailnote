@@ -295,7 +295,7 @@ $(document).ready(function(){
 			$('.center_divider').fadeOut(200);
 			$('.post_list').animate({ width: 640}, 500)
 			$('.published_list .post_line').animate({'font-size':'36px', 'width':500, 'letter-spacing':'-2px','float':'left'})
-			$('.essay-date').css({'font-size':'36px', 'margin-left':'-8px', 'color':'#D8D8D8'})
+			$('.essay-date').css({'font-size':'36px', 'margin-left':'-8px', 'color':'#D8D8D8', 'letter-spacing':'-4px'})
 			// $('.new_post_input').css({'opacity':'0'})
 			// $('.line-break').css({'opacity':'0'})
 			// $('.post_list_header').css({'opacity':'0'})
