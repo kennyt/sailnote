@@ -436,6 +436,11 @@ $(document).ready(function(){
     enlargeUserShowForMobile();
     $('.center_divider').css('height',$(document).height() - 150);
 		$('.post_list').css('margin-left',$('.post_list').offset().left - 40)
+		if ($('.unpublished_list').length == 0){
+			$('.post_list').css({ 'width': 640})
+			$('.published_list .post_line').css({'font-size':'36px', 'width':500, 'letter-spacing':'-2px','float':'left'})
+			$('.essay-date').css({'font-size':'36px', 'margin-left':'-8px', 'color':'#D8D8D8'})
+		}
    //  $('.post_line').css('opacity','0');
   	// $('.post_line').attr('class','post_line insta_transition');
  		// rollInPostList();

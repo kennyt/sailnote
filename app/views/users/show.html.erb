@@ -69,7 +69,6 @@
 			  <% end %>
 			</div>
 			<div class="center_divider"></div>
-		<% end %>
 			<div class="published_list">
 				<!-- <div class="list_loading_bar" style="margin-top:-3px;"></div> -->
 				<% if @published_posts.count > 0 %>
@@ -89,6 +88,28 @@
 			  <% else %>
 			  	<div style="font-family:source sans pro; font-size: 20px; margin-top: 8px; margin-bottom:20px;text-align:center;" id="empty-published">Empty</div>
 			  <% end %>
-		</div>
+			</div>
+		<% else %>
+			<div class="published_list">
+				<!-- <div class="list_loading_bar" style="margin-top:-3px;"></div> -->
+				<% if @published_posts.count > 0 %>
+				  <% @published_posts.each do |post| %>
+				  	<a class="essay-title" href="/<%= post.user.username %>/<%= post.url %>">
+				  		<div class="post_line published_mode">
+				  			<span class="essay-text"><%= post.title %></span>
+					  		<span class="essay-date"><%= post.published_date.strftime("%0d %b %y") %></span>
+						  	<% if @authored_bool %>
+					  			<div class="unpublish_button"><div class="left-hover-tag">unpublish</div></div>
+					  			<div class="delete_button"><div class="right-hover-tag">delete</div></div>
+						  		<span class="view-count"><%= post.hits %> views</span>
+						  	<% end %>
+				  		</div>
+				  	</a>
+				  <% end %>
+			  <% else %>
+			  	<div style="font-family:source sans pro; font-size: 20px; margin-top: 8px; margin-bottom:20px;text-align:center;" id="empty-published">Empty</div>
+			  <% end %>
+			</div>
+		<% end %>
 	</div>
 </div>
