@@ -1,29 +1,27 @@
 <% @title=@user.username + ' - sailnote' %>
 <div class="page_identifier" id="user_view" data-username="<%= @user.username %>"></div>
-<div class="cover-box">
-	<div class="user_container">
-		<% if @user.image_banner.nil? || @user.image_banner.length > 0 %>
-			<div style="background-image:url(<%= @user.image_banner %>)" id="cover-pic"></div>
+<div class="user_container">
+	<% if @user.image_banner.nil? || @user.image_banner.length > 0 %>
+		<!-- <div style="background-image:url(<%= @user.image_banner %>)" id="cover-pic"></div> -->
+	<% else %>
+		<!-- <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D" id="cover-pic"> -->
+	<% end %>
+	<a class="cover-header" href="/<%=@user.username%>"><%= @user.username %></a>
+	<% if @authored_bool %>
+		<!-- <div class="change_pic_btn" title="Upload profile picture."></div> -->
+		<%= cloudinary_js_config %>
+		<div class="hidden_image_holder"></div>
+		<% if @user.bio.length == 0 %>
+			<div class="bio_text" contentEditable="true" data-placeholder="type short bio here" data-changed="0" spellcheck="false"><%= h(@user.bio.html_safe) %></div>
 		<% else %>
-			<img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs%3D" id="cover-pic">
+			<div class="bio_text" contentEditable="true" data-placeholder="" data-changed="0" spellcheck="false"><%= h(@user.bio.html_safe) %></div>
 		<% end %>
-		<a class="cover-header" href="/<%=@user.username%>"><%= @user.username %></a>
-		<% if @authored_bool %>
-			<div class="change_pic_btn" title="Upload profile picture."></div>
-			<%= cloudinary_js_config %>
-			<div class="hidden_image_holder"></div>
-			<% if @user.bio.length == 0 %>
-				<div class="bio_text" contentEditable="true" data-placeholder="type short bio here" data-changed="0" spellcheck="false"><%= h(@user.bio.html_safe) %></div>
-			<% else %>
-				<div class="bio_text" contentEditable="true" data-placeholder="" data-changed="0" spellcheck="false"><%= h(@user.bio.html_safe) %></div>
-			<% end %>
-		<% else %>
-			<div class="bio_text"><%= h(@user.bio.html_safe) %></div>
-		<% end %>
-		<%= link_to '', root_path, :class => 'essaii_left' %>
-	</div>
-	<!-- <div class="ocean"></div> -->
+	<% else %>
+		<div class="bio_text"><%= h(@user.bio.html_safe) %></div>
+	<% end %>
+	<%= link_to '', root_path, :class => 'essaii_left' %>
 </div>
+<div class="list_titles"></div>
 <div class="save_success">saved!</div>
 <% if @authored_bool %>
 	<div class="batman_toolbelt">
@@ -49,36 +47,37 @@
 <div class="archive" user-show="1">
   <% if @authored_bool %>
   	<div class="press_enter_info">press enter to create draft</div>
-  	<input class="new_post_input" placeholder="enter new post title"></input>
-		<div class="list_loading_bar" style="position:absolute;top: 43px;left:0px;"></div>
+		<!-- <div class="list_loading_bar" style="position:absolute;top: 43px;left:0px;"></div> -->
   <% end %>
 
 	<div class="post_list">
 	  <% if @authored_bool %>
 		  <div class="unpublished_list">
-				  <% if @unpublished_posts.count > 0 %>
-					  <% @unpublished_posts.each do |post| %>
-				  			<a class="essay-title" href="/<%= post.user.username %>/<%= post.url %>">
-					  			<div class="post_line">
-				  					<div class="publish_button"><div class="left-hover-tag">publish</div></div>
-					  				<div class="delete_button"><div class="right-hover-tag">delete</div></div>
-				  					<span class="essay-text"><%= post.title %></span>
-					  			</div>
-				  			</a>
-					  <% end %>
-				  <% else %>
-				  	<div style="font-family:source sans pro; font-size: 20px; margin-top: 8px; margin-bottom:20px;text-align:center;" id="unpublished_empty">Empty</div>
+				<input class="new_post_input" placeholder="enter new post title"></input>
+			  <% if @unpublished_posts.count > 0 %>
+				  <% @unpublished_posts.each do |post| %>
+			  			<a class="essay-title" href="/<%= post.user.username %>/<%= post.url %>">
+				  			<div class="post_line">
+			  					<div class="publish_button"><div class="left-hover-tag">publish</div></div>
+				  				<div class="delete_button"><div class="right-hover-tag">delete</div></div>
+			  					<span class="essay-text"><%= post.title %></span>
+				  			</div>
+			  			</a>
 				  <% end %>
+			  <% else %>
+			  	<div style="font-family:source sans pro; font-size: 20px; margin-top: 8px; margin-bottom:20px;text-align:center;" id="unpublished_empty">Empty</div>
+			  <% end %>
 			</div>
+			<div class="center_divider"></div>
 		<% end %>
 			<div class="published_list">
-				<div class="list_loading_bar" style="margin-top:-3px;"></div>
+				<!-- <div class="list_loading_bar" style="margin-top:-3px;"></div> -->
 				<% if @published_posts.count > 0 %>
 				  <% @published_posts.each do |post| %>
 				  	<a class="essay-title" href="/<%= post.user.username %>/<%= post.url %>">
 				  		<div class="post_line">
 				  			<span class="essay-text"><%= post.title %></span>
-					  		<span class="essay-date"> <%= post.published_date.strftime("%0d %b %y") %></span>
+					  		<span class="essay-date"><%= post.published_date.strftime("%0d %b %y") %></span>
 						  	<% if @authored_bool %>
 					  			<div class="unpublish_button"><div class="left-hover-tag">unpublish</div></div>
 					  			<div class="delete_button"><div class="right-hover-tag">delete</div></div>

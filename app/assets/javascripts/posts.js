@@ -129,6 +129,11 @@ function snapScroll(top, direction, user){
 		else {
 			textBody = $('iframe');
 			sections = $('iframe').contents().find('section');
+			$.each(sections, function(i, section){
+				if ($(section).hasClass('undo-on')){
+					sections.splice(i, 1);
+				}
+			})
 		}
 
 		var previousSection = sectionNumber
@@ -201,7 +206,7 @@ function snapScroll(top, direction, user){
 		setTimeout(function(){
 			lastScroll = $(document).scrollTop();
 			textBody.attr('scrollz','0');
-		}, 500)
+		}, 750)
 	}
 }
 
@@ -281,37 +286,36 @@ function verticalAlignSections(user){
 
 function verticalAlignHeader(user){
 	var title;
+	var extra = 0;
 	if (user == 'guest'){
+		extra = 50;
 		title = $('.post_title');
 	} else {
 		title = $('.edit-title');
 	}
 
-	var height = title.height() + $('.post-date-left').height() + $('.author_link').height();
+	var height = title.height() + $('.author_link_wrapper').height();
 	var windowHeight = $(window).height();
 	var marginTop = (windowHeight-height)/2
-	title.animate({'margin-top' : marginTop + 160, 'margin-bottom' : marginTop  }, 0)
-	$('.author_link_wrapper').css('top', marginTop + 60);
-	$('.post-date-left').css('top', marginTop - 30);
+	$('.hero_header').css({'height':windowHeight, 'padding-top':marginTop - 60})
+	var titleBottom = title.offset().top + title.height();
+	$('.author_link_wrapper').css('top', titleBottom + extra);
 }
 
-function invisibleChildren(user){
-	var sections;
-	if (user == 'guest'){
-		sections = $('section')
-	}
-	else {
-		sections = $('iframe').contents().find('section') 
-	}
-	$.each(sections, function(i, section){
-		$(section).children().css('opacity','0');
+function invisibleChildren(section){
+	$.each($(section).children(), function(i, child){
+		if (!($(child).hasClass('confirm_delete_section'))){
+			$(child).fadeOut(300);
+		}
 	})
 }
 
 function visibleChildren(){
 	sections = $('iframe').contents().find('section')
 	$.each(sections, function(i, section){
-		$(section).children().css('opacity','1');
+		if (!($(section).hasClass('undo-on'))) {
+			$(section).children().css('opacity','1');
+		}
 	})
 }
 
@@ -530,7 +534,15 @@ function enlargeForMobile(){
 function turnOnEditing(){
 	var sections = $('iframe').contents().find('section');
 	sections.addClass('editing-note');
-	sections.css({'padding-top':'', 'padding-bottom':'30px', 'min-height':'90px'})
+	$.each(sections, function(i, section){
+		if (!($(section).hasClass('undo-on'))){
+			$(section).css({'padding-top':'', 'padding-bottom':'30px', 'min-height':'90px'})
+		}
+	})
+	$('.url_input').after($('.view_mode_button'))
+	$('.sfooter').hide();
+	showSideTooltips();
+	insertDeleteSection();
 	visibleChildren()
 	checkLastSectionForEmpty()
 	autoSetEditorHeight();
@@ -540,49 +552,99 @@ function turnOnPreview(){
 	sectionNumber = -1;
 	$('html,body').animate({scrollTop : 0}, 500);
 	$('iframe').contents()[0].designMode = 'off';
-	// $('.batman_toolbelt').attr('class','batman_toolbelt view_mode')
-	$('.view_mode_button').html('edit mode')
+	$('.batman_toolbelt').attr('class','batman_toolbelt view_mode')
+	$('.view_mode_button').html('x')
 	$('.view_mode_button').attr('class','edit_mode_button control_button');
-	$('.save_success').attr('style','display:block;background:#34495e;')
+	$('.batman_toolbelt').after($('.edit_mode_button'))
+	$('.save_success').attr('style','display:block;background:#34495e;');
 	$('.save_success').html('preview mode on')
 	$('.blank_note').fadeOut(200);
+	$('.sfooter').show();
+	$('.sfooter').height($(window).height());
 
 	if (checkLastSectionForEmpty()){
 		$(checkLastSectionForEmpty()).remove();
 	}
 	var sections = $('iframe').contents().find('section');
+	$(sections).find('.confirm_delete_section').remove();
 	$(sections).removeClass('editing-note');
 	sections.css({'min-height': $(window).height()})
 	bindScroll($('html,body'))
   bindScroll($('iframe').contents().find('body'))
 	verticalAlignSections();
 	activateKnob();
+	hideSideTooltips();
 	autoSetEditorHeight();
 }
 
 function checkLastSectionForEmpty(){
 	if ($('iframe').contents().find('.editing-note').length == 0) { return false }
 	var lastSection = $('iframe').contents().find('section')[$('iframe').contents().find('section').length - 1]
-	if ($(lastSection).text().length > 0){
-		console.log($(lastSection).text().length)
+	var lastSectionClone = $(lastSection).clone();
+	$(lastSectionClone).find('.confirm_delete_section').remove();
+	if ($(lastSectionClone).text().length > 0){
 		$('.blank_note').fadeOut(200);
 		$('iframe').contents().find('body').append('<section class="text_center_panel classic_font color_white editing-note"><p><br></p><p><br></p></section>')
 		var blankSection = $('iframe').contents().find('section')[$('iframe').contents().find('section').length - 1]
 		var top = $(blankSection).offset().top + $('iframe').offset().top + 60
+		insertDeleteSection();
 		return false
 	} else {
 		return lastSection;
 	}
 }
 
-function enforceTextLimit(section){
-	var previousHTML = $(section).html();
+function flashRed(element){
+	element.css('color','red');
 	setTimeout(function(){
-		var textLength = $(section).text().length
-		if (textLength > 400){
-			$(section).html(previousHTML)
-		}
-	},0)
+		element.css('color','');
+		setTimeout(function(){
+			element.css('color','red');
+			setTimeout(function(){
+				element.css('color','');
+			},25)
+		}, 25)
+	}, 25)
+}
+
+function enforceTextLimit(section, ev){
+	// var previousHTML = $(section).html();
+	console.log(ev)
+
+	var textLength = $(section).text().length
+	if (textLength >= 400 && isCharacterKeyPress(ev)){
+		ev.preventDefault();
+		// $(section).html(previousHTML)
+		flashRed($('.slide_identifier'))
+
+		// var sectionChild = $('iframe')[0].contentWindow.getSelection().anchorNode
+		// this.setSelectionRange(len, len)
+		// var sectionChildLength = sectionChild.length
+		// var s = $('iframe')[0].contentWindow.getSelection(),
+		//     r = $('iframe').contents()[0].createRange();
+		// r.setStart(sectionChild, 2);
+		// r.setEnd(sectionChild, 2);
+		// r.collapse();
+		// s.removeAllRanges();
+		// s.addRange(r);
+	}
+	// setTimeout(function(){
+		
+	// },0)
+
+}
+
+function isCharacterKeyPress(evt) {
+  if (typeof evt.which == "undefined") {
+    // This is IE, which only fires keypress events for printable keys
+    return true;
+  } else if (typeof evt.which == "number" && evt.which > 0) {
+    // In other browsers except old versions of WebKit, evt.which is
+    // only greater than zero if the keypress is a printable key.
+    // We need to filter out backspace and ctrl/alt/meta key combinations
+    return !evt.ctrlKey && !evt.metaKey && !evt.altKey && evt.which != 8;
+  }
+  return false;
 }
 
 function showSlideIdentifier(section){
@@ -591,8 +653,19 @@ function showSlideIdentifier(section){
 		var left = $(section).offset().left - 100
 		var index = getSectionIndex(section)
 		var textLength = $(section).text().length
+		var sections = $('iframe').contents().find('section');
 		$('.edit_section_btn').css({'top':top,'left':left})
 		$('.edit_section_btn').attr('data-section-index', index);
+
+		$('.move_section_up').show();
+		$('.move_section_down').show();
+		$('.move_section_up').attr('data-section-index',index).css({'top':top, 'left':left + 55, 'opacity':'.3'})
+		$('.move_section_down').attr('data-section-index',index).css({'top':top + 30, 'left':left + 55, 'opacity':'.3'})
+		if (index == sections.length - 1){
+			$('.move_section_down').hide();
+		} else if (index == 0){
+			$('.move_section_up').hide();
+		}
 
 		if (index == $('iframe').contents().find('section').length - 1 && $('iframe').contents().find('.editing-note').length > 0){
 			$('.blank_note').css({'top': top})
@@ -606,6 +679,44 @@ function showSlideIdentifier(section){
 	}
 }
 
+function insertDeleteSection(){
+	$('iframe').contents().find('.confirm_delete_section').remove();
+	var sections = $('iframe').contents().find('section')
+	sections.append('<span class="confirm_delete_section" title="delete">x</span>')
+}
+
+function showSideTooltips(){
+	$('.move_section_down').show();
+	$('.move_section_up').show();
+	$('.edit_section_btn').show();
+	$('.slide_identifier').show();
+}
+
+function hideSideTooltips(){
+	$('.move_section_down').hide();
+	$('.move_section_up').hide();
+	$('.edit_section_btn').hide();
+	$('.slide_identifier').hide();
+}
+
+function moveCaret(win, charCount) {
+  var sel, range;
+  if (win.getSelection) {
+    sel = win.getSelection();
+    if (sel.rangeCount > 0) {
+      var textNode = sel.focusNode;
+      var newOffset = sel.focusOffset + charCount;
+      sel.collapse(textNode, Math.min(textNode.length, newOffset));
+    }
+} else if ( (sel = win.document.selection) ) {
+    if (sel.type != "Control") {
+      range = sel.createRange();
+      range.move("character", charCount);
+      range.select();
+    }
+  }
+}
+
 
 //text_editor code. runs on every page with the class .edit-box
 $(document).ready(function(){
@@ -615,7 +726,8 @@ $(document).ready(function(){
 			if ($(this).attr('datasubmit').length){
 				ev.preventDefault();
 				ev.stopPropagation();
-				var user = $('.edit-title').attr('data_author');
+				$('iframe').contents().find('.undo-on').remove();
+				var user = $('.edit-title').attr('data-author');
 				var title = encodeURIComponent($('.edit-title').attr('datatitle').toLowerCase());
 				var clone = $('iframe').contents().find('body').clone();
 				resetStyles($(clone));
@@ -624,7 +736,6 @@ $(document).ready(function(){
 					$(lastSection).remove();
 				}
 				var cloneHtml = $(clone).html()
-				$('iframe').contents().find('section').css({'box-shadow':'none'})
 
 				$('.edit-box').val(cloneHtml);
 				$('.save_success').attr('style','display:block;background:#c0392b;');
@@ -687,8 +798,8 @@ $(document).ready(function(){
 				   editor.contentWindow.document.designMode="on";
 				   editor.scrolling="no";
 				   // stylings
-				   var importFont = '@import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:400italic,700italic,400,700);';
-				   var bodyStyle = 'body {background: rgb(241, 243, 248);}'
+				   // var importFont = '@import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:400italic,700italic,400,700);';
+				   var bodyStyle = 'body {background: #404040;}'
 				   var textLinkStyle = '.text_link{text-decoration:none; border-bottom:1px solid #2980b9;color:#202020;} .text_link:link {color:#202020;border-bottom: 1px solid #202020;}.text_link:visited {color:#202020;border-bottom: 1px solid #202020;}.text_link:active {color:red;}'
 				   var selectionStyle = '::selection {background: #D8D8D8; color:black;} ::-moz-selection {background: #D8D8D8;color:black;}'
 				   var sectionStyle = 'section{width: 100%;position:relative; padding-bottom: 30px; min-height: 90px;}'
@@ -696,20 +807,22 @@ $(document).ready(function(){
 				   var stretcherStyle = '.stretcher{position: absolute;bottom: 50%;left: 0px;height: 20px;margin:0px !important;width: 20px !important;background: red; cursor:pointer;}'
 				   var pStyle = 'p{margin-top: 0px; margin-bottom: 33px;}'
 				   var maxWidth = 'p, blockquote, h1, div {max-width: 95%;} figure{max-width: 100%; margin:0px; overflow:hidden;}'
-				   var editingNote = '.editing-note{width:60%%; margin-left: auto; margin-right:auto; height: auto; display: list-item; list-style:disc; margin-top: 10px; padding-top: 20px; box-shadow: 0px 0px 8px 0px #bdc3c7;} .editing-note .pullquote{width: 100% !important; font-size: 40px !important;} .editing-note h1{font-size: 2.8em !important;} .editing-note div, .editing-note p {font-size: 20px !important;}'
+				   var editingNote = '.editing-note{width:60%%; margin-left: auto; margin-right:auto; height: auto; display: block; margin-top: 25px; padding-top: 20px; box-shadow: 0px 0px 8px 0px black;} .editing-note .pullquote{width: 100% !important; font-size: 40px !important;} .editing-note h1{font-size: 2.8em !important;} .editing-note div, .editing-note p {font-size: 24px !important;}'
 				   var sectionTransition = 'section{ -webkit-transition: box-shadow 180ms ease-in-out, width 180ms ease-in-out;-moz-transition: box-shadow 180ms ease-in-out;-o-transition: box-shadow 180ms ease-in-out;-ms-transition: box-shadow 180ms ease-in-out;transition: box-shadow 180ms ease-in-out;}'
+				   var confirmDeleteSection = '.confirm_delete_section {display:block;right: -8px;position: absolute;cursor: pointer;top: -8px;border:2px solid #383838;background: white;width: 16px; height: 16px; border-radius:50%; font-size: 10px; text-align: center; font-family: tahoma; font-weight: bold; color: #383838;-moz-user-select: none; -khtml-user-select: none; -webkit-user-select: none; -o-user-select: none; } .confirm_delete_section:hover{color: #e74c3c; border:2px solid #e74c3c;}'
+				   var undoOnStyle = '.undo-on{opacity: .3;min-height: 6px !important; height: 6px !important; background:#bdc3c7; padding:0px !important;-webkit-transition: height 200ms ease-out;-moz-transition: height 200ms ease-out;-o-transition: height 200ms ease-out;-ms-transition: height 200ms ease-out;transition: height 200ms ease-out;} .undo-on:hover{opacity: 1;}'
 
 
 
 				   var text_left_panelStyle = '.text_left_panel div, .text_left_panel p, .text_left_panel h1{ margin-left:9%; max-width:40%; width: 675px;} .text_left_panel blockquote, .text_left_panel .pullquote{right:7%; max-width:30%; width: 535px; float:right; padding-left: 20px; padding-right:20px; position: absolute; margin: 0px;} .text_left_panel h1{text-align:center;margin-bottom:25px; margin-top: 0px;} .text_left_panel figure {right:7%; max-width:50%; float:right; padding:0px; position: absolute; margin: 0px;} .text_left_panel img {width: 100%;} .text_left_panel blockquote{line-height:1.4; padding:20px;} .text_left_panel .pullquote{border:0px; text-align:center;}'
-				   var text_center_panelStyle = '.text_center_panel div, .text_center_panel p {width: 675px;margin-left:auto;margin-right:auto;} .text_center_panel figure{text-align: center;} .text_center_panel h1{ width: 750px;margin-left:auto;margin-right:auto;text-align:center; margin-bottom:25px; margin-top: 0px;} .text_center_panel blockquote{position: relative;top:0px !important;margin:30px; margin-left: auto;margin-right: auto;padding:20px; font-size: 24px; line-height: 1.4;  width:625px;} .text_center_panel .pullquote{width: 70%;margin-left: auto;margin-right:auto; border-top: 0px solid black; border-bottom: 0px solid black;padding-right: 40px;padding-left:40px; text-align: center; margin-bottom: 5px; margin-top: 0px;}'
+				   var text_center_panelStyle = '.text_center_panel div, .text_center_panel p {width: 675px;margin-left:auto;margin-right:auto;} .text_center_panel figure{text-align: center;} .text_center_panel h1{ width: 750px;margin-left:auto;margin-right:auto;text-align:left; margin-bottom:25px; margin-top: 0px;} .text_center_panel blockquote{position: relative;top:0px !important;margin:30px; margin-left: auto;margin-right: auto;padding:20px; font-size: 24px; line-height: 1.4;  width:625px;} .text_center_panel .pullquote{width: 70%;margin-left: auto;margin-right:auto; border-top: 0px solid black; border-bottom: 0px solid black;padding-right: 40px;padding-left:40px; text-align: center; margin-bottom: 5px; margin-top: 0px;}'
 				   var text_right_panelStyle= '.text_right_panel div, .text_right_panel p, .text_right_panel h1{ margin-left:51%; max-width:40%; width: 675px;} .text_right_panel blockquote, .text_right_panel .pullquote{right:63%; max-width:30%; width: 535px; float:left; padding-left: 20px; padding-right:20px; position: absolute; margin: 0px;color:#95a5a6;} .text_right_panel h1{text-align:center;margin-bottom:25px; margin-top: 0px;} .text_right_panel figure {right:50%; max-width:50%; float:left; padding:0px; position: absolute; margin: 0px;} .text_right_panel img {width: 100%;} .text_right_panel blockquote{line-height:1.4; padding:20px;} .text_right_panel .pullquote{border:0px; text-align: center;}'
 
 
-				   var graceful_fontStyle = '.graceful_font div, .graceful_font p{font-family:source sans pro, sans-serif; font-size: 26px;} .graceful_font blockquote{font-family: georgia,times new roman, times, serif; font-size: 20px;} .graceful_font h1 {font-family:georgia,times new roman, times, serif; font-size: 3em;line-height:1.1;} .graceful_font .pullquote{font-family: georgia,times new roman, times, serif; font-size: 40px;}'
-				   var classic_fontStyle = '.classic_font div, .classic_font p {font-family:georgia; font-size: 26px; } .classic_font blockquote{font-family:source sans pro; font-size:18px;} .classic_font h1{font-family:source sans pro; font-size:4em;line-height:1.0;}.classic_font .pullquote{font-family:source sans pro; font-size: 45px; line-height: 1.1;}'
+				   var graceful_fontStyle = '.graceful_font div, .graceful_font p{font-family:helvetica, tahoma, sans-serif; font-size: 26px;} .graceful_font blockquote{font-family: georgia,times new roman, times, serif; font-size: 20px;} .graceful_font h1 {font-family:georgia,times new roman, times, serif; font-size: 3em;line-height:1.1;} .graceful_font .pullquote{font-family: georgia,times new roman, times, serif; font-size: 40px;}'
+				   var classic_fontStyle = '.classic_font div, .classic_font p {font-family:times new roman,times, serif; font-size: 26px; } .classic_font blockquote{font-family:helvetica, tahoma; font-size:18px;} .classic_font h1{font-family:helvetica, tahoma; font-size:4.5em;line-height:1.0;letter-spacing:-1.5px;}.classic_font .pullquote{font-family:helvetica, tahoma; font-size: 45px; line-height: 1.1;}'
 
-				   var color_whiteStyle = '.color_white {background: white;} .color_white div, .color_white p, .color_white h1{ color: #383838; } .color_white blockquote{color: #606060; border-top: 8px solid #bdc3c7;border-bottom: 8px solid #bdc3c7;} .color_white .pullquote{border: 0px;} .color_white .text_link{text-decoration:none; border-bottom:1px solid #2980b9;color:#202020;} .color_white .text_link:link {color:#202020;border-bottom: 1px solid #202020;} .color_white .text_link:visited {color:#202020;border-bottom: 1px solid #202020;} .color_white .text_link:active {color:red;}'
+				   var color_whiteStyle = '.color_white {background: white;} .color_white div, .color_white p, .color_white h1{ color: #383838; } .color_white blockquote{color: #484848; border-top: 8px solid #bdc3c7;border-bottom: 8px solid #bdc3c7;} .color_white .pullquote{border: 0px;} .color_white .text_link{text-decoration:none; border-bottom:1px solid #2980b9;color:#202020;} .color_white .text_link:link {color:#202020;border-bottom: 1px solid #202020;} .color_white .text_link:visited {color:#202020;border-bottom: 1px solid #202020;} .color_white .text_link:active {color:red;}'
 
 				   var color_lightgreyStyle = '.color_lightgrey {background: #f1f1f1; color: black} .color_lightgrey div, .color_lightgrey p, .color_lightgrey h1 { color: black; } .color_lightgrey blockquote {color:#7f8c8d; border-top: 8px solid #7f8c8d;border-bottom: 8px solid #7f8c8d;} .color_lightgrey .text_link{text-decoration:none; border-bottom:1px solid #2980b9;color:#202020;} .color_lightgrey .text_link:link {color:#202020;border-bottom: 1px solid #202020;} .color_lightgrey .text_link:visited {color:#202020;border-bottom: 1px solid #202020;} .color_lightgrey .text_link:active {color:red;}' 
 
@@ -731,7 +844,7 @@ $(document).ready(function(){
 
 
 				   $('iframe').contents().find('body').attr('spellcheck','false')
-					 $('iframe').contents().find('head').append($('<style>').html(importFont+bodyStyle+sectionTransition+editingNote+maxWidth+pStyle+textLinkStyle+selectionStyle+sectionStyle+classic_fontStyle+graceful_fontStyle+text_center_panelStyle+text_left_panelStyle+text_right_panelStyle+color_whiteStyle+color_lightgreyStyle+color_lightblueStyle+color_blackStyle+color_slategreyStyle+color_darkblueStyle+color_darkredStyle+color_darkpurpleStyle+color_darktealStyle+color_imageStyle+moverStyle+stretcherStyle))
+					 $('iframe').contents().find('head').append($('<style>').html(bodyStyle+sectionTransition+editingNote+maxWidth+pStyle+textLinkStyle+selectionStyle+sectionStyle+classic_fontStyle+graceful_fontStyle+text_center_panelStyle+text_left_panelStyle+text_right_panelStyle+color_whiteStyle+color_lightgreyStyle+color_lightblueStyle+color_blackStyle+color_slategreyStyle+color_darkblueStyle+color_darkredStyle+color_darkpurpleStyle+color_darktealStyle+color_imageStyle+moverStyle+stretcherStyle+confirmDeleteSection+undoOnStyle))
 					var buttonPane = $("<div/>",{
 					    "class" : "editor-btns"
 					}).prependTo($('body'));
@@ -1132,7 +1245,7 @@ $(document).ready(function(){
 	    	setTimeout(function(){
 		  		// random spans showing up. replacing them with text.
 	  			$.each($('iframe').contents().find('span'), function(i, span){
-	  				if ($(span).attr('style') != 'font-weight: normal;'){
+	  				if ($(span).attr('style') != 'font-weight: normal;' && !($(span).hasClass('confirm_delete_section'))) {
 		  				var span_html = $(span).html()
 		  				$(span).replaceWith(span_html)
 	  				}
@@ -1165,7 +1278,7 @@ $(document).ready(function(){
 		  setTimeout(function(){
 		  	showSlideIdentifier(section);
 		  },0)
-		  enforceTextLimit(section);
+		  enforceTextLimit(section, ev);
 		  checkLastSectionForEmpty();
 		})
 
@@ -1177,8 +1290,11 @@ $(document).ready(function(){
 			},0)
 			e.preventDefault();
 			var text = (e.originalEvent || e).clipboardData.getData('text/plain') || prompt('Paste something..');
-  		$('iframe')[0].contentWindow.document.execCommand('insertText', false, text);
-		  enforceTextLimit(getSectionParent($('iframe').contents()[0].getSelection()));
+			if (text.length + $(getSectionParent($('iframe').contents()[0].getSelection())).text().length < 401 ){
+  			$('iframe')[0].contentWindow.document.execCommand('insertText', false, text);
+			} else {
+				flashRed($('.slide_identifier'))
+			}
 		})
 
 		textBody.on('keyup',function(e){
@@ -1191,7 +1307,7 @@ $(document).ready(function(){
 		$('.edit_section_btn').hover(function(){
 			if (!($('.details_panel').attr('opened') =='1')){
 				var section = getHoveringSection($(this).attr('data-section-index'))
-				$(section).css({'box-shadow': '0px 0px 50px 10px #bdc3c7'})
+				$(section).css({'box-shadow': '0px 0px 50px 10px black'})
 				$(this).attr('hovered','1');
 			}
 		}, function(){
@@ -1281,9 +1397,9 @@ $(document).ready(function(){
 
 		setTimeout(function(){
 			textBody.on('mouseenter','section',function(){
-				$('.edit_section_btn').css({'opacity':'.3'})
+				$('.edit_section_btn').css({'opacity':'1'})
 				$(this).css({'box-shadow':''})
-				if (!($(this).attr('id') == 'dummy')){
+				if (!($(this).attr('id') == 'dummy') && !($(this).hasClass('undo-on'))){
 					showSlideIdentifier(this);
 				}
 			}).on('mouseleave','section', function(){
@@ -1312,7 +1428,6 @@ $(document).ready(function(){
 				$(section).attr('id','being_edited');
 				$('.details_panel').append('<div class="cancel_edit_section">cancel</div>');
 				$('.details_panel').append('<div class="confirm_edit_section">save</div>');
-				$('.details_panel').append('<div class="confirm_delete_section" certain="no">delete</div>');
 				$('.details_panel').height(200);
 				$('iframe').css({'border-bottom':'200px solid white'})
 
@@ -1389,7 +1504,6 @@ $(document).ready(function(){
 			setTimeout(function(){
 				$('.cancel_edit_section').remove();
 				$('.confirm_edit_section').remove();
-				$('.confirm_delete_section').remove();
 				var beforeClass = beingEdited.attr('data-beforeclass');
 				beingEdited.attr('data-beforeclass','');
 				beingEdited.attr('class', beforeClass);
@@ -1418,16 +1532,40 @@ $(document).ready(function(){
 			$('iframe').css({'border-bottom':'0px solid white'})
 			autoSetEditorHeight();
 		})
-		$('body').on('click','.confirm_delete_section', function(){
-			if ($(this).attr('certain') == 'yes'){
-				var beingEdited = $('iframe').contents().find('#being_edited')
-				$(beingEdited).remove();
-				$('.cancel_edit_section').trigger('click');
+		textBody.on('click','.confirm_delete_section', function(){
+			var that = this;
+			var clone = $(this).clone();
+			var beingDeleted = $(this).parent();
+			var index = getSectionIndex($(this).parent()[0])
+
+			if ($(beingDeleted).hasClass('undo-on')){
+				$(beingDeleted).removeClass('undo-on');
+				$(beingDeleted).children().fadeIn(160);
+				$(beingDeleted).animate({'height':'auto', 'min-height':'90px', 'padding':'inherit'}, 300);
+				$(that).remove();
+				setTimeout(function(){
+					$(beingDeleted).prepend(clone.html('x').attr('title','delete'));
+				},300);
+				autoSetEditorHeight();
+				index -= 1;
 			} else {
-				$(this).attr('certain','yes');
-				$(this).html('sure?');
-				$(this).css({'background':'#c0392b', 'font-weight':'bold'})
+				invisibleChildren(beingDeleted);
+				$(beingDeleted).animate({ height: 10, 'min-height':10, padding:0}, 300)
+				$(that).remove();
+				setTimeout(function(){
+					$(beingDeleted).addClass('undo-on');
+					$(beingDeleted).prepend(clone.html('u').attr('title','undo'));
+					autoSetEditorHeight();
+				},300);
 			}
+			var nextSection = $('iframe').contents().find('section')[index+1]
+			var s = $('iframe')[0].contentWindow.getSelection(),
+			    r = $('iframe').contents()[0].createRange();
+			r.setStart(nextSection, 0);
+			r.setEnd(nextSection, 0);
+			r.collapse();
+			s.removeAllRanges();
+			s.addRange(r);
 		})
 
 		textBody.on('click','section', function(){
@@ -1542,6 +1680,28 @@ $(document).ready(function(){
 			}, 2000)
 		})
 
+		$('body').on('click','.move_section_up', function(){
+			var index = parseInt($(this).attr('data-section-index'));
+			var sections = $('iframe').contents().find('section')
+			var movingSection = sections[index]
+			var sectionSwitching = sections[index - 1]
+			$(sectionSwitching).before(movingSection);
+			var sectionTop = $(movingSection).offset().top + $('iframe').offset().top - 40
+			$('html,body').animate({ scrollTop: sectionTop}, {duration: 250, easing: 'easeInOutCubic'})
+			showSlideIdentifier(movingSection);
+		})
+
+		$('body').on('click','.move_section_down', function(){
+			var index = parseInt($(this).attr('data-section-index'));
+			var sections = $('iframe').contents().find('section')
+			var movingSection = sections[index]
+			var sectionSwitching = sections[index + 1]
+			$(sectionSwitching).after(movingSection);
+			var sectionTop = $(movingSection).offset().top + $('iframe').offset().top - 40
+			$('html,body').animate({ scrollTop: sectionTop}, {duration: 250, easing: 'easeInOutCubic'})
+			showSlideIdentifier(movingSection);
+		})
+
 		$('.edit-title').keypress(function(ev){
 	    if (ev.keyCode == 10 || ev.keyCode == 13) 
 	        ev.preventDefault();
@@ -1588,8 +1748,8 @@ $(document).ready(function(){
 	 //  bindScroll(textBody)
 		// $('iframe').contents().find('section').css({'min-height': $(window).height()})
 		$('.edit-title').autosize();
-		verticalAlignHeader();
 		enlargeForMobile();
+		verticalAlignHeader();
 		setTimeout(function(){
 			turnOnEditing();
 			// checkLastSectionForEmpty();
@@ -1600,9 +1760,10 @@ $(document).ready(function(){
 
 		//transition effects
 		$('.edit-title').css({'opacity':'1'})
-		$('.author_link_wrapper').css({'opacity':'.2'})
-		$('.post-date-left').css({'opacity':'.3'})
-
+		$('.author_link_clone').css({'opacity':'.6'})
+		$('.author_link_wrapper').css({'opacity':'.6'})
+		$('.post-date-left').css({'opacity':'.48'})
+		$('.post-date-left').html($('.post-date-left').html().split(' ').join('').toLowerCase())
 		activateKnob();
 		activateDownArrow();
 
@@ -1668,8 +1829,10 @@ $(document).ready(function(){
 
 		//transition effects
 		$('.post_title').css({'opacity':'1'})
-		$('.author_link_wrapper').css({'opacity':'.2'})
-		$('.post-date-left').css({'opacity':'.3'})
+		$('.author_link_clone').css({'opacity':'.6'})
+		$('.author_link_wrapper').css({'opacity':'.6'})
+		$('.post-date-left').css({'opacity':'.48'})
+		$('.post-date-left').html($('.post-date-left').html().split(' ').join('').toLowerCase())
 		// $($('section')[0]).css('opacity','1');
 	}
 })

@@ -127,7 +127,7 @@ $(document).ready(function(){
 			  	$('.new_post_input').css({'background-position':'25% 3000%'})
 					$('.press_enter_info').css({'opacity':'1'});
 			  } else {
-			  	$('.new_post_input').css({'background-position':'25% 30%'})
+			  	$('.new_post_input').css({'background-position':'42px 50%'})
 					$('.press_enter_info').css({'opacity':'0'});
 			  }
 			},0)
@@ -163,7 +163,7 @@ $(document).ready(function(){
 								var date = response['date'];
 								var href = '/'+$('.page_identifier').attr('data-username')+'/'+response['url'];
 								var prependTitle = title;
-								$('.unpublished_list').prepend('<a class="essay-title" href="'+href+'"><div class="post_line"><div class="publish_button"><div class="left-hover-tag">publish</div></div><div class="delete_button"><div class="right-hover-tag">delete</div></div><span class="essay-text">'+prependTitle+'</span></div></a>')
+								$('.new_post_input').after('<a class="essay-title" href="'+href+'"><div class="post_line"><div class="publish_button"><div class="left-hover-tag">publish</div></div><div class="delete_button"><div class="right-hover-tag">delete</div></div><span class="essay-text">'+prependTitle+'</span></div></a>')
 								// $('.post_line').css({'width':$('.new_post_input').width() - 140})
 								$('#unpublished_empty').remove();
 								$('.press_enter_info').css({'opacity':'0'});
@@ -258,7 +258,7 @@ $(document).ready(function(){
 
 						$(post_line).css({'opacity':'0'})
 						setTimeout(function(){
-							$('.unpublished_list').prepend(post);
+							$('.new_post_input').after(post);
 							setTimeout(function(){
 								$(post_line).css({'opacity':'1'});
 							},10)
@@ -289,12 +289,15 @@ $(document).ready(function(){
 		})
 
 		$('body').on('click','.preview_user',function(){
-			$(this.parentNode).hide()
-			$('.hidden_toolbelt').prepend('<li><span class="exit_preview_mode control_button">exit preview</span></li>')
+			$('.batman_toolbelt').after('<div class="edit_mode_button control_button" style="color:grey;">x</div>')
 
 			$('.unpublished_list').css({'opacity':'0'})
-			$('.new_post_input').css({'opacity':'0'})
-			$('.line-break').css({'opacity':'0'})
+			$('.center_divider').fadeOut(200);
+			$('.post_list').animate({ width: 640}, 500)
+			$('.published_list .post_line').animate({'font-size':'36px', 'width':500, 'letter-spacing':'-2px','float':'left'})
+			$('.essay-date').css({'font-size':'36px', 'margin-left':'-8px', 'color':'#D8D8D8'})
+			// $('.new_post_input').css({'opacity':'0'})
+			// $('.line-break').css({'opacity':'0'})
 			// $('.post_list_header').css({'opacity':'0'})
 			$('.batman_toolbelt').attr('class','batman_toolbelt view_mode')
 			$('.bio_text').attr('contentEditable','false')
@@ -312,10 +315,7 @@ $(document).ready(function(){
 			},600)
 		})
 
-		$('body').on('click','.exit_preview_mode',function(){
-			$(this.parentNode).remove()
-			$($('li .preview_user')[0].parentNode).show();
-
+		$('body').on('click','.edit_mode_button',function(){
 			$('.unpublished_list').show()
 			$('.new_post_input').show()
 			$('.line-break').show()
@@ -326,6 +326,10 @@ $(document).ready(function(){
 			$('.archive').css({'border-top':'0px'});
 			$('.bio_text').attr('contentEditable','true')
 			$('.change_pic_btn').fadeIn(200);
+			$('.center_divider').fadeIn(200);
+			$('.post_list').animate({ width: 1070 }, 500)
+			$('.published_list .post_line').attr('style','opacity:1')
+			$('.essay-date').attr('style','opacity:1')
 
 			setTimeout(function(){
 				$('.unpublished_list').css({'opacity':'1'})
@@ -334,18 +338,19 @@ $(document).ready(function(){
 				$('.post_list_header').css({'opacity':'1'})
 			},50)
 			$('.batman_toolbelt').attr('class','batman_toolbelt')
+			$(this).remove();
 		})
 
-		$('body').on('click','.essay-title', function(){
-			//only happens if you click through to link
-			setTimeout(function(){
-				if ($('.confirm-box').length < 1 && !(document.queryCommandSupported('insertBrOnReturn'))){
-					$('.archive').css({'opacity':'0'})
-					$('.bio_text').css({'opacity':'0'})
-					$('.cover-box').css({'opacity':'0'})
-				}
-			},10)
-		})
+		// $('body').on('click','.essay-title', function(){
+		// 	//only happens if you click through to link
+		// 	setTimeout(function(){
+		// 		if ($('.confirm-box').length < 1 && !(document.queryCommandSupported('insertBrOnReturn'))){
+		// 			$('.archive').css({'opacity':'0'})
+		// 			$('.bio_text').css({'opacity':'0'})
+		// 			$('.cover-box').css({'opacity':'0'})
+		// 		}
+		// 	},10)
+		// })
 
 		$('body').on('click','.change_pic_btn', function(e){
 			$('.image_getter').fadeIn(200);
@@ -381,11 +386,11 @@ $(document).ready(function(){
 		// $('.archive').css({'width': '570px'})
 		// $('.new_post_input').css({'width': $('.archive').width()})
 
-		if ($('.new_post_input').length > 0){
-			$('.post_line').css({'width': '430px'})
-		} else {
-			$('.post_line').css({'width': '430px'})
-		}
+		// if ($('.new_post_input').length > 0){
+		// 	$('.post_line').css({'width': '510px'})
+		// } else {
+		// 	$('.post_line').css({'width': '510px'})
+		// }
 		
 
     $('div[data-placeholder]').on('keydown keypress input', function() {
@@ -424,15 +429,21 @@ $(document).ready(function(){
     	},1000)
     })
 
+    $.each($('.essay-date'), function(i, date){
+    	$(date).html($(date).html().split(' ').join('').toLowerCase())
+    })
+
     enlargeUserShowForMobile();
-    $('.post_line').css('opacity','0');
-    setTimeout(function(){
-    	$('.post_line').attr('class','post_line insta_transition');
-    	$('.list_loading_bar').width('100%');
-    	setTimeout(function(){
-    		$('.list_loading_bar').css('opacity','0');
-   			rollInPostList();
-    	}, 400)
-    },0)
+    $('.center_divider').css('height',$(document).height() - 150);
+		$('.post_list').css('margin-left',$('.post_list').offset().left - 40)
+   //  $('.post_line').css('opacity','0');
+  	// $('.post_line').attr('class','post_line insta_transition');
+ 		// rollInPostList();
+    // setTimeout(function(){
+    // 	$('.list_loading_bar').width('100%');
+    // 	setTimeout(function(){
+    // 		$('.list_loading_bar').css('opacity','0');
+    // 	}, 400)
+    // },0)
 	}
 })
